@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('Europe/Paris'); // see all available timezones at http://www.php.net/manual/en/timezones.php  
 $path = "/echelon/";
 $hide_admin_level = "128"; // 1, 2, 8, 16, 32, 64, 128 -> Hides clientdetails 
 
