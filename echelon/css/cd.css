@@ -1,0 +1,20 @@
+/* Client Details Page Styling */
+table.cd-table { margin-bottom: 25px; border: none; }
+	.cd-table tbody tr { border-bottom: 1px solid #F4F4F4; }
+	.cd-table tbody tr th { width: 15%; background: none; border: none; text-align: right; }
+	.cd-table tbody tr td { width: 35%; border: none; }
+
+div#actions { margin-bottom: 25px; }
+
+ul.cd-tabs { display: block; margin-left: 10px; height: 26px; }
+ul.cd-tabs li { display: block; float: left; margin: 0 6px; background: #ddd; border: 1px solid #CCC; -moz-border-radius: 5px 5px 0 0; -webkit-border-radius: 5px 5px 0 0; box-shadow: 4px -1px 6px #EDEDED; -webkit-box-shadow: 4px -1px 6px #EDEDED; -moz-box-shadow: 4px -1px 6px #EDEDED; }
+ul.cd-tabs li.cd-active { padding-bottom: 3px; border-bottom: none; background: #f3f3f3; box-shadow: none; -webkit-box-shadow: none; -moz-box-shadow: none; }
+ul.cd-tabs li a { padding: 4px 9px; font-size: 15px; color: #999; display: block; }
+ul.cd-tabs li a:hover { color: #666; text-decoration: none; }
+
+#actions-box { background: #f3f3f3; padding: 15px; border: 1px solid #CCC; -moz-border-radius: 7px; -webkit-border-radius: 7px; }
+.act-slide { display: none; }
+#cd-act-comment { display: block; }
+
+h3.cd-h { margin: 20px 0 4px; border-bottom: 1px solid #efefef; padding-bottom: 3px; }
+img.cd-open-close { float: right; padding: 3px; margin: 8px; }

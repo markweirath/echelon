@@ -1,465 +1,247 @@
 <?php
-include "ctracker.php";
-error_reporting( E_ERROR ^ E_WARNING );
+$page = "client";
+$page_title = "Clients Listing";
+$auth_name = 'clients';
+$b3_conn = true; // this page needs to connect to the B3 database
+$pagination = true; // this page requires the pagination part of the footer
+require 'inc.php';
 
-// Next line sets the echelon userlevel for this page. 1=superadmins - 2=admins - 3=moderators
-$requiredlevel = 3;
-require_once('Connections/b3connect.php');
-require_once('login/inc_authorize.php');
+##########################
+######## Varibles ########
 
-$currentPage = $_SERVER["PHP_SELF"];
-?>
-<?php
-$maxRows_rs_clients = 25;
-$pageNum_rs_clients = 0;
-if (isset($_GET['pageNum_rs_clients'])) {
-  $pageNum_rs_clients = $_GET['pageNum_rs_clients'];
+## Default Vars ##
+$orderby = "id";
+$order = "ASC";
+
+$is_search = false;
+
+$limit_rows = 75;
+$page_no = 0;
+
+
+## Sorts requests vars ##
+if($_GET['ob']) {
+	$orderby = addslashes($_GET['ob']);
 }
-$startRow_rs_clients = $pageNum_rs_clients * $maxRows_rs_clients;
-$xlorderby_rs_clients = "id";
-if (isset($_GET['orderby'])) {
-  $xlorderby_rs_clients = (get_magic_quotes_gpc()) ? $_GET['orderby'] : addslashes($_GET['orderby']);
+
+if($_GET['o']) {
+	$order = addslashes($_GET['o']);
 }
-$xlorder_rs_clients = "DESC";
-if (isset($_GET['order'])) {
-  $xlorder_rs_clients = (get_magic_quotes_gpc()) ? $_GET['order'] : addslashes($_GET['order']);
+
+// allowed things to sort by
+$allowed_orderby = array('id', 'name', 'connections', 'group_bits', 'time_add', 'time_edit');
+// Check if the sent varible is in the allowed array 
+if(!in_array($orderby, $allowed_orderby)) {
+	$orderby = 'id'; // if not just set to default id
 }
-mysql_select_db($database_b3connect, $b3connect);
-$query_rs_clients = sprintf("SELECT T1.*, T2.name as level 
-FROM clients T1 LEFT JOIN groups T2 
-ON T1.group_bits = T2.id 
-ORDER BY %s %s", $xlorderby_rs_clients,$xlorder_rs_clients);
-$query_limit_rs_clients = sprintf("%s LIMIT %d, %d", $query_rs_clients, $startRow_rs_clients, $maxRows_rs_clients);
-$rs_clients = mysql_query($query_limit_rs_clients, $b3connect) or die(mysql_error());
-$row_rs_clients = mysql_fetch_assoc($rs_clients);
-if (isset($_GET['totalRows_rs_clients'])) {
-  $totalRows_rs_clients = $_GET['totalRows_rs_clients'];
+
+## Page Vars ##
+if ($_GET['p']) {
+  $page_no = addslashes($_GET['p']);
+}
+
+$start_row = $page_no * $limit_rows;
+
+## Search Request handling ##
+if($_GET['s']) {
+	$search_string = addslashes($_GET['s']);
+	$is_search = true; // this is then a search page
+}
+
+if($_GET['t']) {
+	$search_type = $_GET['t']; //  no need to escape it will be checked off whitelist
+	$allowed_search_type = array('all', 'alias', 'pbid', 'ip', 'id');
+	if(!in_array($search_type, $allowed_search_type)) {
+		$search_type = 'all'; // if not just set to default all
+	}
+}
+
+
+###########################
+######### QUERIES #########
+
+$query = "SELECT c.id, c.name, c.connections, c.time_edit, c.time_add, g.name as level
+			FROM clients c LEFT JOIN groups g
+			ON c.group_bits = g.id WHERE c.id > 1 ";
+
+if($is_search == true) { // IF SEARCH
+	if($search_type == 'name') { // ALIAS
+		$query .= sprintf("AND c.name LIKE '%%%s%%' ORDER BY %s", $search_string, $orderby);
+		
+	} elseif($search_type == 'id') { // ID
+		$query .= sprintf("AND c.id LIKE '%%%s%%' ORDER BY %s", $search_string, $orderby);
+		
+	} elseif($search_type == 'pbid') { // PBID
+		$query .= sprintf("AND c.pbid LIKE '%%%s%%' ORDER BY %s", $search_string, $orderby);
+		
+	} elseif($search_type == 'ip') { // IP
+		$query .= sprintf("AND c.ip LIKE '%%%s%%' ORDER BY %s", $search_string, $orderby);
+		
+	} else { // ALL
+		$query .= sprintf("AND c.name LIKE '%%%s%%' OR c.pbid LIKE '%%%s%%' OR c.ip LIKE '%%%s%%' OR c.id LIKE '%%%s%%'
+			ORDER BY %s", $search_string, $search_string, $search_string, $search_string, $orderby);
+	}
+} else { // IF NOT SEARCH
+	$query .= sprintf("ORDER BY %s ", $orderby);
+
+} // end if search request
+
+## Append this section to all queries since it is the same for all ##
+if($order == "desc") {
+	$query .= " DESC"; // set to desc 
 } else {
-  $all_rs_clients = mysql_query($query_rs_clients);
-  $totalRows_rs_clients = mysql_num_rows($all_rs_clients);
+	$query .= " ASC"; // default to ASC if nothing adds up
 }
-$totalPages_rs_clients = ceil($totalRows_rs_clients/$maxRows_rs_clients)-1;
-$maxRows_rs_clientsearch = 25;
-$pageNum_rs_clientsearch = 0;
-if (isset($_GET['pageNum_rs_clientsearch'])) {
-  $pageNum_rs_clientsearch = $_GET['pageNum_rs_clientsearch'];
-}
-$startRow_rs_clientsearch = $pageNum_rs_clientsearch * $maxRows_rs_clientsearch;
-$xlresult_rs_clientsearch = "halsdflkjhasdfhjklasfkjndcknbnqfoiuhk";
-if (isset($_GET['search'])) {
-  $xlresult_rs_clientsearch = (get_magic_quotes_gpc()) ? $_GET['search'] : addslashes($_GET['search']);
-}
-$xlorderby_rs_clientsearch = "id";
-if (isset($_GET['orderby'])) {
-  $xlorderby_rs_clientsearch = (get_magic_quotes_gpc()) ? $_GET['orderby'] : addslashes($_GET['orderby']);
-}
-$xlorder_rs_clientsearch = "DESC";
-if (isset($_GET['order'])) {
-  $xlorder_rs_clientsearch = (get_magic_quotes_gpc()) ? $_GET['order'] : addslashes($_GET['order']);
-}
-mysql_select_db($database_b3connect, $b3connect);
-$query_rs_clientsearch = sprintf("SELECT * FROM clients WHERE name like '%%%s%%' OR guid like '%%%s%%' OR pbid like '%%%s%%' OR ip like '%%%s%%'  ORDER BY %s %s", $xlresult_rs_clientsearch,$xlresult_rs_clientsearch,$xlresult_rs_clientsearch,$xlresult_rs_clientsearch,$xlorderby_rs_clientsearch,$xlorder_rs_clientsearch);
-$query_limit_rs_clientsearch = sprintf("%s LIMIT %d, %d", $query_rs_clientsearch, $startRow_rs_clientsearch, $maxRows_rs_clientsearch);
-$rs_clientsearch = mysql_query($query_limit_rs_clientsearch, $b3connect) or die(mysql_error());
-$row_rs_clientsearch = mysql_fetch_assoc($rs_clientsearch);
-if (isset($_GET['totalRows_rs_clientsearch'])) {
-  $totalRows_rs_clientsearch = $_GET['totalRows_rs_clientsearch'];
-} else {
-  $all_rs_clientsearch = mysql_query($query_rs_clientsearch);
-  $totalRows_rs_clientsearch = mysql_num_rows($all_rs_clientsearch);
-}
-$totalPages_rs_clientsearch = ceil($totalRows_rs_clientsearch/$maxRows_rs_clientsearch)-1;
-$queryString_rs_clients = "";
-if (!empty($_SERVER['QUERY_STRING'])) {
-  $params = explode("&", $_SERVER['QUERY_STRING']);
-  $newParams = array();
-  foreach ($params as $param) {
-    if (stristr($param, "pageNum_rs_clients") == false && 
-        stristr($param, "totalRows_rs_clients") == false) {
-      array_push($newParams, $param);
-    }
-  }
-  if (count($newParams) != 0) {
-    $queryString_rs_clients = "&" . implode("&", $newParams);
-  }
-}
-$queryString_rs_clients = sprintf("&totalRows_rs_clients=%d%s", $totalRows_rs_clients, $queryString_rs_clients);
-$queryString_rs_clientsearch = "";
-if (!empty($_SERVER['QUERY_STRING'])) {
-  $params = explode("&", $_SERVER['QUERY_STRING']);
-  $newParams = array();
-  foreach ($params as $param) {
-    if (stristr($param, "pageNum_rs_clientsearch") == false && 
-        stristr($param, "totalRows_rs_clientsearch") == false) {
-      array_push($newParams, $param);
-    }
-  }
-  if (count($newParams) != 0) {
-    $queryString_rs_clientsearch = "&" . implode("&", $newParams);
-  }
-}
-$queryString_rs_clientsearch = sprintf("&totalRows_rs_clientsearch=%d%s", $totalRows_rs_clientsearch, $queryString_rs_clientsearch);
-?>
-<html>
-  <head>
-    <title>
-      Echelon - B3 Repository Tool (by xlr8or)
-    </title>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-    <style type="text/css">
-      <!--
-      @import url("css/default.css");
-      @import url("lib/jquery.autocomplete/jquery.autocomplete.css");
-      -->
-    </style>
-<script language="JavaScript">
-<!--
-//tmtC_winOpen
-var AliasResults;
-//tmtC_winOpenEnd
-function tmt_winOpen(u,id,f,df){
-if(eval(id)==null||eval(id+".closed")){
-eval(id+"=window.open('"+u+"','"+id+"','"+f+"')");eval(id+".focus()");}
-else if(df){eval(id+".focus()");}
-else{eval(id+"=window.open('"+u+"','"+id+"','"+f+"')");eval(id+".focus()");}
-}
-//-->
-</script>
-  </head>
-  <body>
-    <div id="wrapper">
-      <?php require_once('login/inc_loggedin.php'); ?>
-      <?php include('Connections/inc_codnav.php'); ?>
-      
-      <table width="100%" class="tabelinhoud">
-        <tr>
-          <td>
-            <form action="clients.php" method="GET" name="search" id="search">
-              Search :
-              <input name="search" type="text" id="search" value="<?php echo $_GET['search'];?>">
-              <input type="submit" name="Submit" value="Search">
-              <input type="hidden" name="game" value="<?php echo $game; ?>">
-              [
-              <a href="clients.php?game=<?php echo $game; ?>">clear search</a>
-              ]
-            </form>
-          </td>
-        </tr>
-      </table>
-      <?php if ($_GET['search'] == ("")) { ?>
-      <table width="100%" class="tabeluitleg">
-        <tr>
-          <td align="center">
-            <strong>Client list.</strong>
-            <br>You are viewing a list of all  clients.
-          </td>
-        </tr>
-      </table>
-      <table width="100%" cellspacing="1" cellpadding="1">
-        <tr class="tabelkop">
-          <td>
-            client-id&nbsp;
-            <a href="<?php echo $navThisPage; ?>?game=<?php echo $game; ?>&orderby=id&order=ASC">
-              <img src="img/asc.gif" alt="ascending" width="11" height="9" border="0" align="absmiddle"></a>
-            &nbsp;
-            <a href="<?php echo $navThisPage; ?>?game=<?php echo $game; ?>&orderby=id&order=DESC">
-              <img src="img/desc.gif" alt="descending" width="11" height="9" border="0" align="absmiddle"></a>
-          </td>
-          <td>
-            name&nbsp;
-            <a href="<?php echo $navThisPage; ?>?game=<?php echo $game; ?>&orderby=name&order=ASC">
-              <img src="img/asc.gif" alt="ascending" width="11" height="9" border="0" align="absmiddle"></a>
-            &nbsp;
-            <a href="<?php echo $navThisPage; ?>?game=<?php echo $game; ?>&orderby=name&order=DESC">
-              <img src="img/desc.gif" alt="descending" width="11" height="9" border="0" align="absmiddle"></a>
-          </td>
-          <td>
-            level&nbsp;
-            <a href="<?php echo $navThisPage; ?>?game=<?php echo $game; ?>&orderby=group_bits&order=ASC">
-              <img src="img/asc.gif" alt="ascending" width="11" height="9" border="0" align="absmiddle"></a>
-            &nbsp;
-            <a href="<?php echo $navThisPage; ?>?game=<?php echo $game; ?>&orderby=group_bits&order=DESC">
-              <img src="img/desc.gif" alt="descending" width="11" height="9" border="0" align="absmiddle"></a>
-          </td>
-          <td>
-            connections&nbsp;
-            <a href="<?php echo $navThisPage; ?>?game=<?php echo $game; ?>&orderby=connections&order=ASC">
-              <img src="img/asc.gif" alt="ascending" width="11" height="9" border="0" align="absmiddle"></a>
-            &nbsp;
-            <a href="<?php echo $navThisPage; ?>?game=<?php echo $game; ?>&orderby=connections&order=DESC">
-              <img src="img/desc.gif" alt="descending" width="11" height="9" border="0" align="absmiddle"></a>
-          </td>
-          <td>
-            firstseen&nbsp;
-            <a href="<?php echo $navThisPage; ?>?game=<?php echo $game; ?>&orderby=time_add&order=ASC">
-              <img src="img/asc.gif" alt="ascending" width="11" height="9" border="0" align="absmiddle"></a>
-            &nbsp;
-            <a href="<?php echo $navThisPage; ?>?game=<?php echo $game; ?>&orderby=time_add&order=DESC">
-              <img src="img/desc.gif" alt="descending" width="11" height="9" border="0" align="absmiddle"></a>
-          </td>
-          <td>
-            lastseen&nbsp;
-            <a href="<?php echo $navThisPage; ?>?game=<?php echo $game; ?>&orderby=time_edit&order=ASC">
-              <img src="img/asc.gif" alt="ascending" width="11" height="9" border="0" align="absmiddle"></a>
-            &nbsp;
-            <a href="<?php echo $navThisPage; ?>?game=<?php echo $game; ?>&orderby=time_edit&order=DESC">
-              <img src="img/desc.gif" alt="descending" width="11" height="9" border="0" align="absmiddle"></a>
-          </td>
-        </tr>
-        <?php do { ?>
-        <tr class="tabelinhoud">
-          <td>
-            <?php echo $row_rs_clients['id']; ?>
-          </td>
-            <td <?php if (strlen(trim($row_rs_clients['name']))==0) { // special case where the player's name is only composed of blank characters  
-                echo 'onclick="javascript:window.location=\'clientdetails.php?game=' . $game . '&amp;id=' . $row_rs_clients['id'] .'\'" style="cursor:pointer"';
-              } ?> >
-              <a href="clientdetails.php?game=<?php echo $game; ?>&id=<?php echo $row_rs_clients['id']; ?>">
-                <?php 
-                echo htmlspecialchars($row_rs_clients['name']); ?></a>
-            </td>
-          <td>
-            <?php echo $row_rs_clients['level']; ?>
-          </td>
-          <td>
-            <?php echo $row_rs_clients['connections']; ?>
-          </td>
-          <td>
-            <?php echo date('l, d/m/Y (H:i)',$row_rs_clients['time_add']); ?>
-          </td>
-          <td>
-            <?php echo date('l, d/m/Y (H:i)',$row_rs_clients['time_edit']); ?>
-          </td>
-        </tr>
-        <?php } while ($row_rs_clients = mysql_fetch_assoc($rs_clients)); ?>
-        <tr class="tabelonderschrift">
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            click client to see details
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            &nbsp;
-          </td>
-        </tr>
-      </table>
-      <table border="0" width="100%" cellspacing="0" cellpadding="0" align="center" class="recordnavigatie">
-        <tr class="tabelkop">
-          <td width="100%" colspan="4" align="center">
-            Records:&nbsp;
-            <?php echo ($startRow_rs_clients + 1) ?>
-            &nbsp;to&nbsp;
-            <?php echo min($startRow_rs_clients + $maxRows_rs_clients, $totalRows_rs_clients) ?>
-            &nbsp;from&nbsp;
-            <?php echo $totalRows_rs_clients ?>
-          </td>
-        </tr>
-        <tr>
-          <td align="center" width="25%">
-            <?php if ($pageNum_rs_clients > 0) { // Show if not first page ?>
-            <a href="<?php printf("%25s?pageNum_rs_clients=%25d%25s", $currentPage, 0, $queryString_rs_clients); ?>">First</a>
-            <?php } // Show if not first page ?>
-          </td>
-          <td align="center" width="25%">
-            <?php if ($pageNum_rs_clients > 0) { // Show if not first page ?>
-            <a href="<?php printf("%25s?pageNum_rs_clients=%25d%25s", $currentPage, max(0, $pageNum_rs_clients - 1), $queryString_rs_clients); ?>">Previous</a>
-            <?php } // Show if not first page ?>
-          </td>
-          <td align="center" width="25%">
-            <?php if ($pageNum_rs_clients < $totalPages_rs_clients) { // Show if not last page ?>
-            <a href="<?php printf("%25s?pageNum_rs_clients=%25d%25s", $currentPage, min($totalPages_rs_clients, $pageNum_rs_clients + 1), $queryString_rs_clients); ?>">Next</a>
-            <?php } // Show if not last page ?>
-          </td>
-          <td align="center" width="25%">
-            <?php if ($pageNum_rs_clients < $totalPages_rs_clients) { // Show if not last page ?>
-            <a href="<?php printf("%25s?pageNum_rs_clients=%25d%25s", $currentPage, $totalPages_rs_clients, $queryString_rs_clients); ?>">Last</a>
-            <?php } // Show if not last page ?>
-          </td>
-        </tr>
-      </table>
-<?php }
-/* if ($_GET['search'] == ("")) */
-      ?>
-      <?php if ($_GET['search'] != ("")) { ?>
-      <table width="100%" class="tabeluitleg">
-        <tr>
-          <td align="center">
-            <strong>Client search.</strong>
-            <br>Results for clientsearch on &quot;
-            <strong>
-              <?php echo $search; ?></strong>
-            &quot;.
-            We search on NAME, GUID, PB-GUID and IP.
-          </td>
-        </tr>
-      </table>
-      <table width="100%" border="0" cellpadding="1" cellspacing="1">
-        <tr class="tabelkop">
-          <td>
-            client-id&nbsp;
-            <a href="<?php echo $navThisPage; ?>?search=<?php echo $search; ?>&game=<?php echo $game; ?>&orderby=id&order=ASC">
-              <img src="img/asc.gif" alt="ascending" width="11" height="9" border="0" align="absmiddle"></a>
-            &nbsp;
-            <a href="<?php echo $navThisPage; ?>?search=<?php echo $search; ?>&game=<?php echo $game; ?>&orderby=id&order=DESC">
-              <img src="img/desc.gif" alt="descending" width="11" height="9" border="0" align="absmiddle"></a>
-          </td>
-          <td>
-            name&nbsp;
-            <a href="<?php echo $navThisPage; ?>?search=<?php echo $search; ?>&game=<?php echo $game; ?>&orderby=name&order=ASC">
-              <img src="img/asc.gif" alt="ascending" width="11" height="9" border="0" align="absmiddle"></a>
-            &nbsp;
-            <a href="<?php echo $navThisPage; ?>?search=<?php echo $search; ?>&game=<?php echo $game; ?>&orderby=name&order=DESC">
-              <img src="img/desc.gif" alt="descending" width="11" height="9" border="0" align="absmiddle"></a>
-          </td>
-          <td>
-            connections&nbsp;
-            <a href="<?php echo $navThisPage; ?>?search=<?php echo $search; ?>&game=<?php echo $game; ?>&orderby=connections&order=ASC">
-              <img src="img/asc.gif" alt="ascending" width="11" height="9" border="0" align="absmiddle"></a>
-            &nbsp;
-            <a href="<?php echo $navThisPage; ?>?search=<?php echo $search; ?>&game=<?php echo $game; ?>&orderby=connections&order=DESC">
-              <img src="img/desc.gif" alt="descending" width="11" height="9" border="0" align="absmiddle"></a>
-          </td>
-          <td>
-            firstseen&nbsp;
-            <a href="<?php echo $navThisPage; ?>?search=<?php echo $search; ?>&game=<?php echo $game; ?>&orderby=time_add&order=ASC">
-              <img src="img/asc.gif" alt="ascending" width="11" height="9" border="0" align="absmiddle"></a>
-            &nbsp;
-            <a href="<?php echo $navThisPage; ?>?search=<?php echo $search; ?>&game=<?php echo $game; ?>&orderby=time_add&order=DESC">
-              <img src="img/desc.gif" alt="descending" width="11" height="9" border="0" align="absmiddle"></a>
-          </td>
-          <td>
-            lastseen&nbsp;
-            <a href="<?php echo $navThisPage; ?>?search=<?php echo $search; ?>&game=<?php echo $game; ?>&orderby=time_edit&order=ASC">
-              <img src="img/asc.gif" alt="ascending" width="11" height="9" border="0" align="absmiddle"></a>
-            &nbsp;
-            <a href="<?php echo $navThisPage; ?>?search=<?php echo $search; ?>&game=<?php echo $game; ?>&orderby=time_edit&order=DESC">
-              <img src="img/desc.gif" alt="descending" width="11" height="9" border="0" align="absmiddle"></a>
-          </td>
-        </tr>
-        <?php do { ?>
-        <tr class="tabelinhoud">
-          <td>
-            <?php echo $row_rs_clientsearch['id']; ?>
-          </td>
-          <td>
-            <a href="clientdetails.php?game=<?php echo $game; ?>&id=<?php echo $row_rs_clientsearch['id']; ?>">
-              <?php echo htmlspecialchars($row_rs_clientsearch['name']); ?></a>
-          </td>
-          <td>
-            <?php echo $row_rs_clientsearch['connections']; ?>
-          </td>
-          <td>
-            <?php echo date('l, d/m/Y (H:i)',$row_rs_clientsearch['time_add']); ?>
-          </td>
-          <td>
-            <?php echo date('l, d/m/Y (H:i)',$row_rs_clientsearch['time_edit']); ?>
-          </td>
-        </tr>
-        <?php } while ($row_rs_clientsearch = mysql_fetch_assoc($rs_clientsearch)); ?>
-        <tr class="tabelonderschrift">
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            click client to see details
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            &nbsp;
-          </td>
-          <td>
-            &nbsp;
-          </td>
-        </tr>
-      </table>
-      <table border="0" width="100%" cellspacing="0" cellpadding="0" align="center" class="recordnavigatie">
-        <tr class="tabelkop">
-          <td width="100%" colspan="4" align="center">
-            Records:&nbsp;
-            <?php echo ($startRow_rs_clientsearch + 1) ?>
-            &nbsp;to&nbsp;
-            <?php echo min($startRow_rs_clientsearch + $maxRows_rs_clientsearch, $totalRows_rs_clientsearch) ?>
-            &nbsp;from&nbsp;
-            <?php echo $totalRows_rs_clientsearch ?>
-          </td>
-        </tr>
-        <tr>
-          <td align="center" width="25%">
-            <?php if ($pageNum_rs_clientsearch > 0) { // Show if not first page ?>
-            <a href="<?php printf("%25s?pageNum_rs_clientsearch=%25d%25s", $currentPage, 0, $queryString_rs_clientsearch); ?>">First</a>
-            <?php } // Show if not first page ?>
-          </td>
-          <td align="center" width="25%">
-            <?php if ($pageNum_rs_clientsearch > 0) { // Show if not first page ?>
-            <a href="<?php printf("%25s?pageNum_rs_clientsearch=%25d%25s", $currentPage, max(0, $pageNum_rs_clientsearch - 1), $queryString_rs_clientsearch); ?>">Previous</a>
-            <?php } // Show if not first page ?>
-          </td>
-          <td align="center" width="25%">
-            <?php if ($pageNum_rs_clientsearch < $totalPages_rs_clientsearch) { // Show if not last page ?>
-            <a href="<?php printf("%25s?pageNum_rs_clientsearch=%25d%25s", $currentPage, min($totalPages_rs_clientsearch, $pageNum_rs_clientsearch + 1), $queryString_rs_clientsearch); ?>">Next</a>
-            <?php } // Show if not last page ?>
-          </td>
-          <td align="center" width="25%">
-            <?php if ($pageNum_rs_clientsearch < $totalPages_rs_clientsearch) { // Show if not last page ?>
-            <a href="<?php printf("%25s?pageNum_rs_clientsearch=%25d%25s", $currentPage, $totalPages_rs_clientsearch, $queryString_rs_clientsearch); ?>">Last</a>
-            <?php } // Show if not last page ?>
-          </td>
-        </tr>
-      </table>
-      
-      <table width="100%" border="0" cellspacing="5" cellpadding="0" class="recordnavigatie">
-        <tr>
-          <td align="center">
-            <a href="#" onClick="tmt_winOpen('searchalias.php?search=<?php echo $search; ?>&amp;game=<?php echo $game; ?>
-              ','AliasResults','width=500,height=400,left=0,top=0,resizable=yes',0)">Not found what you were looking for? Click here to search on &quot;
-              <strong>
-                <?php echo $search; ?></strong>
-              &quot; in
-              the alias table!</a>
-          </td>
-        </tr>
-      </table>
-<?php }
-/* if ($_GET['search'] != ("")) */
-      ?>
-      <?php include "footer.php"; ?>
-    </div>
-  </body>
-</html>
-<?php
-mysql_free_result($rs_clients);
-mysql_free_result($rs_clientsearch);
+
+$query_limit = sprintf("%s LIMIT %s, %s", $query, $start_row, $limit_rows); // add limit section
+
+## Prepare and run Query ##
+$stmt = $db->mysql->prepare($query_limit) or die('Database Error: '.$db->mysql->error);
+$stmt->execute(); // run query
+$stmt->store_result(); // store results (needed to count num_rows)
+$num_rows = $stmt->num_rows; // finds the number fo rows retrieved from the database
+$stmt->bind_result($id, $name, $connections, $time_edit, $time_add, $level); // store results
+
+while($stmt->fetch()) : // get results and put results in an array
+	$clients_data[] = array(
+		'id' => $id,
+		'name' => $name,
+		'connect' => $connections,
+		'time_edit' => $time_edit,
+		'time_add' => $time_add,
+		'level' => $level,
+	);
+endwhile;
+
+$stmt->free_result(); // free the data in memory from store_result
+$stmt->close(); // closes the prepared statement
+
+## Find total rows ##
+$result_rows = $db->mysql->query($query);
+$total_rows = $result_rows->num_rows;
+$result_rows->close();
+
+// create query_string
+$query_string_page = queryStringPage();
+$total_pages = totalPages($total_rows, $limit_rows);
+
+## Require Header ##	
+require 'inc/header.php';
 ?>
 
-<!-- javascript is better placed after html to allow browsers start HTML rendering earlier -->
-<script language="JavaScript" type="text/javascript" src="lib/jquery-1.2.6.min.js"></script>
-<script language="JavaScript" type="text/javascript" src="lib/jquery.autocomplete/jquery.autocomplete.min.js"></script>
-<script language="JavaScript" type="text/javascript" src="lib/jquery.bgiframe.min.js"></script>
-<script language="JavaScript" type="text/javascript">
-<!--
-$(document).ready(function() {
- $('input:text#search').autocomplete("ajax.php", {
-    minChars: 3,
-    cacheLength: 10,
-    matchContains:1,
-    width: 200,
-    extraParams: { 'action':'searchPlayerByName'<?php if (isset($_GET['game'])) echo ", 'game': ".$_GET['game'];?> },
-    formatItem: function(row) {
-      return row[1];
-    }
-  });
-});
-//-->
-</script>
+<fieldset class="search">
+	<legend>Client Search</legend>
+	<form action="clients.php" method="get" id="c-search">
+		<input type="text" name="s" id="search" value="<?php echo $search_string; ?>" />
+		<select name="t">
+			<option value="all" <?php if($search_type == "all") echo 'selected="selected"' ?>>All</option>
+			<option value="alias" <?php if($search_type == "names") echo 'selected="selected"' ?>>Name</option>
+			<option value="pbid" <?php if($search_type == "pbid") echo 'selected="selected"' ?>>PBID</option>
+			<option value="ip" <?php if($search_type == "ip") echo 'selected="selected"' ?>>IP Address</option>
+			<option value="id" <?php if($search_type == "id") echo 'selected="selected"' ?>>Player ID</option>
+		</select>
+		
+		<input type="submit" id="sub-search" value="Search" />
+	</form>
+</fieldset>
+
+<table summary="A list of <?php echo limit_rows; ?> players who have connected to the server at one time or another.">
+	<caption>Client Listings
+		<small>
+			<?php
+			if($search_type == "all") {
+				echo 'You are searching all clients that match <strong>'.$search_string.'</strong>.';
+			} elseif($search_type == 'alias') {
+				echo 'You are searching all clients names for <strong>'.$search_string.'</strong>.';
+			} elseif($search_type == 'pbid') {
+				echo 'You are searching all clients Punkbuster Guids for <strong>'.$search_string.'</strong>.';
+			} elseif($search_type == 'id') {
+				echo 'You are searching all clients B3 IDs for <strong>'.$search_string.'</strong>.';
+			} elseif($search_type == 'ip') {
+				echo 'You are searching all clients IP addresses for <strong>'.$search_string.'</strong>.';
+			} else {
+				echo 'A list of all players who have ever connected to the server.';
+			}
+			?>
+		</small>
+	</caption>
+	<thead>
+		<tr>
+			<th>Name
+				<?php linkSortClients('name', 'Name', $is_search, $search_type, $search_string); ?>
+			</th>
+			<th>Client-id
+				<?php linkSortClients('id', 'Client-id', $is_search, $search_type, $search_string); ?>
+			</th>
+			<th>Level
+				<?php linkSortClients('group_bits', 'Level', $is_search, $search_type, $search_string); ?>
+			</th>
+			<th>Connections
+				<?php linkSortClients('connections', 'Connections', $is_search, $search_type, $search_string); ?>
+			</th>
+			<th>Firstseen
+				<?php linkSortClients('time_add', 'First Seen', $is_search, $search_type, $search_string); ?>
+			</th>
+			<th>Lastseen
+				<?php linkSortClients('time_edit', 'Last Seen', $is_search, $search_type, $search_string); ?>
+			</th>
+		</tr>
+	</thead>
+	<tfoot>
+		<tr>
+			<th colspan="6">Click client name to see details</th>
+		</tr>
+	</tfoot>
+	<tbody>
+	<?php
+	$rowcolor = 0;
+
+	 if($num_rows > 0) { // query contains stuff
+	 
+		foreach($clients_data as $clients): // get data from query and loop
+			$cid = $clients['id'];
+			$name = $clients['name'];
+			$level = $clients['level'];
+			$connections = $clients['connect'];
+			$time_edit = $clients['time_edit'];
+			$time_add = $clients['time_add'];
+			
+			$time_add = date('D, d/m/y (H:i)', $time_add);
+			$time_edit = date('D, d/m/y (H:i)', $time_edit);
+			$rowcolor = 1 - $rowcolor;
+			
+			if($rowcolor == 0)
+				$odd_even = "odd";
+			else 
+				$odd_even = "even";
+			
+			
+			// setup heredoc (table data)			
+			$data = <<<EOD
+			<tr class="$odd_even">
+				<td><strong><a href="clientdetails.php?id=$cid">$name</a></strong></td>
+				<td>@$cid</td>
+				<td>$level</td>
+				<td>$connections</td>
+				<td><em>$time_add</em></td>
+				<td><em>$time_edit</em></td>
+			</tr>
+EOD;
+
+		echo $data;
+		endforeach;
+	} else {
+		$no_data = true;
+	
+		echo '<tr class="odd"><td colspan="6">';
+		if($is_search == false)
+			echo 'There is no clients in the database.';
+		else
+			echo 'Your search for <strong>'.$search_string.'</strong> has returned no results.';
+		echo '</td></tr>';
+	} // end if query contains
+	?>
+	</tbody>
+</table>
+
+<?php require 'inc/footer.php'; ?>

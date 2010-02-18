@@ -1,238 +1,327 @@
 <?php
-include "ctracker.php";
-error_reporting( E_ERROR ^ E_WARNING );
+$page = "clientdetails";
+$page_title = "Client Details";
+$auth_name = 'clients';
+$b3_conn = true; // this page needs to connect to the B3 database
+$pagination = false; // this page requires the pagination part of the footer
+require 'inc.php';
 
-// Next line sets the echelon userlevel for this page. 1=superadmins - 2=admins - 3=moderators
-$requiredlevel = 3;
-require_once('Connections/b3connect.php');
-require_once('login/inc_authorize.php');
+## Do Stuff ##
+$cid = 3;
+if($_GET['id'])
+	$cid = $_GET['id'];
+	
+if(!is_numeric($cid))
+	die('Invalid data sent');
+	
+if($cid == 0)
+	die('Failed to detect data, shutting down.');
 
-$colname_rs_clientinfo = "1";
-if (isset($_GET['id'])) {
-  $colname_rs_clientinfo = (get_magic_quotes_gpc()) ? $_GET['id'] : addslashes($_GET['id']);
+$query = "SELECT c.ip, c.connections, c.guid, c.name, c.mask_level, c.greeting, c.time_add, c.time_edit, c.group_bits, g.name
+		  FROM clients c LEFT JOIN groups g ON c.group_bits = g.id WHERE c.id = ? LIMIT 1";
+$stmt = $db->mysql->prepare($query) or die('Database Error '. $db->mysql->error);
+$stmt->bind_param('i', $cid);
+$stmt->execute();
+$stmt->bind_result($ip, $connections, $guid, $name, $mask_level, $greeting, $time_add, $time_edit, $group_bits, $user_group);
+$stmt->fetch();
+$stmt->close();
+
+// query for xlrstats
+$query_xlr = "SELECT id, kills, deaths, ratio, skill, rounds, hide, fixed_name FROM xlr_playerstats WHERE client_id = ? LIMIT 1";
+$stmt = $db->mysql->prepare($query_xlr) or die('2 - MySQL Error: #'.$db->mysql->errno.' '.$db->mysql->error);
+$stmt->bind_param('i', $cid);
+$stmt->execute();
+$stmt->store_result();
+
+if($stmt->num_rows) {
+	
+	$is_xlrstats_user = true;	
+	$stmt->bind_result($xlr_id, $kills, $deaths, $ratio, $skill, $rounds, $hide, $fixed_name);
+	$stmt->fetch();
+	
+} else {
+	$is_xlrstats_user = false;
 }
-mysql_select_db($database_b3connect, $b3connect);
-//$query_rs_clientinfo = sprintf("SELECT * FROM clients WHERE id = %s", $colname_rs_clientinfo);
-$query_rs_clientinfo = sprintf("SELECT T1.*, T2.name as level FROM clients T1 LEFT JOIN groups T2 ON T1.group_bits = T2.id WHERE T1.id = %s", $colname_rs_clientinfo);
-$rs_clientinfo = mysql_query($query_rs_clientinfo, $b3connect) or die(mysql_error());
-$row_rs_clientinfo = mysql_fetch_assoc($rs_clientinfo);
-$totalRows_rs_clientinfo = mysql_num_rows($rs_clientinfo);
-$colname_rs_aliases = "0";
-if (isset($_GET['id'])) {
-  $colname_rs_aliases = (get_magic_quotes_gpc()) ? $_GET['id'] : addslashes($_GET['id']);
-}
-mysql_select_db($database_b3connect, $b3connect);
-$query_rs_aliases = sprintf("SELECT * FROM aliases WHERE client_id = %s ORDER BY num_used DESC", $colname_rs_aliases);
-$rs_aliases = mysql_query($query_rs_aliases, $b3connect) or die(mysql_error());
-$row_rs_aliases = mysql_fetch_assoc($rs_aliases);
-$totalRows_rs_aliases = mysql_num_rows($rs_aliases);
+
+$stmt->free_result();
+$stmt->close();
+
+## Require Header ##
+$page_title .= ' '.$name;
+require 'inc/header.php';
 ?>
-<html>
-  <head>
-    <title>
-      Echelon - B3 Repository Tool (by xlr8or)
-    </title>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-    <style type="text/css">
-      <!--
-      @import url("css/default.css");
-      -->
-    </style>
-  </head>
-  <body>
-    <div id="wrapper">
-      <?php require_once('login/inc_loggedin.php'); ?>
-      <?php include('Connections/inc_codnav.php'); ?>
-      <table width="100%" border="0" cellpadding="1" cellspacing="1">
-        <tr class="tabelinhoud">
-          <td width="9%" align="right" class="tabelkop">
-            Name:
-          </td>
-          <td width="35%">
-            <?php echo htmlspecialchars($row_rs_clientinfo['name']); ?>
-          </td>
-          <td width="12%" align="right" class="tabelkop">
-            IP:
-          </td>
-          <td width="44%">
-            <?php if ($row_rs_clientinfo['ip'] != "") { ?>
-            <a href="<?php echo $path; ?>clients.php?game=<?php echo $game; ?>&search=<?php echo $row_rs_clientinfo['ip']; ?>"><?php echo $row_rs_clientinfo['ip']; ?></a>
-            &nbsp;&nbsp;
-            <a href="http://whois.domaintools.com/<?php echo $row_rs_clientinfo['ip']; ?>" target="_blank"><img src="img/querry.gif" alt="whois search" name="whois" title = "Whois search" width="16" height="15" border="0" align="absmiddle" id="whois"></a>
-            &nbsp;&nbsp;
-            <a href="http://geotool.servehttp.com/?ip=<?php echo $row_rs_clientinfo['ip']; ?>" target="_blank"><img src="img/world.gif" alt="Show Location on map" name="Map" title = "Show Location on map" width="16" height="15" border="0" align="absmiddle" id="map"></a>
-            <?php } else { ?>
-            (No IP address available)
-            <?php } ?>
-          </td>
-        </tr>
-        <tr class="tabelinhoud">
-          <td align="right" class="tabelkop">
-            Client id:
-          </td>
-          <td>
-            @ 
-            <?php echo $row_rs_clientinfo['id']; ?>
-            <?php // start of the hidden admin level information 
-            if ( ($row_rs_clientinfo['group_bits'] < $hide_admin_level ) && ($row_rs_clientinfo['pbid'] != "WORLD") ) { ?>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            
-          </td>
-          <td align="right" class="tabelkop">
-            Connections:
-          </td>
-          <td>
-            <?php echo $row_rs_clientinfo['connections']; ?>
-          </td>
-        </tr>
-        <tr class="tabelinhoud">
-          <td align="right" class="tabelkop">
-            group_bits
-          </td>
-          <td>
-            (
-            <?php //echo $row_rs_clientinfo['group_bits']; ?>
-            <?php if ($row_rs_clientinfo['level'] == "")
-                    {
-                     echo "Un-registered";
-                    }
-                     else
-                    {
-                     echo $row_rs_clientinfo['level'];
-                    }
-            ?>
-            )
-          </td>
-          <td align="right" class="tabelkop">
-            First seen:
-          </td>
-          <td>
-            <?php echo date('l, d/m/Y (H:i)',$row_rs_clientinfo['time_add']); ?>
-          </td>
-        </tr>
-        <tr class="tabelinhoud">
-          <td align="right" class="tabelkop">
-            GUID:
-          </td>
-          <td>
-            <?php if ($row_rs_clientinfo['guid'] != $row_rs_clientinfo['pbid']) { ?>
-            <a href="<?php echo $path; ?>clients.php?game=<?php echo $game; ?>&search=<?php echo $row_rs_clientinfo['guid']; ?>"><?php echo $row_rs_clientinfo['guid']; ?></a>
-            <?php } else { ?>
-            (No GUID available)
-            <?php } ?>
-          </td>
-          <td align="right" class="tabelkop">
-            Last seen:
-          </td>
-          <td>
-            <?php echo date('l, d/m/Y (H:i)',$row_rs_clientinfo['time_edit']); ?>
-          </td>
-        </tr>
-        <tr class="tabelinhoud">
-          <td align="right" class="tabelkop">
-            PB-GUID
-          </td>
-          <td>
-            <?php if (($row_rs_clientinfo['pbid'] != "") && ($row_rs_clientinfo['pbid'] != "WORLD")) { ?>
-            <a href="<?php echo $path; ?>clients.php?game=<?php echo $game; ?>&search=<?php echo $row_rs_clientinfo['pbid']; ?>"><?php echo $row_rs_clientinfo['pbid']; ?></a>
-            <?php } else { ?>
-            (No Punkbuster GUID available)
-            <?php } ?>
-          </td>
-          <td align="right" class="tabelkop">
-            Greeting:
-          </td>
-          <td>
-            <?php echo $row_rs_clientinfo['greeting']; ?>
-          </td>
-        </tr>
-        <tr class="tabelinhoud">
-         <td class="tabelkop">
-         &nbsp;
-         </td>
-         <td colspan=3 class="tabelkop">
-        		<b>Echelon Admin Functions below</b>
-       	 </td>
-       	</tr>
-	<tr class="tabelinhoud">
-	  <td align="right"class="tabelkop">
-	    Comment
-	  </td>
-	 <td><br>
-		<form name=textinput method="Post" Action="admin/textadd.php?id=<?php echo $row_rs_clientinfo['id']; ?>">
-			<input type="text" value="Enter new comment" Name="comment">
-			<input type="hidden" value="<?php echo $game; ?>" Name="game">
-			<input type="submit" name="submit1" value="update">
-		</form>
-	  </td>
-	  <td class="tabelkop" align="right">
-	  	Banning
-	  </td>
-	  <td>
-	  <form name="tempbaninput" method="Post" Action="admin/tempban.php?id=<?php echo $row_rs_clientinfo['id']; ?>&pbid=<?php echo $row_rs_clientinfo['pbid']; ?>&clientname=<?php echo urlencode($row_rs_clientinfo['name']); ?>&client_ip=<?php echo $row_rs_clientinfo['ip']; ?>&game=<?php echo $game;?>">
-      <input type="text" value="Banned by an Echelon WebAdmin" size="50" Maxlength="50" Name="reason">
-    	<input type="text" value="Number" size="9" Maxlength="9" Name="bantime">
-    	<SELECT name="time">
-      	<option>Minutes</option>
-      	<option>Hours</option>
-      	<option>Days</option>           	
-    	</select>
-      <input type="submit" name="submit2" value="tempban" class="button">
-    </form>
+<table class="cd-table">
+	<caption><?php echo $name; ?><small>Everything B3 knows about <?php echo $name; ?></small></caption>
+	<tbody>
+		<tr>
+			<th>Name</th>
+				<td><?php echo  htmlspecialchars($name); ?></td>
+			<th>@id</th>
+				<td><?php echo $cid; ?></td>
+		</tr>
+		<tr>
+			<th>Level</th>
+				<td><?php echo $user_group; ?></td>
+			<th>Connections</th>
+				<td><?php echo $connections; ?></td>
+		</tr>
+		<tr>
+			<th>GUID</th>
+				<td><?php echo '<a href="http://www.punksbusted.com/cgi-bin/membership/guidcheck.cgi?guid='.$guid.'" title="Check this guid is not banned by PunksBusted.com">'.$guid.'</a>'; ?></td>
+			<th>IP Address</th>
+				<td>
+					<?php if ($ip != "") { ?>
+						<a href="<?php echo $path; ?>clients.php?s=<?php echo $ip; ?>&amp;t=ip" title="Search for other users with this IP adreess"><?php echo $ip; ?></a>
+							&nbsp;&nbsp;
+						<a href="http://whois.domaintools.com/<?php echo $ip; ?>" target="_blank" title="Whois IP Search">W</a>
+							&nbsp;&nbsp;
+						<a href="http://geotool.servehttp.com/?ip=<?php echo $ip; ?>" target="_blank" title="Show Location of IP origin on map">L</a>
+					<?php
+						} else {
+							echo "(No IP address available)";
+						}
+					?>
+				</td>
+		</tr>
+		<tr>
+			<th>First Seen</th>
+				<td><?php echo date($tformat, $time_add); ?></td>
+			<th>Last Seen</th>
+				<td><?php echo date($tformat, $time_edit); ?></td>
+		</tr>
+	</tbody>
+</table>
 
-	  <form name="baninput" method="Post" Action="admin/ban.php?id=<?php echo $row_rs_clientinfo['id']; ?>&pbid=<?php echo $row_rs_clientinfo['pbid']; ?>&clientname=<?php echo urlencode($row_rs_clientinfo['name']); ?>&client_ip=<?php echo $row_rs_clientinfo['ip']; ?>&game=<?php echo $game;?>">
-      <input type="text" value="Banned by an Echelon WebAdmin" size="50" Maxlength="50" Name="reason">
-      <input type="submit" value="permban" class="button" style="background: #B9A489 url(img/insta_ban.gif) no-repeat top left; padding-left:15px">
-    </form>
-	  </td>
+<?php if($is_xlrstats_user) : ?>
+<table class="cd-table" id="xlrstats-table">
+	<tbody>
+	<tr>
+		<th>Kills</th>
+			<td><?php echo $kills; ?></td>
+		<th>Deaths</th>
+			<td><?php echo $deaths; ?></td>
 	</tr>
-	<tr class="tabelinhoud">
-	  <td align="right"class="tabelkop">Level</td>
-	  <td colspan=3>
-	  <form name=adminaddition method="Post" Action="admin/adminadd.php?id=<?php echo $row_rs_clientinfo['id']; ?>">
-		  ID Level
-        <SELECT name="level">
-            	<option value="0"<?=($row_rs_clientinfo['group_bits']=='0')?' selected':'';?>>unregistered</option>
-            	<option value="1"<?=($row_rs_clientinfo['group_bits']=='1')?' selected':'';?>>user</option>
-            	<option value="2"<?=($row_rs_clientinfo['group_bits']=='2')?' selected':'';?>>regular</option>
-            	<option value="8"<?=($row_rs_clientinfo['group_bits']=='8')?' selected':'';?>>moderator</option>   
-              <option value="16"<?=($row_rs_clientinfo['group_bits']=='16')?' selected':'';?>>admin</option>
-              <option value="32"<?=($row_rs_clientinfo['group_bits']=='32')?' selected':'';?>>full admin</option>
-              <option value="64"<?=($row_rs_clientinfo['group_bits']=='64')?' selected':'';?>>senior admin</option>
-   	    </select>
-			<input type="hidden" value="<?php echo $game; ?>" Name="game">
-			<input type="submit" name="submit3" value="Change Level">
-		</form>
-            <?php } // end of the hidden admin level information ?>
-	  </td>
-  </tr>
-   </table>
-      <table width="100%" border="0" cellpadding="1" cellspacing="1">
-        <tr>
-          <td class="tabelkop">
-            Used Aliasses:
-          </td>
-        </tr>
-        <tr>
-          <td class="tabelinhoud">
-            <?php do { ?>
-            <?php echo htmlspecialchars($row_rs_aliases['alias']); ?>
-            &nbsp;
-            <i>(
-              <?php echo $row_rs_aliases['num_used']; ?>
-              x)</i>
-            &nbsp;&nbsp;-&nbsp;&nbsp;
-            <?php } while ($row_rs_aliases = mysql_fetch_assoc($rs_aliases)); ?>
-          </td>
-        </tr>
-      </table>
-      <?php include('inc_clienthistory.php'); ?>
-      <?php if ($chatlogger_plugin_activated) include('inc_clientchat.php'); ?>
-      <?php include "footer.php"; ?>
-    </div>
-  </body>
-</html>
-<?php
-mysql_free_result($rs_clientinfo);
-mysql_free_result($rs_aliases);
-?>
+	<tr>
+		<th>Ratio</th>
+			<td><?php echo number_format($ratio, 2, '.', ''); ?></td>
+		<th>Skill</th>
+			<td><?php echo number_format($skill, 2, '.', ''); ?></td>
+	</tr>
+	<tr>
+		<th>Rank</th>
+			<td>#49</td>
+		<th>XLRStats id</th>
+			<td><?php echo $xlr_id; ?></td>
+	</tr>
+	<tr>
+		<th>Fixed Name</th>
+			<td><?php if($fixed_name == "") { echo "Non Set"; } else { echo $fixed_name; } ?></td>
+		<th>Hidden</th>
+			<td><?php if($hide == 1) { echo "Yes"; } else { echo "No"; } ?></td>
+	</tr>
+	</tbody>
+</table>
+<?php endif; ?>
+
+<a name="tabs" />
+<div id="actions">
+	<ul class="cd-tabs">
+		<li class="cd-active"><a href="#tabs" title="Add a comment to this user" rel="cd-act-comment" class="cd-tab">Comment</a></li>
+		<li><a href="#tabs" title="Edit this user's greeting" rel="cd-act-greeting" class="cd-tab">Greeting</a></li>
+		<li><a href="#tabs" title="Add Ban/Tempban to this user" rel="cd-act-ban" class="cd-tab">Ban</a></li>
+		<li><a href="#tabs" title="Change this user's user level" rel="cd-act-lvl" class="cd-tab">Change Level</a></li>
+		<li><a href="#tabs" title="Change this user's mask level" rel="cd-act-mask" class="cd-tab">Mask Level</a></li>
+	</ul>
+	<div id="actions-box">
+		<div id="cd-act-comment" class="act-slide">
+			<?php
+				$groups = $dbl->getGroups();
+			?>
+			<form action="actions/comment.php" method="post">
+				<label for="comment">Comment:</label><br />
+					<textarea type="text" name="comment" id="comment"></textarea>
+					
+				<label for="com-level">Limit Access:</label>
+					<select name="limit" id="com-level">
+						<option value="all">All Access</option>
+						<?php
+							foreach($groups as $group) :
+								$gid = $group['id'];
+								$gname = $group['display'];
+								echo '<option value="'.$gid.'">'.$gname.'</option>';
+							endforeach;
+						?>
+					</select>
+					
+				<input type="hidden" name="token" value="" />
+				
+				<input type="submit" name="comment-sub" value="Add Comment" />
+			</form>
+		</div>
+		<div id="cd-act-greeting" class="act-slide">
+			<form action="actions/greeting.php" method="post">
+				<label for="greeting">Greeting Message:</label>
+					<input type="text" name="greeting" id="greeting" value="<?php echo $greeting; ?>" />
+					
+				<input type="hidden" name="token" value="" />
+				<input type="submit" name="greeting-sub" value="Chnage Greeting" />
+			</form>
+		</div>
+		<div id="cd-act-ban" class="act-slide">
+			<form action="actions/ban.php" method="">
+		
+				<fieldset class="none">
+					<legend>Type</legend>
+					
+					<label for="pb">Permanent Ban?</label>
+						<input type="checkbox" name="pb" id="pb" /><br />
+						
+					<label for="duration">Duration:</label>
+						<input type="text" name="duration" id="duration" class="int" style="width: 60px" />
+						
+						<select name="time">
+							<option value="m">Minutes</option>
+							<option value="h">Hours</option>
+							<option value="d">Days</option>
+							<option value="w">Weeks</option>
+							<option value="mn">Months</option>
+							<option value="y">Years</option>
+						</select>			
+				</fieldset>
+				<br class="clear" />
+				
+				<label for="reason">Reason:</label>
+					<input type="text" name="reason" id="reason" />
+					
+				<input type="hidden" name="token" value="Banned with Echelon!" />
+				<input type="submit" name="ban-sub" value="Ban User" />
+			</form>
+		</div>
+		<div id="cd-act-lvl" class="act-slide">
+			<?php
+				$b3_groups = $db->getB3Groups(); // get a list of all B3 groups from the B3 DB
+			?>
+			<form action="actions/level.php" method="post">
+				<label for="level">Level:</label>
+					<select name="level" id="level">
+						<?php
+							foreach($b3_groups as $group) :
+								$gid = $group['id'];
+								$gname = $group['name'];
+								if($group_bits == $gid)
+									echo '<option value="'.$gid.'" selected="selected">'.$gname.'</option>';
+								else
+									echo '<option value="'.$gid.'">'.$gname.'</option>';
+							endforeach;
+						?>
+					</select>
+					
+				<input type="hidden" name="token" value="" />
+				<input type="submit" name="level-sub" value="Change Level" />
+			</form>
+		</div>
+		<div id="cd-act-mask" class="act-slide">
+			<form action="actions/level.php" method="post">
+				<label for="mlevel">Mask Level:</label>
+					<select name="level" id="mlevel">
+						<?php
+							foreach($b3_groups as $group) :
+								$gid = $group['id'];
+								$gname = $group['name'];
+								if($mask_level == $gid)
+									echo '<option value="'.$gid.'" selected="selected">'.$gname.'</option>';
+								else
+									echo '<option value="'.$gid.'">'.$gname.'</option>';
+							endforeach;
+						?>
+					</select>
+					
+				<input type="hidden" name="token" value="" />
+				<input type="submit" name="mlevel-sub" value="Change Mask" />
+			</form>
+		</div>
+	</div><!-- end #actions-box -->
+</div><!-- end #actions -->
+
+<table>
+	<thead>
+		<tr>
+			<th>Alias</th>
+			<th>Times Used</th>
+			<th>First Used</th>
+			<th>Last Used</th>
+		</tr>
+	</thead>
+	<tfoot>
+		<tr><th colspan="4"></th></tr>
+	</tfoot>
+	<tbody>
+	<?php
+		// notice on the query we say that time_add does not equal time_edit, this is because of bug in alias recording in B3 that has now been solved
+		$query = "SELECT alias, num_used, time_add, time_edit FROM aliases WHERE client_id = ? AND time_add != time_edit ORDER BY time_edit DESC";
+		$stmt = $db->mysql->prepare($query) or die('Alias Database Query Error'. $db->mysql->error);
+		$stmt->bind_param('i', $cid);
+		$stmt->execute();
+		$stmt->bind_result($alias, $num_used, $time_add, $time_edit);
+		
+		$rowcolor = 0;
+		while($stmt->fetch()) :
+
+			$time_add = date($tformat, $time_add);
+			$time_edit = date($tformat, $time_edit);
+			
+			$rowcolor = 1 - $rowcolor;
+			
+			if($rowcolor == 0)
+				$odd_even = "odd";
+			else 
+				$odd_even = "even";
+			
+			$token_del = genFormToken('del'.$id);		
+			
+			// setup heredoc (table data)			
+			$data = <<<EOD
+			<tr class="$odd_even">
+				<td><strong>$alias</td>
+				<td>$num_used</td>
+				<td><em>$time_add</em></td>
+				<td><em>$time_edit</em></td>
+			</tr>
+EOD;
+			echo $data;
+		
+		endwhile;	
+	?>
+	</tbody>
+</table>
+
+<h3 class="cd-h">Penalties <img class="cd-open-close" src="images/add.png" alt="Open" /></h3>
+<table>
+	<thead>
+		<tr>
+			<th></th>
+			<th>Type</th>
+			<th>Added</th>
+			<th>Duration</th>
+			<th>Expires</th>
+			<th>Reason</th>
+			<th>Admin</th>
+		</tr>
+	</thead>
+	<tfoot>
+		<tr><td colspan="7"></td></tr>
+	</tfoot>
+	<tbody>
+		<tr>
+			<td>46932 &nbsp;</td>
+			<td>Warning</td>
+			<td>08/07/09 (13:13)</td>
+			<td>3 days </td>
+			<td><span class="expired">Saturday, 11/07/2009 (13:13)</span></td>
+			<td>Rule #8: No profanity or offensive language (in any language)<br><em>oh shit =&gt;  ohshit </em></td>
+			<td><strong><a title="Click to see users page." href="clientdetails.php?game=1&amp;id=1">B3</a></strong></td>
+		</tr>
+	</tbody>
+</table>
+
+<?php require 'inc/footer.php'; ?>

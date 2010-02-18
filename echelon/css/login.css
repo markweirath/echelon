@@ -1,0 +1,11 @@
+/* CSS */
+.trys { border-bottom: 1px solid #fefefe; margin-bottom: 6px; padding-bottom: 2px; }
+#login-field { width: 45%; }
+#login-form { width: 325px; margin: 0 auto; }
+label { margin-right: 10px; display: inline-block; width: 80px; text-align: right; }
+div.lower { margin-top: 8px; border-top: 1px solid #ccc; }
+	.links-lower { font-size: 14px; margin-left: 7px; }
+		.links-lower a { font-style: italic; }
+	.lower input { margin: 5px 15px; float: right; }
+span.sep { color: #ededed; margin: 0 4px; }
+input { margin: 10px 4px; }

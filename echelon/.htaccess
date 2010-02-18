@@ -1,0 +1,8 @@
+Options All -Indexes
+<Files .htaccess>
+order deny,allow
+deny from all
+</Files>
+DirectoryIndex index.php
+AddHandler php5-script .php
+php_flag magic_quotes_gpc off
