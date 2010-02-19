@@ -158,3 +158,24 @@ $(document).ready(function() {
 	});
 
 });
+
+// Functions for search auto suggest
+function suggest(iString){
+	if(iString.length == 0) {
+		$('#suggestions').fadeOut();
+	} else {
+		$('#search').addClass('load');
+		$.get("actions/autosuggest.php", {s: ""+iString+""}, function(data){
+			if(data.length >0) {
+				$('#suggestions').fadeIn();
+				$('#suggestionsList').html(data);
+				$('#search-input').removeClass('load');
+			}
+		});
+	}
+}
+
+function fill(thisValue) {
+	$('#search').val(thisValue);
+	setTimeout("$('#suggestions').fadeOut();", 600);
+}

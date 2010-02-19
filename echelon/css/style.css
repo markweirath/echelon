@@ -180,6 +180,7 @@ p.last-seen { margin: 20px 0 0; padding: 5px; border-top: 1px solid #ccc; font-s
 .desc-img, .asc-img { opacity: 0.5; }
 .desc-img:hover, .asc-img:hover { opacity: 0.8; }
 
+/* Table Styling */
 table, td { border: 1px solid #CCC; border-collapse: collapse; font: small/1.5 "Tahoma","Bitstream Vera Sans",Verdana,Helvetica,sans-serif; }
 table { width: 100%; border: none; border: 1px solid #CCC; display: table; }
 thead th, 
@@ -205,6 +206,7 @@ tr.inact { background: #fbeee4 !important; }
 tr.table-error:hover { backfround: #fff; }
 tr.table-error td span { display: block; background: #e19d9d; color: white; font-size: 15px; padding: 3px; border: 2px solid #ae2525; -moz-border-radius: 3px; -webkit-border-radius: 3px; margin: 8px; }
 
+/* Under the Table and Pagination Styling */
 div.under-table { margin: 8px 3px 0; color: #444; }
 	.num-rows { float: left; font-size: 15px; font-family: "Times New Roman", Times, serif; }
 	.pages { float: right; font-size: 12px; font-family: Verdana, Arial, Helvetica, sans-serif; }
@@ -213,6 +215,7 @@ div.under-table { margin: 8px 3px 0; color: #444; }
 			.current { color: #FF3333 !important; }
 		.dots { color: #999; font-size: 11px; }
 
+/* Footer Styling */
 #footer { height: 15px; margin: 10px; }
 	#footer p { font-size: 15px; text-align: center; color: #EFEFEF; }
 	.copy { float: left; }
@@ -222,6 +225,24 @@ div.under-table { margin: 8px 3px 0; color: #444; }
 		.foot-nav a { color: #EFEFEF; text-decoration: underline; padding: 1px 2px; }
 		.foot-nav a:hover { color: #EEE; }
 		.foot-nav a:active { color: #D6D6D6; text-decoration: none; }
+		
+/* Auto Suggest */
+.load{ background: white url(../images/indicator.gif) right no-repeat; }
+#result {
+	height:20px;
+	font-size:16px;
+	font-family:Arial, Helvetica, sans-serif;
+	color:#333;
+	padding:5px;
+	margin-bottom:10px;
+	background-color:#FFFF99;
+}
+#search-input{ padding:3px; font-size:17px; }
+.suggestionsBox { background: #eee; border: 1px solid #000; color: black; left: 4px; position: absolute; top: 34px; width: 220px; z-index: 100; opacity: 0.98; }
+.suggestionList ol li { list-style: none; padding: 5px; border-bottom: 1px dotted #666; }
+.suggestionList ol li:last-child { border-bottom: none; }
+.suggestionList ol li:hover { background-color: #6ea3cb; color:#000; cursor: pointer; }
+#suggest { position:relative; }
 		
 /* Site Admin Styling */
 #add-user-form { margin: 0 auto; width: 91%; }

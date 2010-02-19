@@ -132,7 +132,12 @@ require 'inc/header.php';
 <fieldset class="search">
 	<legend>Client Search</legend>
 	<form action="clients.php" method="get" id="c-search">
-		<input type="text" name="s" id="search" value="<?php echo $search_string; ?>" />
+		<input type="text" autocomplete="off" name="s" id="search" onkeyup="suggest(this.value);" onBlur="fill();" value="<?php echo $search_string; ?>" />
+		
+		<div class="suggestionsBox" id="suggestions" style="display: none;">
+			<div class="suggestionList" id="suggestionsList">&nbsp;</div>
+		</div>
+		
 		<select name="t">
 			<option value="all" <?php if($search_type == "all") echo 'selected="selected"' ?>>All</option>
 			<option value="alias" <?php if($search_type == "names") echo 'selected="selected"' ?>>Name</option>
