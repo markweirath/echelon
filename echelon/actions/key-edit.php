@@ -14,6 +14,8 @@ if($_POST['t'] == 'del') : // if this is a deletion request
 		sendGood('Registration key deleted');
 	else
 		sendBack('There was an problem completeing your request');
+		
+	exit; // no need continuing with this script
 
 elseif($_POST['comment']) : // if this is an edit comment request
 

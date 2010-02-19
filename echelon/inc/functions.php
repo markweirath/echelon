@@ -343,10 +343,10 @@ function displayName($name) {
  * @return string
  */
 function getGravatar($email) {
-	$default = "http://b3-echelon.com/echelon/images/nav/default-person.jpg"; // get variable from config.php
+	$default = "https://s.eire32designs.com/echelon/images/nav/default-person.jpg"; // get variable from config.php
 	$size = 32;
 	
-	$grav_url = "http://www.gravatar.com/avatar.php?
+	$grav_url = "https://secure.gravatar.com/avatar.php?
 	gravatar_id=".md5( strtolower($email) ).
 	"&default=".urlencode($default).
 	"&size=".$size; 
@@ -431,7 +431,7 @@ function linkSort($keyword, $title) {
 			&nbsp;
 			<a title="Sort information by '.$title.' descending." href="'.$this_p.'?ob='.$keyword.'&amp;o=desc"><img src="'. $path .'images/desc.png" alt="DESC" class="desc-img" /></a>';
 
-} // end function linkSort
+}
 
 function linkSortClients($keyword, $title, $is_search, $search_type, $search_string) {
 
@@ -447,7 +447,19 @@ function linkSortClients($keyword, $title, $is_search, $search_type, $search_str
 		<a title="Sort information by '.$title.' descending." href="'.$this_p.'?ob='.$keyword.'&amp;o=desc&amp;s='.urlencode($search_string).'&amp;t='.$search_type.'"><img src="'. $path .'images/desc.png" alt="DESC" class="desc-img" /></a>';
 	}
 
-} // end function linkSort
+}
+
+function removeColorCode($text) {
+
+	$text = preg_replace('/\\^([0-9])/ie', '', $text);
+	return $text;
+}
+
+function tableClean($text) {
+
+	$text = htmlspecialchars($text);
+	return $text;
+}
 
 function settingText($name, $title, $value, $type) {
 	switch ($type) {

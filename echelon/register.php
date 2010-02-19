@@ -27,7 +27,7 @@ if(!isset($_REQUEST['key'])) {
 	
 	// check the new email address is a valid email address
 	if(!filter_var($email,FILTER_VALIDATE_EMAIL)) {  
-		sendBack('That email is not valid');
+		set_error('That email is not valid 9999999');
 	}
 	
 	// query db to see if key and email are valid

@@ -5,6 +5,7 @@ $auth_name = 'siteadmin';
 ## Require the inc files and start up class ##
 require 'inc.php';
 
+// If this is a view a user in more detail page
 if($_GET['t'] == 'user') :
 	$id = $_GET['id'];
 	if(!is_numeric($id)) {
@@ -24,14 +25,14 @@ if($_GET['t'] == 'user') :
 		$display = $result[1];
 		$email = $result[2];
 		$ip = $result[3];
-		$premissions = $result[4];
+		$group = $result[4];
 		$admin_id = $result[5];
 		$first_seen = $result[6];
 		$last_seen = $result[7];
 		$admin_name = $result[8];
 	}
 
-	if($admin_name == '') {
+	if($admin_name == '') { // if the admin_id matches no user then set name as unknown
 		$admin_name = 'Unknown';
 		$admin_id = 0;	
 	}
@@ -39,12 +40,78 @@ if($_GET['t'] == 'user') :
 	$is_view_user = true;
 endif; // end 
 
-$add_user_token = genFormToken('adduser');	
+// if this is an dit user page
+if($_GET['t'] == 'edituser') :
+	$uid = $_GET['id'];
+	if(!is_numeric($uid)) {
+		set_error('Invalid data sent. Request aborted.');
+		send('sa.php');
+	}
+	
+	## Get a users details
+	$result = $dbl->getUserDetailsEdit($uid);
+	if(!$result) { // there was no user matching the sent id // throw error and sedn to SA page
+		set_error('No user matches that id.');
+		send('sa.php');
+		exit;
+	} else {
+		## Setup information vars ##
+		$u_username = $result[0];
+		$u_display = $result[1];
+		$u_email = $result[2];
+		$u_group_id = $result[3];
+	}
+	
+	// setup form token
+	$ad_edit_user_token = genFormToken('adedituser');
+	
+	// get the names and id of all B3 Groups for select menu
+	$ech_groups = $dbl->getGroups();
+	
+	// set referance var
+	$is_edit_user = true;
+
+endif;	
 
 ## Require Header ##	
 require 'inc/header.php';
 
-if($is_view_user) : ?>
+if($is_edit_user) : ?>
+
+	<fieldset>
+		<legend>Edit <?php echo $u_display; ?></legend>
+		
+		<form action="actions/user-edit.php" method="post">
+			
+			<label for="display">Display Name:</label>
+				<input type="text"  name="display" id="display" value="<?php echo $u_display; ?>" /><br />
+			
+			<label for="username">Username:</label>
+				<input type="text" name="username" id="username" value="<?php echo $u_username; ?>" /><br />
+				
+			<label for="email">Email Address:</label>
+				<input type="text" name="email" id="email" value="<?php echo $u_email; ?>" /><br />
+				
+			<label for="group">Group</label>
+				<select name="group" id="group">
+					<?php foreach($ech_groups as $group) :
+						if($group['id'] == $u_group_id)
+							echo '<option value="'.$group['id'].'" selected="selected">'.$group['display'].'</option>';
+						else
+							echo '<option value="'.$group['id'].'">'.$group['display'].'</option>';
+					endforeach; ?>
+				</select><br />
+			
+			<input type="hidden" name="token" value="<?php echo $ad_edit_user_token; ?>" />
+			<input type="hidden" name="id" value="<?php echo $uid; ?>" />
+				
+			<input type="submit" name="ad-edit-user" value="Edit <?php echo $u_display; ?>" />
+			
+		</form>
+		
+	</fieldset>
+
+<?php elseif($is_view_user) : ?>
 	<a href="sa.php" title="Go back to the site admin page">&laquo; Go Back</a>
 	<a href="sa.php?t=edituser&amp;id=<?php echo $id; ?>" title="Go back to the site admin page" class="float-right">Edit this user &raquo;</a>
 	<fieldset>
@@ -53,8 +120,8 @@ if($is_view_user) : ?>
 			<p>Display Name: <?php echo $display; ?></p>
 			<p>Email: <?php echo emailLink($email, $display); ?></p>
 			<p>IP Address: <?php echo ipLink($ip); ?></p>
-			<p>First Seen: <?php echo date('D, d/m/y (H:i)', $first_seen); ?></p>
-			<p>Last Seen: <?php echo date('D, d/m/y (H:i)', $last_seen); ?></p>
+			<p>First Seen: <?php echo date($tformat, $first_seen); ?></p>
+			<p>Last Seen: <?php echo date($tformat, $last_seen); ?></p>
 			<p>Creator: <?php echo echUserLink($admin_id, $admin_name); ?></p>
 	</fieldset>
 
@@ -65,12 +132,12 @@ if($is_view_user) : ?>
 		<tr>
 			<th></th>
 			<th>id</th>
-			<th>Display Name</th>
-			<th>User Group</th>
+			<th>Name</th>
+			<th>Group</th>
 			<th>Email</th>
 			<th>IP Address</th>
-			<th>Firstseen</th>
-			<th>Lastseen</th>
+			<th>First Seen</th>
+			<th>Last Seen</th>
 			<th></th>
 		</tr>
 	</thead>
@@ -93,8 +160,8 @@ if($is_view_user) : ?>
 			$group = $users['group'];
 			
 			
-			$time_add = date('D, d/m/y', $time_add);
-			$time_edit = date('D, d/m/y (H:i)', $time_edit);
+			$time_add = date($tformat, $time_add);
+			$time_edit = date($tformat, $time_edit);
 			$ip = ipLink($ip);
 			$email_link = emailLink($email, $name);
 			
@@ -112,7 +179,7 @@ if($is_view_user) : ?>
 			// setup heredoc (table data)			
 			$data = <<<EOD
 			<tr class="$odd_even">
-				<td><span class="gravatar"><img src="$grav_url" alt="" /></span></td>
+				<td><img src="$grav_url" alt="" /></td>
 				<td>$id</td>
 				<td><strong><a href="sa.php?t=user&amp;id=$id" title="View $name in more detail">$name</a></strong></td>
 				<td>$group</td>
@@ -125,7 +192,7 @@ if($is_view_user) : ?>
 						<input type="hidden" value="$token_del" name="token" />
 						<input type="hidden" value="$id" name="id" />
 						<input type="hidden" value="del" name="t" />
-						<input class="harddel" type="image" src="images/user_del.png" alt="Delete" />
+						<input class="harddel" type="image" src="images/user_del.png" alt="Delete" title="Delete this user forever" />
 					</form>
 					<a href="sa.php?t=edituser&amp;id=$id" title="Edit $name"><img src="images/user_edit.png" alt="edit" /></a>
 					<a href="sa.php?t=user&amp;id=$id" title="View $name in more detail"><img src="images/user_view.png" alt="view" /></a>
@@ -138,7 +205,10 @@ EOD;
 	?>
 	</tbody>
 </table>
-<?php $ech_groups = $dbl->getGroups(); ?>
+<?php
+	$ech_groups = $dbl->getGroups();
+	$add_user_token = genFormToken('adduser');
+?>
 <fieldset>
 	<legend>Add Echelon User</legend>
 	<form action="actions/user-add.php" method="post" id="add-user-form">
@@ -195,7 +265,7 @@ EOD;
 			$admin_id = $reg_keys['admin_id']; // id of admin who added key
 			$admin = $reg_keys['admin']; // display name of admin who added key
 			
-			$time_add = date('D, d/m/y (H:i)', $time_add);
+			$time_add = date($tformat, $time_add);
 			$email = emailLink($email, '');
 			$admin_link = echUserLink($admin_id, $admin);
 			$rowcolor = 1 - $rowcolor;
@@ -272,7 +342,7 @@ EOD;
 			$time_add = $bl['time_add'];
 			$admin = $bl['admin'];
 			
-			$time_add = date('D, d/m/y (H:i)', $time_add);
+			$time_add = date($tformat, $time_add);
 			$ip = ipLink($ip);		
 				
 			$rowcolor = 1 - $rowcolor;

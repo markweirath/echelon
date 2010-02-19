@@ -91,11 +91,15 @@ $(document).ready(function() {
 		thisItem.fadeOut("fast"); // fade out the edit button
 		comment.fadeOut("fast"); 
 		
-		td.append('<form action="actions/key-edit.php" method="post" style="display: none;" class="edit-comment-form"><input type="text" name="comment" id="comment-text-box" value="' + commentText + '" /><input type="hidden" name="key" value="' + key + '" id="key-input" /></form>');
+		td.append('<form action="" method="post" style="display: none;" onSubmit="return false;" class="edit-comment-form"><input type="text" name="comment" id="comment-text-box" value="' + commentText + '" /><input type="hidden" name="key" value="' + key + '" id="key-input" /></form>');
 		
 		$(".edit-comment-form").slideDown("slow"); // slide in the form since the form is usually large than the table row so the animation makes the form addition less jerky when added
 			
-		$('#comment-text-box').blur(function() {
+		$(".edit-coment-form").submit(function(){
+			return false;			  
+		});
+		
+		$('#comment-text-box').blur(function(){
 										   
 			var newText = $(this).val();
 			var key = $("#key-input").val();

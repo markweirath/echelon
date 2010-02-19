@@ -193,14 +193,17 @@ tfoot th { border-left: none; border-top: 1px solid #CCC; padding: 6px; backgrou
 caption { text-align: left; font-size: 20px; padding: 0 10px; color: #333; font-family: Georgia, "Times New Roman", Times, serif; }
 	caption small { font-size: 11px; color: #666; margin-left: 5px; padding-left: 5px; border-left: 1px solid #ccc; font-family: Geneva, Arial, Helvetica, sans-serif; }
 	caption .cap-link { float: right; padding: 1px 3px; border: 1px solid #bbb; background: #eee; font-size: 15px; }
-table a:link { color: #666; }
-table a:visited { color: #666; }
+table a:link { color: #666; border-bottom: 1px dotted #dedede; }
+table a:visited { color: #777; }
 table a:hover { color: #036; text-decoration: none; }
 table a:active { color: #036; }
 
 tr.odd { background: #FFF; }
 tr.even { background: #F8F8F8; }
 tr.inact { background: #fbeee4 !important; }
+
+tr.table-error:hover { backfround: #fff; }
+tr.table-error td span { display: block; background: #e19d9d; color: white; font-size: 15px; padding: 3px; border: 2px solid #ae2525; -moz-border-radius: 3px; -webkit-border-radius: 3px; margin: 8px; }
 
 div.under-table { margin: 8px 3px 0; color: #444; }
 	.num-rows { float: left; font-size: 15px; font-family: "Times New Roman", Times, serif; }

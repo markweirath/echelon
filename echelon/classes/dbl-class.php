@@ -648,6 +648,21 @@ class DbL {
 		$stmt->close();
 	}
 	
+	function editUser($id, $username, $display, $email, $ech_group) {
+		$query = "UPDATE users SET username = ?, display = ?, email = ?, ech_group = ? WHERE id = ? LIMIT 1";
+		$stmt = $this->mysql->prepare($query) or die('Database Error');
+		$stmt->bind_param('sssii', $username, $display, $email, $ech_group, $id);
+		$stmt->execute();
+		
+		if($stmt->affected_rows == 1)
+			return true;
+		else
+			return false;
+			
+		$stmt->close();
+	
+	}
+	
 	/**
 	 * Gets a user's details (for SA view/edit)
 	 *
@@ -655,7 +670,7 @@ class DbL {
 	 * @return array
 	 */
 	function getUserDetails($id) {
-		$query = "SELECT u.username, u.display, u.email, u.ip, u.group, u.admin_id, u.first_seen, u.last_seen, a.display 
+		$query = "SELECT u.username, u.display, u.email, u.ip, u.ech_group, u.admin_id, u.first_seen, u.last_seen, a.display 
 				  FROM users u LEFT JOIN users a ON u.admin_id = a.id WHERE u.id = ? LIMIT 1";
 		$stmt = $this->mysql->prepare($query) or die('Database Error '. $this->mysql->error);
 		$stmt->bind_param('i', $id);
@@ -667,6 +682,28 @@ class DbL {
 
 		if($stmt->num_rows == 1) :
 			$data = array($username, $display, $email, $ip, $group, $admin_id, $first_seen, $last_seen, $admin_name);
+			return $data;
+		else :
+			return false;
+		endif;
+		
+		$stmt->free_result();
+		$stmt->close();
+	
+	}
+	
+	function getUserDetailsEdit($id) {
+		$query = "SELECT username, display, email, ech_group FROM users WHERE id = ? LIMIT 1";
+		$stmt = $this->mysql->prepare($query) or die('Database Error '. $this->mysql->error);
+		$stmt->bind_param('i', $id);
+		$stmt->execute();
+	
+		$stmt->store_result();
+		$stmt->bind_result($username, $display, $email, $group_id);
+		$stmt->fetch();
+
+		if($stmt->num_rows == 1) :
+			$data = array($username, $display, $email, $group_id);
 			return $data;
 		else :
 			return false;

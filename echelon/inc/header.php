@@ -2,7 +2,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-	<meta name="keywords" content="eire32designs, websites, design, developemtn" /> 
 	
 	<title><?php echo $site_name; ?> Echelon - <?php echo $page_title; ?></title>
 	
@@ -114,7 +113,7 @@
 					<a href="#">Clients</a>
 					<ul class="dd">
 						<li class="clients<?php if($page == 'client') echo ' selected'; ?>"><a href="<?php echo $path; ?>clients.php" title="Clients Listing">Clients</a></li>
-						<li class="active<?php if($page == 'active') echo ' selected'; ?>"><a href="<?php echo $path; ?>clients.php" title="In-active admins">In-active Admins</a></li>
+						<li class="active<?php if($page == 'active') echo ' selected'; ?>"><a href="<?php echo $path; ?>active.php" title="In-active admins">In-active Admins</a></li>
 						<li class="regular<?php if($page == 'regular') echo ' selected'; ?>"><a href="<?php echo $path; ?>clients.php" title="Regular non admin visitors to your servers">Regular Visitors</a></li>
 						<li class="admins<?php if($page == 'admins') echo ' selected'; ?>"><a href="<?php echo $path; ?>clients.php" title="A list of all admins">Admin Listing</a></li>
 					</ul>

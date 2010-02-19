@@ -179,10 +179,10 @@ require 'inc/header.php';
 			<th>Connections
 				<?php linkSortClients('connections', 'Connections', $is_search, $search_type, $search_string); ?>
 			</th>
-			<th>Firstseen
+			<th>First Seen
 				<?php linkSortClients('time_add', 'First Seen', $is_search, $search_type, $search_string); ?>
 			</th>
-			<th>Lastseen
+			<th>Last Seen
 				<?php linkSortClients('time_edit', 'Last Seen', $is_search, $search_type, $search_string); ?>
 			</th>
 		</tr>
@@ -206,8 +206,8 @@ require 'inc/header.php';
 			$time_edit = $clients['time_edit'];
 			$time_add = $clients['time_add'];
 			
-			$time_add = date('D, d/m/y (H:i)', $time_add);
-			$time_edit = date('D, d/m/y (H:i)', $time_edit);
+			$time_add = date($tformat, $time_add);
+			$time_edit = date($tformat, $time_edit);
 			$rowcolor = 1 - $rowcolor;
 			
 			if($rowcolor == 0)

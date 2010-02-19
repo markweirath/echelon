@@ -16,5 +16,11 @@ ul.cd-tabs li a:hover { color: #666; text-decoration: none; }
 .act-slide { display: none; }
 #cd-act-comment { display: block; }
 
-h3.cd-h { margin: 20px 0 4px; border-bottom: 1px solid #efefef; padding-bottom: 3px; }
-img.cd-open-close { float: right; padding: 3px; margin: 8px; }
+.cd-h { margin: 20px 0 4px; border-bottom: 1px solid #efefef; padding-bottom: 3px; }
+#cd-h-pen:hover { cursor: pointer; }
+img.cd-open { float: right; padding: 3px; margin: 8px; }
+
+.cd-table-fold { display: none; }
+#cd-tr-load-pen td { text-align: center; }
+#cd-tr-load-pen:hover { background : #fff; }
+.load-large { margin: 15px; }

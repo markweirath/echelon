@@ -86,6 +86,10 @@
 		<script src="<?php echo $path; ?>js/password_strength_plugin.js" type="text/javascript" charset="utf-8"></script>
 	<?php } ?>
 	
+	<?php if($page == 'clientdetails') { ?>
+		<script src="<?php echo $path; ?>js/cd.js" type="text/javascript" charset="utf-8"></script>
+	<?php } ?>
+	
 	<!-- load main site js -->
 	<script src="<?php echo $path; ?>js/site.js" type="text/javascript" charset="utf-8"></script>
 	
