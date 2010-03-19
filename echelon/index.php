@@ -19,15 +19,15 @@ $time_last_seen = ($time - $_SESSION['last_seen']);
 		<h3>Changelog v2.0</h3>
 		
 		<ul>
-			<li>Better user management</li>
-			<li>IP Blacklist</li>
-			<li>Echelon connect</li>
-			<li>Editable settings</li>
-			<li>Regular visitors page</li>
-			<li>In-active admins page</li>
-			<li>Multi server for a single DB support</li>
-			<li>Ability to change a client's mask, greeting, login details, edit a ban</li>
-			<li>Security: Anti-session hijacking and fixation, tokens to stop CSRF attacks, prepared statments to prevent SQL injection.</li>
+			<li>Better user management, allowing more flexible permissions for Echelon users and managers</li>
+			<li>IP Blacklist, allows troublesome people to be banned from accessing the Echelon site</li>
+			<li>Echelon connect, lets people connect their B3 client with their Echelon user</li>
+			<li>Editable settings lets Echelon managers keep things simple</li>
+			<li>Regular visitors page shows a list of people who are not clan members and who connect regularly.</li>
+			<li>In-active admins page shows a list of admins who have not connected to the servers in a while</li>
+			<li>Multi server for a single DB support. This allows you to associate mutliple servers to one DB. This gives people who use this technique when setting up B3 more flexibility for chat logs and banning and the like</li>
+			<li>Ability to change a client's mask, greeting, login details, edit a ban deatils</li>
+			<li>Security: Anti-session hijacking and fixation, tokens to stop CSRF attacks, prepared statments to prevent SQL injection. MAking your Echelon expirence more secure allowing you to protect both you and your clients</li>
 		</ul>
 	</div>
 

@@ -76,8 +76,11 @@ EOD;
 	endwhile;
 	
 else : // if no results
-
-	echo '<tr class="table-good"><td colspan="7"><span>This user has no recorded penalties!</span></td></tr>';
+	
+	if($type == 'client')
+		echo '<tr class="table-good"><td colspan="7"><span>This user has no recorded penalties!</span></td></tr>';
+	else 
+		echo '<tr class="table-good"><td colspan="7"><span>This user has no recorded admin actions!</span></td></tr>';
 
 endif;
 

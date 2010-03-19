@@ -8,19 +8,27 @@ $this_page = $_SERVER["PHP_SELF"];
 
 ## setup the game var ##
 if($_GET['game']) {
-	$game = addslashes($_GET['game']);
-	$_SESSION['game'] = $game; // set the cookie to game value
+	$game = $_GET['game'];
+	setcookie("game", $game, time()*60*60*24*31, $path); // set the cookie to game value
+
 } elseif($_POST['game']) {
 	$game = addslashes($_POST['game']);
-	$_SESSION['game'] = $game; // set the cookie to game value
+	setcookie("game", $game, time()*60*60*24*31, $path); // set the cookie to game value
+
+} elseif($_COOKIE['game']) {
+	$game = $_COOKIE['game'];
+	
 } elseif($_SESSION['game']) {
-	$game = addslashes($_SESSION['game']);
-} else { // if not data sent just default to game 1
+	$game = $_SESSION['game'];
+	setcookie("game", $game, time()*60*60*24*31, $path); // set the cookie to game value
+	
+} else {
 	$game = 1;
+	setcookie("game", $game, time()*60*60*24*31, $path); // set the cookie to game value
+	//die('Default Error');
 }
 
-## set the config array ##
-
+## get the config array ##
 $config = $dbl->getConfig();
 
 $config['cosmos'] = array();
@@ -43,10 +51,11 @@ $tformat = $config['cosmos']['time_format'];
 
 // if $game is greater than num_games then game doesn't exist so send to error page with error and reset game to 1
 if($game > $num_games) {
-	$_SESSION['game'] = 1;
-	set_error('That game doesn\'t exist');
-	sendError();
-	exit;
+	//$_SESSION['game'] = 1;
+	//set_error('That game doesn\'t exist');
+	//sendError();
+	//exit;
+	die('Massive Error');
 }
 
 // send the $config['game1'] arrays

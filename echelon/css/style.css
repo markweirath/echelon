@@ -177,6 +177,7 @@ body { color: black; font: 17px; background: url(../images/body-bg.jpg) repeat; 
 	#nav li ul.dd li:last-child { border-bottom: none; }
 	#nav li ul.dd li a { display: block; background: none; border: none; opacity: 1; color: #222; padding: 7px 14px; margin: 1px; }
 	#nav li ul.dd li a:hover { color: #000; cursor: pointer; }
+	.games-list li { width: 190px !important; } /* Make the list for the games slightly wider */
 
 #user-info { float: right; background: url(../images/nav/join.png) no-repeat; height: 48px; padding-left: 85px; }
 div.info { width: 170px; float: left; height: 48px; background: url(../images/nav/white-side.png) repeat-x; padding-top: 3px; }

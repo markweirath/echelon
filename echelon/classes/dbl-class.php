@@ -37,6 +37,19 @@ class DbL {
 	
 	}
 	
+	function getGamesList() {
+		$query = "SELECT category, value FROM config WHERE category != 'cosmos' AND name = 'name' ORDER BY id ASC";
+		$results = $this->mysql->query($query) or die('Database error');
+		
+		while($row = $results->fetch_object()) :	
+			$games[] = array(
+				'category' => $row->category,
+				'value' => $row->value
+			);
+		endwhile;
+		return $games;
+	}
+	
 	/**
 	 * This function gets the salt value from the users table by using a clients username
 	 *

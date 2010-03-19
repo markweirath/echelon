@@ -17,7 +17,7 @@ ul.cd-tabs li a:hover { color: #666; text-decoration: none; }
 #cd-act-comment { display: block; }
 
 .cd-h { margin: 20px 0 4px; border-bottom: 1px solid #efefef; padding-bottom: 3px; }
-#cd-h-pen:hover { cursor: pointer; }
+.cd-open-close:hover, #cd-h-admin:hover, #cd-h-pen:hover { cursor: pointer; }
 img.cd-open { float: right; padding: 3px; margin: 8px; }
 
 .cd-table-fold { display: none; }

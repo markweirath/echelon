@@ -10,7 +10,7 @@ $(document).ready(function() {
 	$('#cd-h-admin').click(function(){
 		var thisItem = this;
 		getPenInfo(thisItem, 'admin');		
-	}); // #cd-h-pen click  
+	}); // #cd-h-pen click
 	  
 });
 
@@ -27,7 +27,11 @@ function getPenInfo(thisItem, type) {
 	
 	$(thisItem).children('.cd-open').hide();
 	
-	$(thisItem).parent().prepend('<h3 class="cd-h">Penalties</h3>');
+	if(type == 'client') {
+		$(thisItem).parent().prepend('<h3 class="cd-h">Penalties</h3>');
+	} else {
+		$(thisItem).parent().prepend('<h3 class="cd-h">Admin Actions</h3>');
+	}
 	
 	// after showing the empty table load in the data
 	

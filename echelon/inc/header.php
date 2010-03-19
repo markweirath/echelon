@@ -129,6 +129,19 @@ endif;
 			
 				<li class="home<?php if($page == 'home') echo ' selected'; ?>"><a href="<?php echo $path; ?>" title="Home Page">Home</a></li>
 				<li class="cdd">
+					<a href="#">Games</a>
+					<ul class="dd games-list">
+						<?php
+							$games_list = $dbl->getGamesList();
+							foreach($games_list as $item) :
+								$game_id = substr($item['category'], -1); // the id of the game is at the end of the string (eg. 'game1') so substr gets the last character (ie. the id)
+								$name = $item['value'];
+								echo '<li><a href="'.$path . $this_page .'?game='.$game_id.'" title="Switch to this game">'.$name.'</a></li>';
+							endforeach;
+						?>	
+					</ul>
+				</li>
+				<li class="cdd">
 					<a href="#">Clients</a>
 					<ul class="dd">
 						<li class="clients<?php if($page == 'client') echo ' selected'; ?>"><a href="<?php echo $path; ?>clients.php" title="Clients Listing">Clients</a></li>
