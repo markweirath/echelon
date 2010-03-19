@@ -1,3 +1,15 @@
+<?php
+if($pagination == true) : // if pagination is needed on the page
+	## Find total rows ##
+	$result_rows = $db->mysql->query($query);
+	$total_rows = $result_rows->num_rows;
+	$result_rows->close();
+	
+	// create query_string
+	$query_string_page = queryStringPage();
+	$total_pages = totalPages($total_rows, $limit_rows);
+endif;
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -18,6 +30,11 @@
 		<link href="<?php echo $path; ?>css/cd.css" rel="stylesheet" media="screen" type="text/css" />
 	<?php } ?>
 	
+	<?php if($page == 'settings') { ?>
+		<!-- Load Login CSS Stylesheet -->
+		<link href="<?php echo $path; ?>css/settings.css" rel="stylesheet" media="screen" type="text/css" />
+	<?php } ?>
+	
 	<!-- ALL JS TO BE LOADED INTO THE FOOTER -->
 </head>
 
@@ -25,7 +42,7 @@
 		
 <div id="page-wrap">
 	
-<?php if(loggedIn()) { ?>
+<?php if($mem->loggedIn()) { ?>
 <!-- Panel -->
 <div id="toppanel">
 
@@ -58,20 +75,22 @@
 		</div>
 		
 		<div class="left right">
-			<h3>Client Search</h3>
-			<form action="../clients.php" method="get" id="c-search">
-				<input type="text" name="s" id="search" value="Search clients list...." class="clr-txt" style="width: 170px;" />
-				
-				<select name="t">
-					<option value="all" <?php if($search_type == "all") echo 'selected="selected"' ?>>All</option>
-					<option value="alias" <?php if($search_type == "alias") echo 'selected="selected"' ?>>Alias</option>
-					<option value="pbid" <?php if($search_type == "pbid") echo 'selected="selected"' ?>>PBID</option>
-					<option value="ip" <?php if($search_type == "ip") echo 'selected="selected"' ?>>IP</option>
-					<option value="id" <?php if($search_type == "id") echo 'selected="selected"' ?>>Player ID</option>
-				</select><br />
-				
-				<input type="submit" id="sub-search" value="Search" />
-			</form>
+			<?php if(!is_clients($page)) : ?>
+				<h3>Client Search</h3>
+				<form action="../clients.php" method="get" id="c-search">
+					<input type="text" name="s" id="search" value="Search clients list...." class="clr-txt" style="width: 170px;" />
+					
+					<select name="t">
+						<option value="all" <?php if($search_type == "all") echo 'selected="selected"' ?>>All</option>
+						<option value="alias" <?php if($search_type == "alias") echo 'selected="selected"' ?>>Alias</option>
+						<option value="pbid" <?php if($search_type == "pbid") echo 'selected="selected"' ?>>PBID</option>
+						<option value="ip" <?php if($search_type == "ip") echo 'selected="selected"' ?>>IP</option>
+						<option value="id" <?php if($search_type == "id") echo 'selected="selected"' ?>>Player ID</option>
+					</select><br />
+					
+					<input type="submit" id="sub-search" value="Search" />
+				</form>
+			<?php endif; ?>
 		</div>
 	</div>
 </div>
@@ -106,7 +125,7 @@
 	<div id="menu">
 	
 		<ul id="nav">
-			<?php if(loggedIn()) { ?>
+			<?php if($mem->loggedIn()) { ?>
 			
 				<li class="home<?php if($page == 'home') echo ' selected'; ?>"><a href="<?php echo $path; ?>" title="Home Page">Home</a></li>
 				<li class="cdd">
@@ -114,8 +133,8 @@
 					<ul class="dd">
 						<li class="clients<?php if($page == 'client') echo ' selected'; ?>"><a href="<?php echo $path; ?>clients.php" title="Clients Listing">Clients</a></li>
 						<li class="active<?php if($page == 'active') echo ' selected'; ?>"><a href="<?php echo $path; ?>active.php" title="In-active admins">In-active Admins</a></li>
-						<li class="regular<?php if($page == 'regular') echo ' selected'; ?>"><a href="<?php echo $path; ?>clients.php" title="Regular non admin visitors to your servers">Regular Visitors</a></li>
-						<li class="admins<?php if($page == 'admins') echo ' selected'; ?>"><a href="<?php echo $path; ?>clients.php" title="A list of all admins">Admin Listing</a></li>
+						<li class="regular<?php if($page == 'regular') echo ' selected'; ?>"><a href="<?php echo $path; ?>regular.php" title="Regular non admin visitors to your servers">Regular Visitors</a></li>
+						<li class="admins<?php if($page == 'admins') echo ' selected'; ?>"><a href="<?php echo $path; ?>admins.php" title="A list of all admins">Admin Listing</a></li>
 					</ul>
 				</li>
 				<li class="cdd">
@@ -154,22 +173,19 @@
 		</ul><!-- end #nav -->
 		
 		<div id="user-info">
-			<?php if(loggedIn()) { ?>
+			<?php if($mem->loggedIn()) { ?>
 				<div class="log-cor">
 					<a href="<?php echo $path; ?>actions/logout.php" class="logout" title="Sign out">Sign Out</a>
 				</div>
 			<?php } ?>
 			
 			<div class="info">
-				<?php $grav_url = getGravatar($_SESSION['email']); ?>
+				<?php $grav_url = $mem->getGravatar($_SESSION['email']); ?>
 				<span class="gravatar"><a href="http://gravatar.com/" target="_blank" title="Get your own personalised image"><img src="<?php echo $grav_url; ?>" alt="" /></a></span>
-				<span class="display-name"><?php displayName($_SESSION['name']); ?></span>
-				<?php if(loggedIn()) {
+				<span class="display-name"><?php $mem->displayName($_SESSION['name']); ?></span>
+				<?php if($mem->loggedIn()) {
 					echo '<span class="last-seen">';
-					if($_SESSION['last_seen'] != '')
-						echo 'Last Seen: '.date('d M y', $_SESSION['last_seen']);
-					else
-						echo 'Welcome to Echelon!';
+						$mem->lastSeen();
 					echo '</span>';	
 				} ?>
 			</div>

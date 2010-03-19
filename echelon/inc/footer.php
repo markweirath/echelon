@@ -4,43 +4,45 @@
 					<p class="num-rows">
 						<?php recordNumber($start_row, $limit_rows, $total_rows); ?>
 					</p>
-					<div class="pages">
-						
-						<?php if($page_no > 0) { /* Show if not first page */ ?>
-							<a href="<?php printf("%25s?p=%d%s", $this_page, 0, $query_string_page); ?>" class="page" title="Go to the first page">&laquo; First</a>
-				
-							<a href="<?php printf("%25s?p=%d%s", $this_page, max(0, $page_no - 1), $query_string_page); ?>" class="page" title="Go to the previous page">&lsaquo; Previous</a>
+					<?php if($total_rows > $limit_rows) : /* If the number of rows returned is not more than the min per page then don't show this section */ ?>
+						<div class="pages">
 							
-							<?php if($page_no - 2 > 0) { ?>
-								<a href="<?php printf("%25s?p=%d%s", $this_page, max(0, $page_no - 2), $query_string_page); ?>" class="page"><?php echo $page_no - 2; ?></a>
-							<?php } ?>
-						
-							<?php if($page_no - 1 > 0) { ?>
-								<a href="<?php printf("%25s?p=%d%s", $this_page, max(0, $page_no - 1), $query_string_page); ?>" class="page"><?php echo $page_no - 1; ?></a>
-							<?php } ?>
-						
-							<span class="dots">...</span>
-						<?php } ?>
-						
-						<a href="" class="page current" title="Page <?php echo $page_no; ?>"><?php echo $page_no; ?></a>
-						
-						<?php if($page_no < $total_pages) { /* Show if not last page */ ?>
-						
-							<?php if($page_no + 1 < $total_pages) { ?>
-								<span class="dots">...</span>
+							<?php if($page_no > 0) { /* Show if not first page */ ?>
+								<a href="<?php printf("%25s?p=%d%s", $this_page, 0, $query_string_page); ?>" class="page" title="Go to the first page">&laquo; First</a>
+					
+								<a href="<?php printf("%25s?p=%d%s", $this_page, max(0, $page_no - 1), $query_string_page); ?>" class="page" title="Go to the previous page">&lsaquo; Previous</a>
 								
-								<a href="<?php printf("%25s?p=%d%s", $this_page, max(0, $page_no + 1), $query_string_page); ?>" class="page"><?php echo $page_no + 1; ?></a>
+								<?php if($page_no - 2 > 0) { ?>
+									<a href="<?php printf("%25s?p=%d%s", $this_page, max(0, $page_no - 2), $query_string_page); ?>" class="page"><?php echo $page_no - 2; ?></a>
+								<?php } ?>
+							
+								<?php if($page_no - 1 > 0) { ?>
+									<a href="<?php printf("%25s?p=%d%s", $this_page, max(0, $page_no - 1), $query_string_page); ?>" class="page"><?php echo $page_no - 1; ?></a>
+								<?php } ?>
+							
+								<span class="dots">...</span>
 							<?php } ?>
 							
-							<?php if($page_no + 2 < $total_pages) { ?>
-								<a href="<?php printf("%25s?p=%d%s", $this_page, max(0, $page_no + 2), $query_string_page); ?>" class="page"><?php echo $page_no + 2; ?></a>
-							<?php }?>
+							<a href="" class="page current" title="Page <?php echo $page_no; ?>"><?php echo $page_no; ?></a>
 							
-							<a href="<?php printf("%25s?p=%d%s", $this_page, min($total_pages, $page_no + 1), $query_string_page); ?>" class="page" title="Go to the next page">Next &rsaquo;</a>
-				
-							<a href="<?php printf("%25s?p=%d%s", $this_page, $total_pages, $query_string_page); ?>" class="page" title="Go to the last page">Last &raquo;</a>
-						<?php } ?>
-					</div>
+							<?php if($page_no < $total_pages) { /* Show if not last page */ ?>
+							
+								<?php if($page_no + 1 < $total_pages) { ?>
+									<span class="dots">...</span>
+									
+									<a href="<?php printf("%25s?p=%d%s", $this_page, max(0, $page_no + 1), $query_string_page); ?>" class="page"><?php echo $page_no + 1; ?></a>
+								<?php } ?>
+								
+								<?php if($page_no + 2 < $total_pages) { ?>
+									<a href="<?php printf("%25s?p=%d%s", $this_page, max(0, $page_no + 2), $query_string_page); ?>" class="page"><?php echo $page_no + 2; ?></a>
+								<?php }?>
+								
+								<a href="<?php printf("%25s?p=%d%s", $this_page, min($total_pages, $page_no + 1), $query_string_page); ?>" class="page" title="Go to the next page">Next &rsaquo;</a>
+					
+								<a href="<?php printf("%25s?p=%d%s", $this_page, $total_pages, $query_string_page); ?>" class="page" title="Go to the last page">Last &raquo;</a>
+							<?php } ?>
+						</div>
+					<?php endif; ?>
 					<br class="clear" />
 				</div>
 			<?php endif; // if there is data
@@ -59,7 +61,7 @@
 	<div id="footer">
 		<p>
 			<span class="copy">&copy;<?php echo date("Y"); ?> <a href="http://eire32designs.com" target="_blank">Eire32</a> &amp; <a href="http://jonsdesigns.com" target="_blank">Jon</a> - All rights reserved</span>
-			<?php if(loggedIn()) { ?>
+			<?php if($mem->loggedIn()) { ?>
 			<span class="foot-nav links">
 				<a href="<?php echo $path; ?>" title="Home Page">Home</a> -
 				<a href="<?php echo $path; ?>sa.php" title="Site Administration">Site Admin</a> -
@@ -70,16 +72,16 @@
 		</p>
 	</div>
 	
-	<!--[if lt IE 7]>
-			<script type="text/javascript" src="../js/unitpngfix.js"></script>
+</div><!-- close #page-wrap -->
+	
+	<!--[if lt IE 7]>		
+			<script type="text/javascript" src="<?php echo $path; ?>js/unitpngfix.js"></script>
 	<![endif]--> 
 	
 	<!-- load jQuery off google CDN -->
-	<?php if($https) { ?>
-		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
-	<?php } else { ?>
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
-	<?php } ?>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+	<script src="<?php echo $path; ?>js/jquery.numeric.pack.js" type="text/javascript" charset="utf-8"></script>
+	<script src="<?php echo $path; ?>js/jquery.timers.js" type="text/javascript" charset="utf-8"></script>
 	
 	<?php if($page == 'me') { ?>
 		<script src="<?php echo $path; ?>js/me.js" type="text/javascript" charset="utf-8"></script>

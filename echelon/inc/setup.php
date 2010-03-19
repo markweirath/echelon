@@ -38,6 +38,7 @@ $allow_ie = $config['cosmos']['allow_ie'];
 $min_pw_len = $config['cosmmos']['min_pw_len'];
 $https_enabled = $config['cosmos']['https'];
 $key_expire = $config['cosmos']['user_key_expire']; // This var says how long it takes for a user creation key to expire
+global $tformat; // make global to allow the formatting to be used inside functions
 $tformat = $config['cosmos']['time_format'];
 
 // if $game is greater than num_games then game doesn't exist so send to error page with error and reset game to 1
@@ -70,3 +71,4 @@ $game_db_user = $config['game'.$game]['db_user'];
 $game_db_pw = $config['game'.$game]['db_pw'];
 $game_db_name = $config['game'.$game]['db_name'];
 
+$page_no = 0; // setup default page number so this doesn't have to be in every file

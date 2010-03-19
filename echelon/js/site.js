@@ -1,6 +1,19 @@
-// JavaScript Document
 $(document).ready(function() {
 	
+	// Forces all textareas/inputs with a class /int to allow allow numbers in the field
+	$(".int").numeric();
+	
+	// Site navigation dropdown menus
+	$('li.cdd').hover(function(){
+		$('ul.dd').slideUp(150);
+		$(this).find('ul.dd').slideDown('fast');
+	}, function(){
+		//setTimeout('alert("Hello")'), 500);
+		$(this).oneTime(250, function() {
+			$(this).find('ul.dd').slideUp('fast');
+		});
+	});
+
 	// Tabs
 	$("a.cd-tab").click(function() {
 		
@@ -156,7 +169,7 @@ $(document).ready(function() {
 		});
 		
 	});
-
+	
 });
 
 // Functions for search auto suggest
@@ -164,12 +177,14 @@ function suggest(iString){
 	if(iString.length == 0) {
 		$('#suggestions').fadeOut();
 	} else {
-		$('#search').addClass('load');
+		loading = $('#c-s-load');
+		
+		loading.css("visibility", "visible");
 		$.get("actions/autosuggest.php", {s: ""+iString+""}, function(data){
 			if(data.length >0) {
 				$('#suggestions').fadeIn();
 				$('#suggestionsList').html(data);
-				$('#search-input').removeClass('load');
+				loading.css("visibility", "hidden");
 			}
 		});
 	}
@@ -177,5 +192,5 @@ function suggest(iString){
 
 function fill(thisValue) {
 	$('#search').val(thisValue);
-	setTimeout("$('#suggestions').fadeOut();", 600);
+	setTimeout("$('#suggestions').fadeOut('normal');", 500);
 }

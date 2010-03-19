@@ -165,7 +165,7 @@ if($is_edit_user) : ?>
 			$ip = ipLink($ip);
 			$email_link = emailLink($email, $name);
 			
-			$grav_url = getGravatar($email);
+			$grav_url = $mem->getGravatar($email);
 			
 			$rowcolor = 1 - $rowcolor;
 			
@@ -399,7 +399,7 @@ EOD;
 <fieldset>
 	<legend>Add to Blacklist</legend>
 	<form action="actions/blacklist.php" method="post" id="add-bl-form">
-		<div class="left-side">
+		<div class="left-side" style="width: auto;">
 			<label for="bl-reason">Reason:</label>
 				<textarea rows="6" cols="18" name="reason" id="bl-reason" class="clr-txt">Enter a reason for this ban...</textarea>
 		</div>

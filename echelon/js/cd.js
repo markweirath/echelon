@@ -29,7 +29,11 @@ $(document).ready(function() {
 			},
 			error: function(req,error){
 				if(error === 'error'){error = req.statusText;}
-				var errormsg = '<tr class="table-error"><td colspan="7"><span><strong>Communication Error:</strong> '+error+'</span></td></tr>';
+				
+				// if the error was a timeouut then suppy a more informative error message
+				if(error == 'timeout'){errormsg = 'There was a communication error, your request timed out.';}
+				
+				var errormsg = formatError(errormsg);
 				container.html(errormsg);
 			},
 		}); // end ajax
@@ -37,3 +41,9 @@ $(document).ready(function() {
 	}); // #cd-h-pen click
 	  
 });
+
+function formatError(msg) {
+	
+	return '<tr class="table-error"><td colspan="7"><span><strong>Error:</strong> ' + msg + '</span></td></tr>';
+	
+}

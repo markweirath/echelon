@@ -72,7 +72,7 @@ if($is_change_display_email) { // if the display or email have been altered edit
 }
 
 if($is_change_pw) { // if a change pw request
-	genAndSetNewPW($pass1, $user_id); // function to generate and set a new password
+	$mem->genAndSetNewPW($pass1, $user_id); // function to generate and set a new password
 }
 
 sendGood('Your user information has been successfully updated');

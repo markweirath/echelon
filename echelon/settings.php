@@ -5,6 +5,7 @@ $page_title = "Settings";
 $auth_name = 'manage_settings';
 require 'inc.php';
 
+// get a list of all settings from the config table
 $settings = $dbl->getSettings();
 
 require 'inc/header.php';
@@ -42,7 +43,7 @@ require 'inc/header.php';
 			
 		endforeach;
 	?>
-		<fieldset class="none">
+		<fieldset class="none" id="cosmos-settings">
 			<legend>General Echelon Settings</legend>
 			<?php echo $general;?>
 		</fieldset>

@@ -30,36 +30,6 @@ function genPW($input, $salt) {
 	return $pw;
 }
 
-function genAndSetNewPW($password, $user_id) {
-	// generate a new salt for the user
-	$salt_new = randPass(12);
-	
-	// find the hash of the supplied password and the new salt
-	$password_new = genPW($password, $salt_new);
-	
-	if(!isset($dbl))
-		$dbl = new DBL();
-	
-	// update the user with new password and new salt
-	$results_pw = $dbl->editMePW($password_new, $salt_new, $user_id);
-	if(results_pw == false) {
-		set_error('There was an error changing your password');
-		return false;
-	} else {
-		return true;
-	}
-}
-
-/**
- * Generates a fingerprint for anti session hijacking
- *
- * @return string
- */
-function getFinger() {
-	$user_agent = $_SERVER['HTTP_USER_AGENT']; // get browser name from user
-	return genHash($user_agent."DcEx"); // return hash of browser and a small salt
-}
-
 /**
  * Detect an AJAX request
  *
@@ -75,74 +45,12 @@ function detectAJAX() {
 	// This method is not full proof since all servers do not support the $_SERVER['HTTP_X_REQUESTED_WITH'] varible.
 }
 
-/* not ajax, do more.... */
-
-/**
- * Checks if a user has the rights to view this page, is not locked/banned or not logged in
- *
- * @param string $name - permission name
- */
-function auth($name) {
-	locked(); // stop blocked people from acessing	
-	if(!loggedIn()) { // if not authorised
-		set_error('You must log in');
-		sendLogin();
-		exit;
-	}
-	checkBL(); // check ban list for IP	
-	$perm_required = $_SESSION['perms'][$name];
-	if(!$perm_required) { // if users level is less than needed access, deny entry, and cause error
-		set_error('You do not have the correct privilages to view that page');
-		sendHome();
-		exit;
-	}
-}
-
-/**
- * Checks if a user is logged in or not
- *
- * @return bool
- */
-function loggedIn() { // are they logged in
-	if($_SESSION['auth'] == true) // if authorised allow access
-		return true;
-	else
-		return false; // if not authorised
-}
-
-/**
- * Logs a user out
- */
-function logout() {
-	
-	if(!isset($ses)) {
-		$ses = new Session();
-	}
-
-	$error = $_SESSION['error']; // perserve errors if the person is loggedout by error
-
-	$_SESSION = array(); // unsets all varibles
-
-	// If it's desired to kill the session, also delete the session cookie.
-	// Note: This will destroy the session, and not just the session data!
-	if (isset($_COOKIE[session_name()])) {
-	   setcookie(session_name(), '', time()-42000, '/');
-	}
-	
-	// Finally, destroy the session.
-	session_destroy();
-
-	$ses->sesStart(); // start session
-	$_SESSION['error'] = $error; // add error to new session
-	
-}
-
 /**
  * Checks if a user has attempted to login to many times or has been caught hacking the site
  */
 function locked() {
 	if($_SESSION['wrong'] >= 3 || $_SESSION['hack'] >= 3) {
-		if(loggedIn()) {
+		if($mem->loggedIn()) {
 			logout(); // if they are logged in log them out
 		}
 		if(!isset($dbl)){ // if no Db object
@@ -322,36 +230,17 @@ function sendError() {
 	header("Location: {$path}error.php");
 }
 
-/**
- * Echo out the display name in a link, if the display name is not set echo guest.
- *
- * @param string $name - display name of the user
- */
-function displayName($name) {
-	if($name == '')
-		echo 'Guest';
+function is_clients($page) {
+	if($page == 'client')
+		return true;
 	else
-		echo '<a href="'.$path.'me.php" title="Go to your own account settings">'.$name.'</a>';
-		
-	return;
+		return false;
 }
 
-/**
- * Gets a users gravatar from gravatar.com
- *
- * @param string $email - email address of the current user
- * @return string
- */
-function getGravatar($email) {
-	$default = "https://s.eire32designs.com/echelon/images/nav/default-person.jpg"; // get variable from config.php
-	$size = 32;
-	
-	$grav_url = "https://secure.gravatar.com/avatar.php?
-	gravatar_id=".md5( strtolower($email) ).
-	"&default=".urlencode($default).
-	"&size=".$size; 
-	
-	return $grav_url;
+function guidCheckLink($guid) {
+
+	echo '<a class="external" href="http://www.punksbusted.com/cgi-bin/membership/guidcheck.cgi?guid='.$guid.'" title="Check this guid is not banned by PunksBusted.com">'.$guid.'</a>';
+
 }
 
 /**
@@ -461,10 +350,41 @@ function tableClean($text) {
 	return $text;
 }
 
+function timeExpire($time_expire, $type, $inactive, $tformat) {
+
+	$time = time();
+
+	if (($time_expire <= $time) && ($time_expire != -1)) {
+		$msg = "<span class=\"p-expired\">".date($tformat, $time_expire)."</span>";
+
+	} elseif ($time_expire == '-1') {
+		$msg = "<span class=\"p-permanent\">Permanent</span>";
+
+	} elseif ($time_expire > $time) {
+		$msg = "<span class=\"p-active\">".date($tformat, $time_expire)."</span>";
+	}
+
+	if ($type == 'Kick') {
+		$msg = "<em>(Kick Only)</em>";
+
+	} elseif ($type == 'Notice'){
+		$msg = "<span class=\"p-inactive\">Notice</span>";
+
+	} elseif ($inactive == "1") {
+		$msg = "<span class=\"p-inactive\">De-activated</span>";
+
+	}
+	
+	if($msg == '') // if we got nothing then return unknown
+		$msg = '<em>(Unknwon)</em>';
+
+	return $msg;
+}
+
 function settingText($name, $title, $value, $type) {
 	switch ($type) {
 		case 'int':
-			$text = '<label for="'.$name.'">'.$title.':</label><input type="text" class="int" value="'.$value.'" name="'.$name.'" /><br />';
+			$text = '<input type="text" class="int" value="'.$value.'" name="'.$name.'" /><label for="'.$name.'">'.$title.'</label><br />';
 		break;
 		case 'password':
 			$text = '<label for="'.$name.'">'.$title.':</label><input type="password" value="'.$value.'" name="'.$name.'" /><br />';
@@ -474,9 +394,9 @@ function settingText($name, $title, $value, $type) {
 		break;
 		case 'check':
 			if($value == 1) {
-				$text = '<label for="'.$name.'">'.$title.':</label><input type="checkbox" name="'.$name.'" checked="checked"><br /><br />';
+				$text = '<input type="checkbox" name="'.$name.'" checked="checked"><label for="'.$name.'">'.$title.'</label><br /><br />';
 			} else {
-				$text = '<label for="'.$name.'">'.$title.':</label><input type="checkbox" name="'.$name.'"><br /><br />';
+				$text = '<input type="checkbox" name="'.$name.'"><label for="'.$name.'">'.$title.'</label><br /><br />';
 			}
 		break;
 		default: // if text
@@ -528,17 +448,17 @@ function verifyFormToken($form, $tokens) {
 function verifyFormTokenLogin($form) {
         
 	// check if a session is started and a token is transmitted, if not return an error
-	if(!isset($_SESSION['tokens'][$form])) { 
+	if(!isset($_SESSION['tokens'][$form]))
 		return false;
-	}
+
 	// check if the form is sent with token in it
-	if(!isset($_POST['token'])) {
+	if(!isset($_POST['token']))
 		return false;
-	}
+
 	// compare the tokens against each other if they are still the same
-	if ($_SESSION['tokens'][$form] !== $_POST['token']) {
+	if ($_SESSION['tokens'][$form] !== $_POST['token'])
 		return false;
-	}
+
 	return true;
 }
 
@@ -587,12 +507,11 @@ function errors() {
  * @param int $count - lenght of the string
  * @return string
  */
-function randPass($count){  
+function randPass($count) {  
 
 	$pass = str_shuffle('abcefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890@#%$*'); //shuffle
 	
 	return substr($pass,3,$count); //returns the password  
-
 }
 
 /**
@@ -602,16 +521,16 @@ function randPass($count){
  */
 function detectSSL(){
 	if($_SERVER["https"] == "on")
-		return TRUE;
+		return true;
 		
 	elseif ($_SERVER["https"] == 1)
-		return TRUE;
+		return true;
 		
 	elseif ($_SERVER['SERVER_PORT'] == 443)
-		return TRUE;
+		return true;
 		
 	else
-		return FALSE;
+		return false;
 }
 
 /**

@@ -7,15 +7,17 @@ $pagination = false; // this page requires the pagination part of the footer
 require 'inc.php';
 
 ## Do Stuff ##
-$cid = 3;
+$cid = 0;
 if($_GET['id'])
 	$cid = $_GET['id'];
 	
 if(!is_numeric($cid))
 	die('Invalid data sent');
 	
-if($cid == 0)
-	die('Failed to detect data, shutting down.');
+if($cid == 0) {
+	set_error('No user specified, please select one');
+	send('index.php');
+}
 
 $query = "SELECT c.ip, c.connections, c.guid, c.name, c.mask_level, c.greeting, c.time_add, c.time_edit, c.group_bits, g.name
 		  FROM clients c LEFT JOIN groups g ON c.group_bits = g.id WHERE c.id = ? LIMIT 1";
@@ -55,22 +57,54 @@ require 'inc/header.php';
 	<tbody>
 		<tr>
 			<th>Name</th>
-				<td><?php echo  htmlspecialchars($name); ?></td>
+				<td><?php echo  tableClean($name); ?></td>
 			<th>@id</th>
 				<td><?php echo $cid; ?></td>
 		</tr>
 		<tr>
 			<th>Level</th>
-				<td><?php echo $user_group; ?></td>
+				<td><?php 
+					if($user_group == '')
+						echo 'Un-registered';
+					else
+						echo $user_group; 
+					?>
+				</td>
 			<th>Connections</th>
 				<td><?php echo $connections; ?></td>
 		</tr>
 		<tr>
 			<th>GUID</th>
-				<td><?php echo '<a href="http://www.punksbusted.com/cgi-bin/membership/guidcheck.cgi?guid='.$guid.'" title="Check this guid is not banned by PunksBusted.com">'.$guid.'</a>'; ?></td>
+				<td>
+				<?php 
+					$guid_len = strlen($guid);
+					if($mem->reqLevel('view_full_guid')) { // if allowed to see the full guid
+						if($guid_len == 32) 
+							guidCheckLink($guid);
+						else 
+							echo $guid.' <span class="red" title="This guid is only 31 characters long! It should be 32 characters long!">['. $guid_len .']</span>';
+				
+					} elseif($mem->reqLevel('view_half_guid')) { // if allowed to see the last 8 chars of guid
+						
+						if($guid_len == 32) {
+							$half_guid = substr($guid, -8); // get the last 8 characters of the guid
+							guidCheckLink($half_guid);
+						} else {
+							echo $guid.' <span class="red" title="This guid is only 31 characters long! It should be 32 characters long!">['. $guid_len .']</span>';
+						}
+					
+					} else { // if not allowed to see any part of the guid
+						echo '(You do not have access to see the GUID)';
+					
+					}
+				?>
+				</td>
 			<th>IP Address</th>
 				<td>
-					<?php if ($ip != "") { ?>
+					<?php
+					$ip = tableClean($ip);
+					if($mem->reqLevel('view_ip')) :
+						if ($ip != "") { ?>
 						<a href="<?php echo $path; ?>clients.php?s=<?php echo $ip; ?>&amp;t=ip" title="Search for other users with this IP adreess"><?php echo $ip; ?></a>
 							&nbsp;&nbsp;
 						<a href="http://whois.domaintools.com/<?php echo $ip; ?>" target="_blank" title="Whois IP Search">W</a>
@@ -80,6 +114,9 @@ require 'inc/header.php';
 						} else {
 							echo "(No IP address available)";
 						}
+					else:	
+						echo '(You do not have access to see the IP address)';
+					endif; // if current user is allowed to see the player's IP address
 					?>
 				</td>
 		</tr>
@@ -115,7 +152,7 @@ require 'inc/header.php';
 	</tr>
 	<tr>
 		<th>Fixed Name</th>
-			<td><?php if($fixed_name == "") { echo "Non Set"; } else { echo $fixed_name; } ?></td>
+			<td><?php if($fixed_name == "") { echo "Non Set"; } else { echo tableClean($fixed_name); } ?></td>
 		<th>Hidden</th>
 			<td><?php if($hide == 1) { echo "Yes"; } else { echo "No"; } ?></td>
 	</tr>
@@ -126,18 +163,21 @@ require 'inc/header.php';
 <a name="tabs" />
 <div id="actions">
 	<ul class="cd-tabs">
-		<li class="cd-active"><a href="#tabs" title="Add a comment to this user" rel="cd-act-comment" class="cd-tab">Comment</a></li>
-		<li><a href="#tabs" title="Edit this user's greeting" rel="cd-act-greeting" class="cd-tab">Greeting</a></li>
-		<li><a href="#tabs" title="Add Ban/Tempban to this user" rel="cd-act-ban" class="cd-tab">Ban</a></li>
-		<li><a href="#tabs" title="Change this user's user level" rel="cd-act-lvl" class="cd-tab">Change Level</a></li>
-		<li><a href="#tabs" title="Change this user's mask level" rel="cd-act-mask" class="cd-tab">Mask Level</a></li>
+		<?php if($mem->reqLevel('comment')) { ?><li class="cd-active"><a href="#tabs" title="Add a comment to this user" rel="cd-act-comment" class="cd-tab">Comment</a></li><?php } ?>
+		<?php if($mem->reqLevel('greeting')) { ?><li><a href="#tabs" title="Edit this user's greeting" rel="cd-act-greeting" class="cd-tab">Greeting</a></li><?php } ?>
+		<?php if($mem->reqLevel('ban')) { ?><li><a href="#tabs" title="Add Ban/Tempban to this user" rel="cd-act-ban" class="cd-tab">Ban</a></li><?php } ?>
+		<?php if($mem->reqLevel('edit_client_level')) { ?><li><a href="#tabs" title="Change this user's user level" rel="cd-act-lvl" class="cd-tab">Change Level</a></li><?php } ?>
+		<?php if($mem->reqLevel('edit_mask')) { ?><li><a href="#tabs" title="Change this user's mask level" rel="cd-act-mask" class="cd-tab">Mask Level</a></li><?php } ?>
 	</ul>
 	<div id="actions-box">
+		<?php
+			$groups = $dbl->getGroups();
+			if($mem->reqLevel('comment')) :
+			$comment_token = genFormToken('comment');	
+		?>
 		<div id="cd-act-comment" class="act-slide">
-			<?php
-				$groups = $dbl->getGroups();
-			?>
-			<form action="actions/comment.php" method="post">
+			
+			<form action="actions/b3/comment.php" method="post">
 				<label for="comment">Comment:</label><br />
 					<textarea type="text" name="comment" id="comment"></textarea>
 					
@@ -153,22 +193,32 @@ require 'inc/header.php';
 						?>
 					</select>
 					
-				<input type="hidden" name="token" value="" />
+				<input type="hidden" name="token" value="<?php echo $comment_token; ?>" />
 				
 				<input type="submit" name="comment-sub" value="Add Comment" />
 			</form>
 		</div>
+		<?php
+			endif;
+			if($mem->reqLevel('greeting')) :
+			$greeting_token = genFormToken('greeting');
+		?>
 		<div id="cd-act-greeting" class="act-slide">
-			<form action="actions/greeting.php" method="post">
-				<label for="greeting">Greeting Message:</label>
-					<input type="text" name="greeting" id="greeting" value="<?php echo $greeting; ?>" />
+			<form action="actions/b3/greeting.php" method="post">
+				<label for="greeting">Greeting Message:</label><br />
+					<textarea name="greeting" id="greeting"><?php echo $greeting; ?></textarea>
 					
-				<input type="hidden" name="token" value="" />
-				<input type="submit" name="greeting-sub" value="Chnage Greeting" />
+				<input type="hidden" name="token" value="<?php echo $greeting_token; ?>" />
+				<input type="hidden" name="cid" value="<?php echo $cid; ?>" />
+				<input type="submit" name="greeting-sub" value="Edit Greeting" />
 			</form>
 		</div>
+		<?php
+			endif;
+			if($mem->reqLevel('ban')) :
+		?>
 		<div id="cd-act-ban" class="act-slide">
-			<form action="actions/ban.php" method="">
+			<form action="actions/b3/ban.php" method="">
 		
 				<fieldset class="none">
 					<legend>Type</legend>
@@ -193,15 +243,20 @@ require 'inc/header.php';
 				<label for="reason">Reason:</label>
 					<input type="text" name="reason" id="reason" />
 					
+				<input type="hidden" name="cid" value="<?php echo $cid; ?>" />
 				<input type="hidden" name="token" value="Banned with Echelon!" />
 				<input type="submit" name="ban-sub" value="Ban User" />
 			</form>
 		</div>
+		<?php
+			endif; // end hide ban section to non authed
+			$b3_groups = $db->getB3Groups(); // get a list of all B3 groups from the B3 DB
+			
+			if($mem->reqLevel('edit_client_level')) :
+			$level_token = genFormToken('level');
+		?>
 		<div id="cd-act-lvl" class="act-slide">
-			<?php
-				$b3_groups = $db->getB3Groups(); // get a list of all B3 groups from the B3 DB
-			?>
-			<form action="actions/level.php" method="post">
+			<form action="actions/b3/level.php" method="post">
 				<label for="level">Level:</label>
 					<select name="level" id="level">
 						<?php
@@ -216,12 +271,18 @@ require 'inc/header.php';
 						?>
 					</select>
 					
-				<input type="hidden" name="token" value="" />
+				<input type="hidden" name="cid" value="<?php echo $cid; ?>" />
+				<input type="hidden" name="token" value="<?php echo $level_token; ?>" />
 				<input type="submit" name="level-sub" value="Change Level" />
 			</form>
 		</div>
+		<?php
+			endif; // end if 
+			if($mem->reqLevel('edit_mask')) : 
+			$mask_lvl_token = genFormToken('mask');
+		?>
 		<div id="cd-act-mask" class="act-slide">
-			<form action="actions/level.php" method="post">
+			<form action="actions/b3/level.php" method="post">
 				<label for="mlevel">Mask Level:</label>
 					<select name="level" id="mlevel">
 						<?php
@@ -235,14 +296,17 @@ require 'inc/header.php';
 							endforeach;
 						?>
 					</select>
-					
-				<input type="hidden" name="token" value="" />
+				
+				<input type="hidden" name="cid" value="<?php echo $cid; ?>" />
+				<input type="hidden" name="token" value="<?php echo $mask_lvl_token; ?>" />
 				<input type="submit" name="mlevel-sub" value="Change Mask" />
 			</form>
 		</div>
+		<?php endif; ?>
 	</div><!-- end #actions-box -->
 </div><!-- end #actions -->
 
+<h3 class="cd-h">Aliases</h3>
 <table>
 	<thead>
 		<tr>
@@ -264,33 +328,44 @@ require 'inc/header.php';
 		$stmt->execute();
 		$stmt->bind_result($alias, $num_used, $time_add, $time_edit);
 		
-		$rowcolor = 0;
-		while($stmt->fetch()) :
+		$stmt->store_result(); // needed for the $stmt->num_rows call
 
-			$time_add = date($tformat, $time_add);
-			$time_edit = date($tformat, $time_edit);
-			
-			$rowcolor = 1 - $rowcolor;
-			
-			if($rowcolor == 0)
-				$odd_even = "odd";
-			else 
-				$odd_even = "even";
-			
-			$token_del = genFormToken('del'.$id);		
-			
-			// setup heredoc (table data)			
-			$data = <<<EOD
-			<tr class="$odd_even">
-				<td><strong>$alias</td>
-				<td>$num_used</td>
-				<td><em>$time_add</em></td>
-				<td><em>$time_edit</em></td>
-			</tr>
-EOD;
-			echo $data;
+		if($stmt->num_rows) :
 		
-		endwhile;	
+			$rowcolor = 0;
+			
+			while($stmt->fetch()) :
+	
+				$time_add = date($tformat, $time_add);
+				$time_edit = date($tformat, $time_edit);
+				
+				$rowcolor = 1 - $rowcolor;
+				
+				if($rowcolor == 0)
+					$odd_even = "odd";
+				else 
+					$odd_even = "even";
+				
+				$token_del = genFormToken('del'.$id);		
+				
+				// setup heredoc (table data)			
+				$data = <<<EOD
+				<tr class="$odd_even">
+					<td><strong>$alias</td>
+					<td>$num_used</td>
+					<td><em>$time_add</em></td>
+					<td><em>$time_edit</em></td>
+				</tr>
+EOD;
+				echo $data;
+			
+			endwhile;
+		
+		else : // if there are no aliases connected with this user then put out a small and short message
+		
+			echo '<tr><td colspan="4">'.$name.' goes by no other names.</td></tr>';
+		
+		endif;
 	?>
 	</tbody>
 </table>

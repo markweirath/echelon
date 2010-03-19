@@ -15,30 +15,24 @@ $order = "ASC";
 
 $is_search = false;
 
-$limit_rows = 75;
-$page_no = 0;
-
+//$limit_rows = 75; // limit_rows can be set by the DB settings // uncomment this line to manually overide the number of table rows per page
 
 ## Sorts requests vars ##
-if($_GET['ob']) {
+if($_GET['ob'])
 	$orderby = addslashes($_GET['ob']);
-}
 
-if($_GET['o']) {
+if($_GET['o'])
 	$order = addslashes($_GET['o']);
-}
 
 // allowed things to sort by
 $allowed_orderby = array('id', 'name', 'connections', 'group_bits', 'time_add', 'time_edit');
 // Check if the sent varible is in the allowed array 
-if(!in_array($orderby, $allowed_orderby)) {
+if(!in_array($orderby, $allowed_orderby))
 	$orderby = 'id'; // if not just set to default id
-}
 
 ## Page Vars ##
-if ($_GET['p']) {
+if ($_GET['p'])
   $page_no = addslashes($_GET['p']);
-}
 
 $start_row = $page_no * $limit_rows;
 
@@ -51,9 +45,8 @@ if($_GET['s']) {
 if($_GET['t']) {
 	$search_type = $_GET['t']; //  no need to escape it will be checked off whitelist
 	$allowed_search_type = array('all', 'alias', 'pbid', 'ip', 'id');
-	if(!in_array($search_type, $allowed_search_type)) {
+	if(!in_array($search_type, $allowed_search_type))
 		$search_type = 'all'; // if not just set to default all
-	}
 }
 
 
@@ -64,7 +57,7 @@ $query = "SELECT c.id, c.name, c.connections, c.time_edit, c.time_add, g.name as
 			FROM clients c LEFT JOIN groups g
 			ON c.group_bits = g.id WHERE c.id > 1 ";
 
-if($is_search == true) { // IF SEARCH
+if($is_search == true) : // IF SEARCH
 	if($search_type == 'name') { // ALIAS
 		$query .= sprintf("AND c.name LIKE '%%%s%%' ORDER BY %s", $search_string, $orderby);
 		
@@ -81,10 +74,10 @@ if($is_search == true) { // IF SEARCH
 		$query .= sprintf("AND c.name LIKE '%%%s%%' OR c.pbid LIKE '%%%s%%' OR c.ip LIKE '%%%s%%' OR c.id LIKE '%%%s%%'
 			ORDER BY %s", $search_string, $search_string, $search_string, $search_string, $orderby);
 	}
-} else { // IF NOT SEARCH
+else : // IF NOT SEARCH
 	$query .= sprintf("ORDER BY %s ", $orderby);
 
-} // end if search request
+endif; // end if search request
 
 ## Append this section to all queries since it is the same for all ##
 if($order == "desc") {
@@ -116,14 +109,7 @@ endwhile;
 $stmt->free_result(); // free the data in memory from store_result
 $stmt->close(); // closes the prepared statement
 
-## Find total rows ##
-$result_rows = $db->mysql->query($query);
-$total_rows = $result_rows->num_rows;
-$result_rows->close();
-
-// create query_string
-$query_string_page = queryStringPage();
-$total_pages = totalPages($total_rows, $limit_rows);
+## Some pagination setup is in the header.php with a if pagination required statement
 
 ## Require Header ##	
 require 'inc/header.php';
@@ -132,6 +118,9 @@ require 'inc/header.php';
 <fieldset class="search">
 	<legend>Client Search</legend>
 	<form action="clients.php" method="get" id="c-search">
+	
+		<img src="images/indicator.gif" alt="Loading...." title="We are searching for posible matches, please wait" id="c-s-load" />
+	
 		<input type="text" autocomplete="off" name="s" id="search" onkeyup="suggest(this.value);" onBlur="fill();" value="<?php echo $search_string; ?>" />
 		
 		<div class="suggestionsBox" id="suggestions" style="display: none;">

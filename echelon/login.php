@@ -1,29 +1,34 @@
 <?php
 
-##### Ordinary page class #####
+// Varible setup to stop no logged in (private) pages running the auth user function
+$auth_user_here = false;
+
 require 'inc/functions.php';
 require 'inc/config.php'; // load the config file
 require 'classes/session-class.php'; // class to deal with the management of sesssions
 require 'classes/dbl-class.php'; // DBL
-
+require 'classes/members-class.php'; // require the members class
+ 
 $dbl = new DBL(); // DBL connection is needed for the setup file to pull config from the DBL
-
+ 
 require 'inc/setup.php';
-
+ 
 $ses = new Session(); // create Session Object
 $ses->sesStart(); // start session
 
+$mem = new member();
+
 ##### start script #####
 
-if(loggedIn()) { // if logged in users may skip this page
+if($mem->loggedIn()) { // if logged in users may skip this page
 	sendHome(); // send to the index/home page
 	
 } elseif ($_POST['f-name']) { // if this is a log in request 
 	// Make sure we don't cache this
-	header("Expires: Sat, 01 Jan 2000 00:00:00 GMT");
-	header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
-	header("Cache-Control: post-check=0, pre-check=0",false);
-	session_cache_limiter("must-revalidate");
+	//header("Expires: Sat, 01 Jan 2000 00:00:00 GMT");
+	//header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
+	//header("Cache-Control: post-check=0, pre-check=0",false);
+	//session_cache_limiter("must-revalidate");
 	
 	// if over the maxium amount of wrong attempts, if on BL
 	// or if hack attempts detected, BL and remove user
@@ -120,7 +125,7 @@ if(loggedIn()) { // if logged in users may skip this page
 		
 		$_SESSION['game'] = 1;
 
-		$_SESSION['finger'] = getFinger(); // find the hash of user agent plus salt
+		$_SESSION['finger'] = $mem->getFinger(); // find the hash of user agent plus salt
 
 		$ip = getRealIp(); // get users current IP
 		$result = $dbl->newUserInfo($ip, $results[0]); // update user to have new time and IP

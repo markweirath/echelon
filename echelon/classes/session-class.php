@@ -2,8 +2,8 @@
 if (!empty($_SERVER['SCRIPT_FILENAME']) && 'session-class.php' == basename($_SERVER['SCRIPT_FILENAME']))
   		die ('Please do not load this page directly. Thanks!');
 
-class Session
-{
+class Session {
+
         /**
          * This function starts, validates and secures a session.
          *
@@ -13,8 +13,10 @@ class Session
          * @param string $domain Used to allow subdomains access to the cookie
          * @param bool $secure If true the browser only sends the cookie over https
          */
-        static function sesStart($limit = 0, $path = '/', $domain = null, $secure = null)
-        {
+        static function sesStart($name = 'echelon', $limit = 0, $path = '/', $domain = null, $secure = null) {
+		
+				// Set the cookie name
+                session_name($name . '_session');
 
                 // Set SSL level
                 $https = isset($secure) ? $secure : isset($_SERVER['HTTPS']);
@@ -31,7 +33,7 @@ class Session
 					if(!self::preventHijacking())
 					{
 							// Reset session data and regenerate id
-							$_SESSION['finger'] = getFinger();
+							$_SESSION['finger'] = member::getFinger();
 							self::regenerateSession();
 
 					// Give a 40% chance of the session id changing on any request
@@ -48,8 +50,8 @@ class Session
          * levels for a user change.
          *
          */
-        static function regenerateSession()
-        {
+        static function regenerateSession() {
+		
                 // If this session is obsolete it means there already is a new id
                 if(isset($_SESSION['OBSOLETE']) || $_SESSION['OBSOLETE'] == true)
                         return;
@@ -79,13 +81,13 @@ class Session
          *
          * @return bool
          */
-        static protected function validateSession()
-        {
-                if( isset($_SESSION['OBSOLETE']) && !isset($_SESSION['EXPIRES']) )
-                        return false;
+        static protected function validateSession() {
+
+                if(isset($_SESSION['OBSOLETE']) && !isset($_SESSION['EXPIRES']))
+					return false;
 
                 if(isset($_SESSION['EXPIRES']) && $_SESSION['EXPIRES'] < time())
-                        return false;
+					return false;
 
                 return true;
         }
@@ -96,15 +98,15 @@ class Session
          *
          * @return bool
          */
-        static protected function preventHijacking()
-        {
+        static protected function preventHijacking() {
+	
                 if( !isset($_SESSION['finger']) )
                 	return false;
 
-                if($_SESSION['finger'] != getFinger() )
+                if($_SESSION['finger'] != member::getFinger())
                 	return false;
 
-                if( $_SESSION['finger'] != getFinger() )
+                if($_SESSION['finger'] != member::getFinger())
                 	return false;
 
                 return true;

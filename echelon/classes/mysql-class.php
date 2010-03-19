@@ -46,6 +46,23 @@ class DB_B3 {
 		$stmt->close();
 		return $groups;	
 	}
+	
+	function getB3GroupsLevel() {
+		$query = "SELECT id FROM groups ORDER BY id ASC";
+		$stmt = $this->mysql->prepare($query);
+		$stmt->execute();
+		$stmt->bind_result($id);
+		
+		$groups = array();
+		
+		while($stmt->fetch()) :
+			array_push($groups, $id);
+		endwhile;
+	
+		$stmt->close();
+		return $groups;	
+	
+	}
 
 #############################
 #############################

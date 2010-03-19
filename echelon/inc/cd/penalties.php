@@ -24,9 +24,16 @@ if($stmt->num_rows) : // if results exist
 			
 		// Change into readable times
 		$time_add = date($tformat, $time_add);
-		$time_expire = date($tformat, $time_expire);
+		
+		$time_expire_read = timeExpire($time_expire, $type, $inactive, $tformat);
 		$reason = tableClean(removeColorCode($reason));
+		$data = tableClean($data);
 		$admin_name = tableClean($admin_name);
+		
+		if($type != 'Kick' && $type != 'Notice' && $time_expire != '-1')
+			$duration = time_duration($duration*60); // all penalty durations are stored in minutes, so multiple by 60 in order to get seconds
+		else
+			$duration = '';
 		
 		// Row odd/even
 		$rowcolor = 1 - $rowcolor;
@@ -41,7 +48,7 @@ if($stmt->num_rows) : // if results exist
 			<td>$type</td>
 			<td>$time_add</td>
 			<td>$duration</td>
-			<td>$time_expire</td>
+			<td>$time_expire_read</td>
 			<td>$reason<br /><em>$data</em></td>
 			<td><a href="clientdetails.php?id=$admin_id" title="View the admin's client page">$admin_name</a></td>	
 		</tr>
@@ -53,7 +60,7 @@ EOD;
 	
 else : // if no results
 
-	echo '<tr class="table-error"><td colspan="7"><span>This user has no recorded penalties!</span></td></tr>';
+	echo '<tr class="table-good"><td colspan="7"><span>This user has no recorded penalties!</span></td></tr>';
 
 endif;
 

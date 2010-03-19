@@ -1,6 +1,6 @@
 <?php
-$page = "active";
-$page_title = "Inactive Admins";
+$page = "admins";
+$page_title = "Admin Listing";
 $auth_name = 'clients';
 $b3_conn = true; // this page needs to connect to the B3 database
 $pagination = true; // this page requires the pagination part of the footer
@@ -10,14 +10,10 @@ require 'inc.php';
 ######## Varibles ########
 
 ## Default Vars ##
-$orderby = "time_edit";
-$order = "ASC";
+$orderby = "group_bits";
+$order = "DESC"; // either ASC or DESC
 
 //$limit_rows = 75; // limit_rows can be set by the DB settings // uncomment this line to manually overide the number of table rows per page
-
-$time = time();
-$lenght = 7; // default lenght in days that the admin must be in active to show on this list
-
 
 ## Sorts requests vars ##
 if($_GET['ob']) {
@@ -30,7 +26,8 @@ if($_GET['o']) {
 
 // allowed things to sort by
 $allowed_orderby = array('id', 'name', 'connections', 'group_bits', 'time_edit');
-if(!in_array($orderby, $allowed_orderby)) { // Check if the sent varible is in the allowed array 
+// Check if the sent varible is in the allowed array 
+if(!in_array($orderby, $allowed_orderby)) {
 	$orderby = 'time_edit'; // if not just set to default id
 }
 
@@ -47,13 +44,11 @@ $start_row = $page_no * $limit_rows;
 
 $query = sprintf("SELECT c.id, c.name, c.connections, c.time_edit, g.name as level
 	FROM clients c LEFT JOIN groups g ON c.group_bits = g.id
-	WHERE c.group_bits >= 8
-	AND  c.group_bits <=64 AND(%d - c.time_edit > %d*60*60*24 )", $time, $lenght);
-
-$query .= sprintf("ORDER BY %s ", $orderby);
+	WHERE c.group_bits >= 8 ORDER BY %s", $orderby);
 
 ## Append this section to all queries since it is the same for all ##
-if($order == "desc") {
+$order = strtoupper($order); // force uppercase to stop inconsistentcies
+if($order == "DESC") {
 	$query .= " DESC"; // set to desc 
 } else {
 	$query .= " ASC"; // default to ASC if nothing adds up
@@ -87,18 +82,18 @@ $stmt->close(); // closes the prepared statement
 require 'inc/header.php';
 ?>
 
-<table summary="A list of <?php echo limit_rows; ?> players who have connected to the server at one time or another.">
-	<caption>Inactive Admins<small>There are <strong><?php echo $total_rows; ?></strong> admins who have not been seen by B3 for <strong><?php echo $lenght; ?></strong> days.</small></caption>
+<table summary="A list of all registered admins">
+	<caption>Admin Listing<small>A list of all registered admins</small></caption>
 	<thead>
 		<tr>
 			<th>Name
 				<?php linkSortClients('name', 'Name', $is_search, $search_type, $search_string); ?>
 			</th>
-			<th>Client-id
-				<?php linkSortClients('id', 'Client-id', $is_search, $search_type, $search_string); ?>
-			</th>
 			<th>Level
 				<?php linkSortClients('group_bits', 'Level', $is_search, $search_type, $search_string); ?>
+			</th>
+			<th>Client-id
+				<?php linkSortClients('id', 'Client-id', $is_search, $search_type, $search_string); ?>
 			</th>
 			<th>Connections
 				<?php linkSortClients('connections', 'Connections', $is_search, $search_type, $search_string); ?>
@@ -106,14 +101,11 @@ require 'inc/header.php';
 			<th>Last Seen
 				<?php linkSortClients('time_edit', 'Last Seen', $is_search, $search_type, $search_string); ?>
 			</th>
-			<th>
-				Duration
-			</th>
 		</tr>
 	</thead>
 	<tfoot>
 		<tr>
-			<th colspan="6">Click client name to see details</th>
+			<th colspan="5"></th>
 		</tr>
 	</tfoot>
 	<tbody>
@@ -130,10 +122,9 @@ require 'inc/header.php';
 			$time_edit = $clients['time_edit'];
 			
 			## Change to human readable		
-			$time_diff = time_duration($time - $time_edit, 'yMwd');		
-			$time_edit = date($tformat, $time_edit); // this must be after the time_diff
+			$time_edit_read = date($tformat, $time_edit); // this must be after the time_diff
 			
-			## Row color
+			## row color
 			$rowcolor = 1 - $rowcolor;	
 			if($rowcolor == 0)
 				$odd_even = "odd";
@@ -143,12 +134,11 @@ require 'inc/header.php';
 			// setup heredoc (table data)			
 			$data = <<<EOD
 			<tr class="$odd_even">
-				<td><strong><a href="clientdetails.php?id=$cid">$name</a></strong></td>
-				<td>@$cid</td>
+				<td><strong><a href="clientdetails.php?id=$cid" title="View everything B3 knows about $name">$name</a></strong></td>
 				<td>$level</td>
+				<td>@$cid</td>
 				<td>$connections</td>
-				<td><em>$time_edit</em></td>
-				<td><em>$time_diff</em></td>
+				<td><em>$time_edit_read</em></td>
 			</tr>
 EOD;
 
@@ -156,7 +146,7 @@ EOD;
 		endforeach;
 	} else {
 		$no_data = true;
-		echo '<tr class="odd"><td colspan="6">There are no admins that have been in active for more than '. $lenght . ' days.</td></tr>';
+		echo '<tr class="odd"><td colspan="5">There are no registered admins</td></tr>';
 	} // end if query contains
 	?>
 	</tbody>
