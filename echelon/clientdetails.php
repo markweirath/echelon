@@ -371,7 +371,7 @@ EOD;
 </table>
 
 <div id="penalties">
-	<h3 class="cd-h" id="cd-h-pen" rel="cd-table-pen">Penalties <img class="cd-open" src="images/add.png" alt="Open" /></h3>
+	<h3 class="cd-h" id="cd-h-pen" rel="pen">Penalties <img class="cd-open" src="images/add.png" alt="Open" /></h3>
 	<table class="cd-table-fold" id="cd-table-pen" rel="<?php echo $cid; ?>">
 		<thead>
 			<tr>
@@ -388,6 +388,29 @@ EOD;
 			<tr><td colspan="7"></td></tr>
 		</tfoot>
 		<tbody id="contain-pen">
+			<tr id="cd-tr-load-pen"><td colspan="7"><img class="load-large" id="load-pen" src="images/indicator-large.gif" alt="Loading....." title="Loading penalty data for <?php echo $name; ?>" /></td></tr>
+		</tbody>
+	</table>
+</div>
+
+<div id="admin">
+	<h3 class="cd-h" id="cd-h-admin" rel="admin">Admin Actions <img class="cd-open" src="images/add.png" alt="Open" /></h3>
+	<table class="cd-table-fold" id="cd-table-admin" rel="<?php echo $cid; ?>">
+		<thead>
+			<tr>
+				<th></th>
+				<th>Type</th>
+				<th>Added</th>
+				<th>Duration</th>
+				<th>Expires</th>
+				<th>Reason</th>
+				<th>Admin</th>
+			</tr>
+		</thead>
+		<tfoot>
+			<tr><td colspan="7"></td></tr>
+		</tfoot>
+		<tbody id="contain-admin">
 			<tr id="cd-tr-load-pen"><td colspan="7"><img class="load-large" id="load-pen" src="images/indicator-large.gif" alt="Loading....." title="Loading penalty data for <?php echo $name; ?>" /></td></tr>
 		</tbody>
 	</table>

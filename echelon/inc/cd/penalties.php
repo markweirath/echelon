@@ -5,13 +5,24 @@ require '../../inc.php';
 
 $cid = $_GET['id']; 
 if($cid == '')
-	echo '<tr class="table-error"><td colspan="7"><span>That user id does not match any known users</span></td></tr>'; // return message of no id sent
+	echo '<tr class="table-error"><td colspan="7"><span>No user selected, please send a client id</span></td></tr>'; // return message of no id sent
 
-$query = "SELECT p.id, p.type, p.time_add, p.time_expire, p.reason, p.data, p.inactive, p.duration, 
-			COALESCE(c.id,'1') as admin_id, COALESCE(c.name, 'B3') as admin_name 
-			FROM penalties p LEFT JOIN clients c ON c.id = p.admin_id
-			WHERE p.client_id = ? ORDER BY id DESC";
-$stmt = $db->mysql->prepare($query);
+$type = 'client';
+if($_GET['type'] == 'admin')
+	$type = 'admin';
+else
+	$type = 'client';
+
+if($type == 'client')
+	$query = "SELECT p.id, p.type, p.time_add, p.time_expire, p.reason, p.data, p.inactive, p.duration, 
+	COALESCE(c.id,'1') as admin_id, COALESCE(c.name, 'B3') as admin_name 
+	FROM penalties p LEFT JOIN clients c ON c.id = p.admin_id WHERE p.client_id = ? ORDER BY id DESC";
+else
+	$query = "SELECT p.id, p.type, p.time_add, p.time_expire, p.reason, p.data, p.inactive, p.duration, 
+	COALESCE(c.id,'1') as admin_id, COALESCE(c.name, 'B3') as admin_name 
+	FROM penalties p LEFT JOIN clients c ON c.id = p.client_id WHERE p.admin_id = ? ORDER BY id DESC";
+
+$stmt = $db->mysql->prepare($query) or die('<tr class="table-good"><td colspan="7"><span>Problem getting records from the database</span></td></tr>');
 $stmt->bind_param('i', $cid); // bind in the client_id for the query
 $stmt->execute(); // run query
 $stmt->store_result(); // store the result - needed for the num_rows check
@@ -41,6 +52,12 @@ if($stmt->num_rows) : // if results exist
 			$odd_even = "odd";
 		else 
 			$odd_even = "even";
+			
+		if($admin_id != 1)
+			$admin_link = '<a href="clientdetails.php?id='.$admin_id.'" title="View the admin\'s client page">'.$admin_name.'</a>';
+		else
+			$admin_link = $admin_name;
+		
 		
 		$row = <<<EOD
 		<tr class="$odd_even">
@@ -50,7 +67,7 @@ if($stmt->num_rows) : // if results exist
 			<td>$duration</td>
 			<td>$time_expire_read</td>
 			<td>$reason<br /><em>$data</em></td>
-			<td><a href="clientdetails.php?id=$admin_id" title="View the admin's client page">$admin_name</a></td>	
+			<td>$admin_link</td>	
 		</tr>
 EOD;
 
@@ -65,5 +82,3 @@ else : // if no results
 endif;
 
 $stmt->close(); // close the stmt connection
-
-?>
