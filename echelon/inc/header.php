@@ -132,11 +132,16 @@ endif;
 					<a href="#">Games</a>
 					<ul class="dd games-list">
 						<?php
+							$this_cur_page = basename($_SERVER['SCRIPT_NAME']);
 							$games_list = $dbl->getGamesList();
 							foreach($games_list as $item) :
-								$game_id = substr($item['category'], -1); // the id of the game is at the end of the string (eg. 'game1') so substr gets the last character (ie. the id)
-								$name = $item['value'];
-								echo '<li><a href="'.$path . $this_page .'?game='.$game_id.'" title="Switch to this game">'.$name.'</a></li>';
+								$loop_game_id = substr($item['category'], -1); // the id of the game is at the end of the string (eg. 'game1') so substr gets the last character (ie. the id)
+								$loop_game_name = $item['value'];
+								if($game == $loop_game_id)
+									echo '<li class="selected">';
+								else
+									echo '<li>';
+								echo '<a href="'.$path . $this_cur_page .'?game='.$loop_game_id.'" title="Switch to this game">'.$loop_game_name.'</a></li>';
 							endforeach;
 						?>	
 					</ul>

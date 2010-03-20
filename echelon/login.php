@@ -37,6 +37,7 @@ if($mem->loggedIn()) { // if logged in users may skip this page
 	// set sent vars
 	$username = cleanvar($_POST['f-name']); // strip and remove spaces from vars
 	$pw = cleanvar($_POST['f-pw']);
+	$game_input = cleanvar($_POST['f-game']);
 
 	// are they empty values
 	emptyInput($username, 'username');
@@ -51,7 +52,7 @@ if($mem->loggedIn()) { // if logged in users may skip this page
 	}
 
 	// Building a whitelist array with keys which will send through the form, no others would be accepted later on
-	$whitelist = array('token','f-name','f-pw');
+	$whitelist = array('token','f-name','f-pw', 'f-game');
 
 	// Building an array with the $_POST-superglobal 
 	foreach ($_POST as $key=>$item) {
@@ -63,6 +64,18 @@ if($mem->loggedIn()) { // if logged in users may skip this page
 			exit;
 		}
 	} // end foreach
+	
+		
+	if(!is_numeric($game_input)) {
+		wrong(1); // plus 1 to wrong counter
+		hack(1); // plus 1 to hack counter
+		writeLog('Login - Bad game number'); // make note in log
+		sendBack('Invalid data sent, that is not a valid game');
+		exit;
+	}
+		
+	if($game_input > $num_games)
+		sendBack('That is not a game, please choose to load a real game');
 	
 	######## Everything is all right continue with script #########
 	
@@ -123,7 +136,7 @@ if($mem->loggedIn()) { // if logged in users may skip this page
 		$_SESSION['wrong'] = 0; // reset wrong counter
 		$_SESSION['hack'] = 0; // reset hack atempt count
 		
-		$_SESSION['game'] = 1;
+		setcookie("game", $game_input, time()*60*60*24*31, $path); // set the game cookie equal to the game choosen in the login form
 
 		$_SESSION['finger'] = $mem->getFinger(); // find the hash of user agent plus salt
 
@@ -366,6 +379,18 @@ if($mem->loggedIn()) { // if logged in users may skip this page
 
 		 <label for="f-pw">Password:</label>
 			<input type="password" name="f-pw" id="f-pw" tabindex="2" />
+
+		<label for="f-game">Game:</label>
+			<select name="f-game" id="f-game" tabindex="3">
+				<?php
+					$games_list = $dbl->getGamesList();
+					foreach($games_list as $item) :
+						$loop_game_id = substr($item['category'], -1); // the id of the game is at the end of the string (eg. 'game1') so substr gets the last character (ie. the id)
+						$loop_game_name = $item['value'];
+						echo '<option value="'.$loop_game_id.'">'.$loop_game_name.'</option>';
+					endforeach;
+				?>	
+			</select>
 
 		<input type="hidden" name="token" value="<?php echo $token; ?>" />	
 

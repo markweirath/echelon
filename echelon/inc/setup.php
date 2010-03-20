@@ -18,10 +18,6 @@ if($_GET['game']) {
 } elseif($_COOKIE['game']) {
 	$game = $_COOKIE['game'];
 	
-} elseif($_SESSION['game']) {
-	$game = $_SESSION['game'];
-	setcookie("game", $game, time()*60*60*24*31, $path); // set the cookie to game value
-	
 } else {
 	$game = 1;
 	setcookie("game", $game, time()*60*60*24*31, $path); // set the cookie to game value
