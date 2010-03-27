@@ -381,6 +381,20 @@ function timeExpire($time_expire, $type, $inactive, $tformat) {
 	return $msg;
 }
 
+function timeExpirePen($time_expire, $tformat) {
+	if (($time_expire <= time()) && ($time_expire != -1))
+		$msg = "<span class=\"p-expired\">".date($tformat, $time_expire)."</span>"; 
+	
+	if ($time_expire == -1)
+		$msg = "<span class=\"p-permanent\">Permanent</span>"; 
+	
+	if ($time_expire > time())
+		$msg = "<span class=\"p-active\">".date($tformat, $time_expire)."</span>"; 
+	
+	return $msg;
+}
+
+
 function settingText($name, $title, $value, $type) {
 	switch ($type) {
 		case 'int':
@@ -601,8 +615,12 @@ function decrypt($algo = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC, $key_sent
  * @param       string  which time periods to display
  * @param       bool    whether to show zero time periods
  */
-function time_duration($seconds, $use = null, $zeros = false)
-{
+function time_duration($seconds, $use = null, $zeros = false) {
+
+	if($seconds == '') {
+		return '';
+	}
+	
     // Define time periods
     $periods = array (
         'years'     => 31556926,

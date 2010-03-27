@@ -74,7 +74,7 @@ while($stmt->fetch()) : // get results and put results in an array
 		'name' => $name,
 		'connect' => $connections,
 		'time_edit' => $time_edit,
-		'level' => $level,
+		'level' => $level
 	);
 endwhile;
 
