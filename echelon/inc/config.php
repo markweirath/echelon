@@ -16,7 +16,7 @@ define("EN_KEY", "XXXXXXXXXX");
 
 ## Connection info to connect to the database containing the echelon tables 
 // (where you installed the SQL script that came with the install
-define("DBL_HOSTNAME", "XXXXXXXX"); // hostname of where the server is located
-define("DBL_USERNAME", "XXXX"); // username that can connect to that DB
-define("DBL_PASSWORD", "XXX"); // Password for that user
-define("DBL_DB", "XXXXXXXX"); // name of the database to connect to
+define("DBL_HOSTNAME", "localhost"); // hostname of where the server is located
+define("DBL_USERNAME", "root"); // username that can connect to that DB
+define("DBL_PASSWORD", ""); // Password for that user
+define("DBL_DB", "echelon"); // name of the database to connect to

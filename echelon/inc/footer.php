@@ -1,4 +1,4 @@
-		<?php if($pagination) : // check to see if pagination is required on this page
+		<?php if($pagination == true) : // check to see if pagination is required on this page
 			if(!$no_data) : // if there no recorded records ?>
 				<div class="under-table">
 					<p class="num-rows">
@@ -20,16 +20,13 @@
 									<a href="<?php printf("%25s?p=%d%s", $this_page, max(0, $page_no - 1), $query_string_page); ?>" class="page"><?php echo $page_no - 1; ?></a>
 								<?php } ?>
 							
-								<span class="dots">...</span>
 							<?php } ?>
 							
-							<a href="" class="page current" title="Page <?php echo $page_no; ?>"><?php echo $page_no; ?></a>
+							<span class="page current"><?php echo $page_no; ?></span>
 							
 							<?php if($page_no < $total_pages) { /* Show if not last page */ ?>
 							
-								<?php if($page_no + 1 < $total_pages) { ?>
-									<span class="dots">...</span>
-									
+								<?php if($page_no + 1 < $total_pages) { ?>								
 									<a href="<?php printf("%25s?p=%d%s", $this_page, max(0, $page_no + 1), $query_string_page); ?>" class="page"><?php echo $page_no + 1; ?></a>
 								<?php } ?>
 								

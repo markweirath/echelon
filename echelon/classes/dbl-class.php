@@ -34,7 +34,32 @@ class DbL {
 			);
 		endwhile;
 		return $config;
+	}
 	
+	function getServers($cur_game) {
+		$query = "SELECT id, name, ip, pb_active, rcon_pass, rcon_ip, rcon_port FROM servers WHERE game = ?";
+		$stmt = $this->mysql->prepare($query);
+		$stmt->bind_param('i', $cur_game);
+		$stmt->execute();
+		
+		$stmt->store_result(); // store results
+		$stmt->bind_result($id, $name, $ip, $pb_active, $rcon_pass, $rcon_ip, $rcon_port); // bind results into vars
+		
+		while($stmt->fetch()) : // get results and store in an array
+			$servers[] = array(
+				'id' => $id,
+				'name' => $name,
+				'ip' => $ip,
+				'pb_active' => $pb_active,
+				'rcon_pass' => $rcon_pass,
+				'rcon_ip' => $rcon_ip,
+				'rcon_port' => $rcon_port
+			);
+		endwhile;
+
+		$stmt->free_result();
+		$stmt->close();
+		return $servers;	
 	}
 	
 	function getGamesList() {
@@ -749,6 +774,7 @@ class DbL {
 		} else {
 			return false;
 		}
+		$stmt->free_result();
 		$stmt->close();
 	}
 	

@@ -1,6 +1,9 @@
-<?php 
+<?php
+error_reporting(E_ALL ^ E_NOTICE);
 $page = "error";
 $page_title = "Error";
+$b3_conn = false;
+$pagination = false;
 require 'inc/ctracker.php';
 require 'inc/functions.php';
 require 'inc/header.php'; 

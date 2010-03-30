@@ -1,7 +1,8 @@
 <?php
-require 'inc/ctracker.php'; // anti worm injection protection
-require 'inc/config.php'; // load the config file
-require 'inc/functions.php'; // require all the basic functions used in this site
+error_reporting(E_ALL ^ E_NOTICE);
+require_once 'inc/ctracker.php'; // anti worm injection protection
+require_once 'inc/config.php'; // load the config file
+require_once 'inc/functions.php'; // require all the basic functions used in this site
 
 require 'classes/dbl-class.php'; // class to preform all DB related actions
 $dbl = new DBL(); // start connection to the local Echelon DB
@@ -16,7 +17,7 @@ $ses->sesStart(); // start session
 
 $mem = new member();
 
-if($b3_conn) // if this is true then connect. This is to stop connecting to the B3 Db for non b3 Db connection pages eg. Home, Site Admin, My Account
+if($b3_conn == true) // if this is true then connect. This is to stop connecting to the B3 Db for non b3 Db connection pages eg. Home, Site Admin, My Account
 	$db = new DB_B3($game_db_host, $game_db_user, $game_db_pw, $game_db_name); // create connection to the B3 DB
 
 if($auth_user_here == false) // some pages do not need auth but include this file so this following line is optional

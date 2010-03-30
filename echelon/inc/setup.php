@@ -2,7 +2,7 @@
 if (!empty($_SERVER['SCRIPT_FILENAME']) && 'setup.php' == basename($_SERVER['SCRIPT_FILENAME']))
   		die ('Please do not load this page directly. Thanks!');
 
-include 'config.php';
+require_once 'config.php';
 
 $this_page = $_SERVER["PHP_SELF"];
 
@@ -24,11 +24,14 @@ if($_GET['game']) {
 	//die('Default Error');
 }
 
-## get the config array ##
-$config = $dbl->getConfig();
+## Get the config array ##
+$config_info = $dbl->getConfig();
+// NOTE: $config_info holds all the information that is stored in the config table in the DB while
+//		 $config holds all the sorted information in arrays such as $config['cosmos'] and $config['game1']
 
+$config = array();
 $config['cosmos'] = array();
-foreach($config as $setting) :
+foreach($config_info as $setting) :
 	if($setting['category'] == 'cosmos') {
 		$config['cosmos'][$setting['name']] = $setting['value'];
 	}
@@ -47,19 +50,20 @@ $tformat = $config['cosmos']['time_format'];
 
 // if $game is greater than num_games then game doesn't exist so send to error page with error and reset game to 1
 if($game > $num_games) {
-	//$_SESSION['game'] = 1;
-	//set_error('That game doesn\'t exist');
-	//sendError();
-	//exit;
-	die('Massive Error');
+	setcookie("game", 1, time()*60*60*24*31, $path); // set the cookie to game value
+	set_error('That game doesn\'t exist');
+	sendError();
+	exit;
+	//die('Massive Error');
 }
+
 
 // send the $config['game1'] arrays
 $counter = 1;
 while($counter <= $num_games) :
 	$config['game'.$counter] = array();
 	
-	foreach($config as $setting) :
+	foreach($config_info as $setting) :
 		if($setting['category'] == 'game'.$counter) {
 			$config['game'.$counter][$setting['name']] = $setting['value'];
 		}
@@ -67,6 +71,25 @@ while($counter <= $num_games) :
 	
 	$counter++;
 endwhile;
+
+## Get and setup the servers information into the array ##
+$servers = $dbl->getServers($game);
+
+$counter = 1; // restart counter to 1
+foreach($servers as $server) : // loop thro the list of servers
+	
+	$config['game'.$game]['servers'][$counter] = array();
+	$config['game'.$game]['servers'][$counter]['name'] = $server['name'];
+	$config['game'.$game]['servers'][$counter]['ip'] = $server['ip'];
+	$config['game'.$game]['servers'][$counter]['pb_active'] = $server['pb_active'];
+	$config['game'.$game]['servers'][$counter]['rcon_pass'] = $server['rcon_pass'];
+	$config['game'.$game]['servers'][$counter]['rcon_ip'] = $server['rcon_ip'];
+	$config['game'.$game]['servers'][$counter]['rcon_port'] = $server['rcon_port'];
+	
+	$counter++; // increment counter
+endforeach;
+
+## Setup some handy easy to access information for the CURRENT GAME only ##
 
 $game_name = $config['game'.$game]['name'];
 $game_name_short = $config['game'.$game]['short_name'];
@@ -76,4 +99,5 @@ $game_db_user = $config['game'.$game]['db_user'];
 $game_db_pw = $config['game'.$game]['db_pw'];
 $game_db_name = $config['game'.$game]['db_name'];
 
-$page_no = 0; // setup default page number so this doesn't have to be in every file
+## setup default page number so this doesn't have to be in every file ##
+$page_no = 0; 

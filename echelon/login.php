@@ -1,10 +1,13 @@
 <?php
-
+error_reporting(E_ALL ^ E_NOTICE);
 // Varible setup to stop no logged in (private) pages running the auth user function
 $auth_user_here = false;
+$pagination = false;
 
-require 'inc/functions.php';
-require 'inc/config.php'; // load the config file
+require_once 'inc/ctracker.php'; // anti worm injection protection
+require_once 'inc/config.php'; // load the config file
+require_once 'inc/functions.php';
+
 require 'classes/session-class.php'; // class to deal with the management of sesssions
 require 'classes/dbl-class.php'; // DBL
 require 'classes/members-class.php'; // require the members class

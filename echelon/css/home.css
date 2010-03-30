@@ -1,0 +1,6 @@
+/* Home Page CSS Styling */
+
+#change-log { width: 45%; margin: 10px; float: left; }
+#change-log h3 { text-align: center; padding-bottom: 4px; margin-bottom: 6px; border-bottom: 1px solid #efefef; }
+#change-log ul { list-style-position: outside; margin-left: 20px; }
+#change-log ul li { margin: 2px 0; }

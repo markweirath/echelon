@@ -216,9 +216,10 @@ require 'inc/header.php';
 		<?php
 			endif;
 			if($mem->reqLevel('ban')) :
+			$ban_token = genFormToken('ban');
 		?>
 		<div id="cd-act-ban" class="act-slide">
-			<form action="actions/b3/ban.php" method="">
+			<form action="actions/b3/ban.php" method="post">
 		
 				<fieldset class="none">
 					<legend>Type</legend>
@@ -244,7 +245,7 @@ require 'inc/header.php';
 					<input type="text" name="reason" id="reason" />
 					
 				<input type="hidden" name="cid" value="<?php echo $cid; ?>" />
-				<input type="hidden" name="token" value="Banned with Echelon!" />
+				<input type="hidden" name="token" value="<?php echo $ban_token; ?>" />
 				<input type="submit" name="ban-sub" value="Ban User" />
 			</form>
 		</div>

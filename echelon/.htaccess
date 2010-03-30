@@ -1,3 +1,4 @@
+php_value register_globals off
 Options All -Indexes
 <Files .htaccess>
 order deny,allow

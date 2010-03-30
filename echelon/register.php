@@ -1,4 +1,5 @@
 <?php
+error_reporting(E_ALL ^ E_NOTICE);
 require 'inc/functions.php';
 require 'inc/config.php'; // load the config file
 require 'classes/session-class.php'; // class to deal with the management of sesssions

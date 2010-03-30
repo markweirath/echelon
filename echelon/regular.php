@@ -22,31 +22,26 @@ $connections_limit = 50; // default number of connections that the player must h
 $clan_tags = array("=(e)=","=(eG)=","=(eGO)=","=(eGO)=","{ROC}","*{PotW}*","{DP}","=KND=","{KGB}");
 
 ## Sorts requests vars ##
-if($_GET['ob']) {
+if($_GET['ob'])
 	$orderby = addslashes($_GET['ob']);
-}
 
-if($_GET['o']) {
+if($_GET['o'])
 	$order = addslashes($_GET['o']);
-}
 
 // allowed things to sort by
 $allowed_orderby = array('id', 'name', 'connections', 'group_bits', 'time_edit');
 // Check if the sent varible is in the allowed array 
-if(!in_array($orderby, $allowed_orderby)) {
+if(!in_array($orderby, $allowed_orderby))
 	$orderby = 'time_edit'; // if not just set to default id
-}
 
 ## Page Vars ##
-if ($_GET['p']) {
+if ($_GET['p'])
   $page_no = addslashes($_GET['p']);
-}
 
 $start_row = $page_no * $limit_rows;
 
-
 ###########################
-######### QUERIES #########
+######### QUERY ###########
 
 $query = sprintf("SELECT c.id, c.name, c.connections, c.time_edit, g.name as level
 	FROM clients c LEFT JOIN groups g ON c.group_bits = g.id
@@ -61,11 +56,10 @@ foreach ($clan_tags as $tag) {
 $query .= sprintf("ORDER BY %s", $orderby);
 
 ## Append this section to all queries since it is the same for all ##
-if($order == "desc") {
+if($order == "desc")
 	$query .= " DESC"; // set to desc 
-} else {
+else
 	$query .= " ASC"; // default to ASC if nothing adds up
-}
 
 $query_limit = sprintf("%s LIMIT %s, %s", $query, $start_row, $limit_rows); // add limit section
 
@@ -76,20 +70,20 @@ $stmt->store_result(); // store results (needed to count num_rows)
 $num_rows = $stmt->num_rows; // finds the number fo rows retrieved from the database
 $stmt->bind_result($id, $name, $connections, $time_edit, $level); // store results
 
-while($stmt->fetch()) : // get results and put results in an array
-	$clients_data[] = array(
-		'id' => $id,
-		'name' => $name,
-		'connect' => $connections,
-		'time_edit' => $time_edit,
-		'level' => $level,
-	);
-endwhile;
-
+if($num_rows > 0) :
+	while($stmt->fetch()) : // get results and put results in an array
+		$clients_data[] = array(
+			'id' => $id,
+			'name' => $name,
+			'connect' => $connections,
+			'time_edit' => $time_edit,
+			'level' => $level,
+		);
+	endwhile;
+endif;
+	
 $stmt->free_result(); // free the data in memory from store_result
 $stmt->close(); // closes the prepared statement
-
-## Some pagination setup is in the header.php with a if pagination required statement
 
 ## Require Header ##	
 require 'inc/header.php';
@@ -104,19 +98,19 @@ require 'inc/header.php';
 	<thead>
 		<tr>
 			<th>Name
-				<?php linkSortClients('name', 'Name', $is_search, $search_type, $search_string); ?>
+				<?php linkSort('name', 'Name'); ?>
 			</th>
 			<th>Connections
-				<?php linkSortClients('connections', 'Connections', $is_search, $search_type, $search_string); ?>
+				<?php linkSort('connections', 'Connections'); ?>
 			</th>
 			<th>Client-id
-				<?php linkSortClients('id', 'Client-id', $is_search, $search_type, $search_string); ?>
+				<?php linkSort('id', 'Client-id'); ?>
 			</th>
 			<th>Level
-				<?php linkSortClients('group_bits', 'Level', $is_search, $search_type, $search_string); ?>
+				<?php linkSort('group_bits', 'Level'); ?>
 			</th>
 			<th>Last Seen
-				<?php linkSortClients('time_edit', 'Last Seen', $is_search, $search_type, $search_string); ?>
+				<?php linkSort('time_edit', 'Last Seen'); ?>
 			</th>
 		</tr>
 	</thead>
@@ -129,7 +123,7 @@ require 'inc/header.php';
 	<?php
 	$rowcolor = 0;
 
-	 if($num_rows > 0) { // query contains stuff
+	 if($num_rows > 0) { // query contains stuff so spit it out
 	 
 		foreach($clients_data as $clients): // get data from query and loop
 			$cid = $clients['id'];
@@ -138,10 +132,10 @@ require 'inc/header.php';
 			$connections = $clients['connect'];
 			$time_edit = $clients['time_edit'];
 			
-			## Change to human readable		
+			## Change to human readable ##
 			$time_edit_read = date($tformat, $time_edit); // this must be after the time_diff
 			
-			## row color
+			## row color ##
 			$rowcolor = 1 - $rowcolor;	
 			if($rowcolor == 0)
 				$odd_even = "odd";
@@ -159,12 +153,13 @@ require 'inc/header.php';
 			</tr>
 EOD;
 
-		echo $data;
+			echo $data;
 		endforeach;
+		$no_data = false;
 	} else {
 		$no_data = true;
 		echo '<tr class="odd"><td colspan="5">There are no people who have had a total mininium of '.$connections_limit.' and been seen in the last '.$lenght.' days.</td></tr>';
-	} // end if query contains
+	} // end if query contains information
 	?>
 	</tbody>
 </table>

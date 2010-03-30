@@ -1,6 +1,6 @@
 <?php
-$page = "adminbans";
-$page_title = "Admin Bans";
+$page = "adminkicks";
+$page_title = "Admin Kicks";
 $auth_name = 'penalties';
 $b3_conn = true; // this page needs to connect to the B3 database
 $pagination = true; // this page requires the pagination part of the footer
@@ -23,9 +23,10 @@ if($_GET['o'])
 	$order = addslashes($_GET['o']);
 
 // allowed things to sort by
-$allowed_orderby = array('target_name', 'type', 'time_add', 'duration', 'time_expire', 'admins_name');
-if(!in_array($orderby, $allowed_orderby)) // Check if the sent varible is in the allowed array 
+$allowed_orderby = array('target_name', 'time_add', 'admins_name');
+if(!in_array($orderby, $allowed_orderby)) { // Check if the sent varible is in the allowed array 
 	$orderby = 'time_add'; // if not just set to default id
+}
 
 ## Page Vars ##
 if ($_GET['p'])
@@ -33,11 +34,10 @@ if ($_GET['p'])
 
 $start_row = $page_no * $limit_rows;
 
-
 ###########################
-######### QUERY ###########
+######### QUERIES #########
 
-$query = "SELECT p.type, p.time_add, p.time_expire, p.reason, p.duration, target.id as target_id, target.name as target_name, c.id as admins_id, c.name as admins_name FROM penalties p, clients c, clients as target WHERE admin_id != '0' AND (p.type = 'Ban' OR p.type = 'TempBan') AND inactive = 0 AND p.time_expire <> 0 AND p.client_id = target.id AND p.admin_id = c.id";
+$query = "SELECT p.time_add, p.reason, target.id as target_id, target.name as target_name, c.id as admin_id, c.name as admin_name FROM penalties p, clients c, clients as target WHERE admin_id != '0' AND p.type = 'Kick' AND inactive = 0 AND p.client_id = target.id AND p.admin_id = c.id";
 
 $query .= sprintf(" ORDER BY %s ", $orderby);
 
@@ -49,28 +49,25 @@ else
 
 $query_limit = sprintf("%s LIMIT %s, %s", $query, $start_row, $limit_rows); // add limit section
 
-//die($query_limit);
-
 ## Prepare and run Query ##
 $stmt = $db->mysql->prepare($query_limit) or die('Database Error: '.$db->mysql->error);
 $stmt->execute();
 $stmt->store_result();
 $num_rows = $stmt->num_rows;
-$stmt->bind_result($type, $time_add, $time_expire, $reason, $duration, $client_id, $client_name, $admin_id, $admin_name);
+$stmt->bind_result($time_add, $reason, $client_id, $client_name, $admin_id, $admin_name);
 
-while($stmt->fetch()) : // get results and put results in an array
-	$pens_data[] = array(
-		'type' => $type,
-		'time_add' => $time_add,
-		'time_expire' => $time_expire,
-		'reason' => $reason,
-		'duration' => $duration,
-		'client_id' => $client_id,
-		'client_name' => $client_name,
-		'admin_id' => $admin_id,
-		'admin_name' => $admin_name
-	);
-endwhile;
+if($num_rows > 0) : // no need to start loop if there is no data
+	while($stmt->fetch()) : // get results and put results in an array
+		$kicks_data[] = array(
+			'time_add' => $time_add,
+			'reason' => $reason,
+			'client_id' => $client_id,
+			'client_name' => $client_name,
+			'admin_id' => $admin_id,
+			'admin_name' => $admin_name
+		);
+	endwhile;
+endif;
 
 $stmt->free_result(); // free the data in memory from store_result
 $stmt->close(); // closes the prepared statement
@@ -81,34 +78,26 @@ $stmt->close(); // closes the prepared statement
 require 'inc/header.php';
 ?>
 
-<table summary="A list of <?php echo limit_rows; ?> active tempbans/bans made by admins in a servers">
-	<caption>Admin Bans<small>There are <strong><?php echo $total_rows; ?></strong> active bans/tempbans that have been added by admins</caption>
+<table summary="A list of <?php echo limit_rows; ?> kicks made by admins in a servers">
+	<caption>Admin Kicks<small>There are <strong><?php echo $total_rows; ?></strong> kicks that have been added by admins</caption>
 	<thead>
 		<tr>
-			<th>Target
-				<?php linkSort('target_name', 'Name'); ?>
+			<th>Client
+				<?php linkSort('target_name', 'client name'); ?>
 			</th>
-			<th>Type
-				<?php linkSort('type', 'penalty type'); ?>
-			</th>
-			<th>Added
+			<th>Kicked At
 				<?php linkSort('time_add', 'time the penalty was added'); ?>
 			</th>
-			<th>Duration
-				<?php linkSort('duration', 'duration of penalty'); ?>
-			</th>
-			<th>Expires
-				<?php linkSort('time_expire', 'time the penalty expires'); ?>
-			</th>
 			<th>Reason</th>
-			<th>Admin
-				<?php linkSort('admins_name', 'Admin name'); ?>
+			<th>
+				Admin
+				<?php linkSort('admins_name', 'admin name'); ?>
 			</th>
 		</tr>
 	</thead>
 	<tfoot>
 		<tr>
-			<th colspan="7"></th>
+			<th colspan="4"></th>
 		</tr>
 	</tfoot>
 	<tbody>
@@ -117,16 +106,13 @@ require 'inc/header.php';
 
 	 if($num_rows > 0) { // query contains stuff
 
-		foreach($pens_data as $pen): // get data from query and loop
-			$type = $pen['type'];
-			$time_add = $pen['time_add'];
-			$time_expire = $pen['time_expire'];
-			$reason = tableClean($pen['reason']);
-			$duration = $pen['duration'];
-			$client_id = $pen['client_id'];
-			$client_name = tableClean($pen['client_name']);
-			$admin_id = $pen['admin_id'];
-			$admin_name = tableClean($pen['admin_name']);
+		foreach($kicks_data as $kick): // get data from query and loop
+			$time_add = $kick['time_add'];
+			$reason = tableClean($kick['reason']);
+			$client_id = $kick['client_id'];
+			$client_name = tableClean($kick['client_name']);
+			$admin_id = $kick['admin_id'];
+			$admin_name = tableClean($kick['admin_name']);
 
 			## Tidt data to make more human friendly
 			if($time_expire != '-1')
@@ -134,7 +120,6 @@ require 'inc/header.php';
 			else
 				$duration_read = '';
 
-			$time_expire_read = timeExpirePen($time_expire, $tformat);
 			$time_add_read = date($tformat, $time_add);
 			$reason_read = removeColorCode($reason);
 
@@ -149,22 +134,17 @@ require 'inc/header.php';
 			$data = <<<EOD
 			<tr class="$odd_even">
 				<td><strong><a href="clientdetails.php?id=$client_id" title="View more information on $client_name">$client_name</a></strong></td>
-				<td>$type</td>
 				<td>$time_add_read</td>
-				<td>$duration_read</td>
-				<td>$time_expire_read</td>
 				<td>$reason_read</td>
 				<td><strong><a href="clientdetails.php?id=$admin_id" title="View more information on $admin_name">$admin_name</a></strong></td>
 			</tr>
 EOD;
 
-			echo $data;
+		echo $data;
 		endforeach;
-		
-		$no_data = false;
 	} else {
 		$no_data = true;
-		echo '<tr class="odd"><td colspan="7">There no tempbans or bans in the database</td></tr>';
+		echo '<tr class="odd"><td colspan="4">There are no kicks in the database</td></tr>';
 	} // end if query contains
 	?>
 	</tbody>

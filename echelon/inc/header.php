@@ -26,13 +26,18 @@ endif;
 	<?php } ?>
 	
 	<?php if($page == 'clientdetails') { ?>
-		<!-- Load Login CSS Stylesheet -->
+		<!-- Load Client details CSS Stylesheet -->
 		<link href="<?php echo $path; ?>css/cd.css" rel="stylesheet" media="screen" type="text/css" />
 	<?php } ?>
 	
 	<?php if($page == 'settings') { ?>
-		<!-- Load Login CSS Stylesheet -->
+		<!-- Load settings page CSS Stylesheet -->
 		<link href="<?php echo $path; ?>css/settings.css" rel="stylesheet" media="screen" type="text/css" />
+	<?php } ?>
+	
+	<?php if($page == 'home') { ?>
+		<!-- Load Home page CSS Stylesheet -->
+		<link href="<?php echo $path; ?>css/home.css" rel="stylesheet" media="screen" type="text/css" />
 	<?php } ?>
 	
 	<!-- ALL JS TO BE LOADED INTO THE FOOTER -->
@@ -165,7 +170,7 @@ endif;
 					</ul>
 				</li>
 				<li class="cdd">
-					<a href="#">Logs</a>
+					<a href="#">Other</a>
 					<ul class="dd">
 						<li class="pbss<?php if($page == 'pbss') echo ' selected'; ?>"><a href="<?php echo $path; ?>clients.php" title="Punkbuster&trade; screenshots">PBSS</a></li>
 						<li class="chat<?php if($page == 'chat') echo ' selected'; ?>"><a href="<?php echo $path; ?>clients.php" title="Logs of chats from the servers">Chat Logs</a></li>
@@ -174,7 +179,7 @@ endif;
 					</ul>
 				</li>
 				<li class="cdd">
-					<a href="#">Settings</a>
+					<a href="#">Echelon</a>
 					<ul class="dd">
 						<li class="settings<?php if($page == 'settings') echo ' selected'; ?>"><a href="<?php echo $path; ?>settings.php" title="Site Settings">Site Settings</a></li>
 						<li class="sa<?php if($page == 'sa') echo ' selected'; ?>"><a href="<?php echo $path; ?>sa.php" title="Site Administration">Site Admin</a></li>
