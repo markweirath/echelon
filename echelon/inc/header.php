@@ -164,8 +164,8 @@ endif;
 					<a href="#">Penalties</a>
 					<ul class="dd">
 						<li class="adminkicks<?php if($page == 'adminkicks') echo ' selected'; ?>"><a href="<?php echo $path; ?>adminkicks.php">Admin Kicks</a></li>
-						<li class="adminbans<?php if($page == 'adminbans') echo ' selected'; ?>"><a href="<?php echo $path; ?>adminbans.php">Admin Bans</a></li>
-						<li class="b3pen<?php if($page == 'b3pen') echo ' selected'; ?>"><a href="<?php echo $path; ?>clients.php" title="All Kicks/Bans added automatically by B3">B3 Penalties</a></li>
+						<li class="adminbans<?php if($page == 'adminbans') echo ' selected'; ?>"><a href="<?php echo $path; ?>bans.php?t=a">Admin Bans</a></li>
+						<li class="b3pen<?php if($page == 'b3pen') echo ' selected'; ?>"><a href="<?php echo $path; ?>bans.php?t=b" title="All Kicks/Bans added automatically by B3">B3 Bans</a></li>
 						<li class="pubbans<?php if($page == 'pubbans') echo ' selected'; ?>"><a href="<?php echo $path; ?>pubbans.php" title="A public list of bans in the database">Public Ban List</a></li>
 					</ul>
 				</li>

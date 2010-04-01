@@ -130,17 +130,17 @@ class DbL {
 	 */
 	function login($username, $pw) {
 
-		$query = "SELECT u.id, u.ip, u.last_seen, u.display, u.email, g.premissions FROM users u LEFT JOIN groups g ON u.ech_group = g.id WHERE u.username = ? AND u.password = ? LIMIT 1";
+		$query = "SELECT u.id, u.ip, u.last_seen, u.display, u.email, u.ech_group, g.premissions FROM users u LEFT JOIN groups g ON u.ech_group = g.id WHERE u.username = ? AND u.password = ? LIMIT 1";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('ss', $username, $pw);
 		$stmt->execute(); // run query
 		
 		$stmt->store_result(); // store results	
-		$stmt->bind_result($id, $ip, $last_seen, $name, $email, $perms); // store results
+		$stmt->bind_result($id, $ip, $last_seen, $name, $email, $group, $perms); // store results
 		$stmt->fetch(); // get results
 
 		if($stmt->num_rows == 1):
-			$results = array($id, $ip, $last_seen, $name, $email, $perms);
+			$results = array($id, $ip, $last_seen, $name, $email, $group, $perms);
 			return $results; // yes log them in
 		else :
 			return false;
@@ -793,11 +793,50 @@ class DbL {
 			$groups[] = array(
 				'id' => $id,
 				'display' => $display
-			); 		
+			);
 		endwhile;
 		
 		$stmt->close();
 		return $groups;	
+	
+	}
+	
+	function getEchLogs($client_id) {
+		$query = "SELECT l.id, l.type, l.msg, l.user_id, u.display, l.time_add FROM ech_logs l LEFT JOIN users u ON l.user_id = u.id WHERE client_id = ? ORDER BY time_add DESC";
+		$stmt = $this->mysql->prepare($query);
+		$stmt->bind_param('i', $client_id);
+		$stmt->execute();
+		
+		$stmt->store_result();
+		$stmt->bind_result($id, $type, $msg, $user_id, $user_name, $time_add);
+		
+		while($stmt->fetch()) :
+			$ech_logs[] = array(
+				'id' => $id,
+				'type' => $type,
+				'msg' => $msg,
+				'user_id' => $user_id,
+				'user_name' => $user_name,
+				'time_add' => $time_add,
+			); 	
+		endwhile;
+		
+		$stmt->close();
+		return $ech_logs;
+	
+	}
+	
+	function addEchLog($type, $comment, $cid, $user_id) {
+		// id, type, msg, client_id, user_id, time_add
+		$query = "INSERT INTO ech_logs VALUES(NULL, ?, ?, ?, ?, UNIX_TIMESTAMP())";
+		$stmt = $this->mysql->prepare($query) or die('MySQL Error: '. $this->mysql->error);
+		$stmt->bind_param('ssiii', $type, $comment, $cid, $user_id);
+		$stmt->execute();
+		
+		if($stmt->affected_rows )
+			return true;
+		else
+			return false;
 	
 	}
 	

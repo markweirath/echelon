@@ -1,25 +1,11 @@
 <?php
-error_reporting(E_ALL ^ E_NOTICE);
-// Varible setup to stop no logged in (private) pages running the auth user function
 $auth_user_here = false;
 $pagination = false;
-
-require_once 'inc/ctracker.php'; // anti worm injection protection
-require_once 'inc/config.php'; // load the config file
-require_once 'inc/functions.php';
-
-require 'classes/session-class.php'; // class to deal with the management of sesssions
-require 'classes/dbl-class.php'; // DBL
-require 'classes/members-class.php'; // require the members class
- 
-$dbl = new DBL(); // DBL connection is needed for the setup file to pull config from the DBL
- 
-require 'inc/setup.php';
- 
-$ses = new Session(); // create Session Object
-$ses->sesStart(); // start session
-
-$mem = new member();
+$b3_conn = false;
+if(isset($_POST['f-name'])) { // this is a login attempt
+	$page = 'login'; // do not remove needed to keep the toke in the session array and not be moved into the $tokens array
+}
+require 'inc.php';
 
 ##### start script #####
 
@@ -27,12 +13,7 @@ if($mem->loggedIn()) { // if logged in users may skip this page
 	sendHome(); // send to the index/home page
 	
 } elseif ($_POST['f-name']) { // if this is a log in request 
-	// Make sure we don't cache this
-	//header("Expires: Sat, 01 Jan 2000 00:00:00 GMT");
-	//header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
-	//header("Cache-Control: post-check=0, pre-check=0",false);
-	//session_cache_limiter("must-revalidate");
-	
+
 	// if over the maxium amount of wrong attempts, if on BL
 	// or if hack attempts detected, BL and remove user
 	locked();
@@ -50,7 +31,7 @@ if($mem->loggedIn()) { // if logged in users may skip this page
 		wrong(1); // plus 1 to wrong counter
 		hack(1); // plus 1 to hack counter
 		writeLog('Login - Bad Token'); // make note in log
-		sendBack('Login Failed - Stop! Attack detected');
+		sendBack('Login Failed - Stop! Attack detected!!!');
 		exit;
 	}
 
@@ -106,7 +87,7 @@ if($mem->loggedIn()) { // if logged in users may skip this page
 
 		## get premissions
 		$perms = $dbl->getPermissions(); // use user's id
-		$perms_list = $results[5]; // value of perms for users group db
+		$perms_list = $results[6]; // value of perms for users group db
 
 		$_SESSION['perms'] = array();
 		
@@ -132,10 +113,12 @@ if($mem->loggedIn()) { // if logged in users may skip this page
 		$_SESSION['user_id'] = $results[0]; // set user id	
 		$_SESSION['last_ip'] = $results[1]; // set last known ip
 		$_SESSION['last_seen'] = $results[2]; // set last time seen.
+		$_SESSION['username'] = $username; // set username equal to the username that was used to login
 		$_SESSION['name'] = $results[3]; // get the users display name
-		$_SESSION['email'] = $results[4]; // users email address 
+		$_SESSION['email'] = $results[4]; // users email address
+		$_SESSION['group'] = $results[5]; // what ecg-group is the user in
 		
-		$_SESSION['auth'] = true; // authorise user
+		$_SESSION['auth'] = true; // authorise user to access logged in areas
 		$_SESSION['wrong'] = 0; // reset wrong counter
 		$_SESSION['hack'] = 0; // reset hack atempt count
 		
@@ -403,6 +386,11 @@ if($mem->loggedIn()) { // if logged in users may skip this page
 			<input type="submit" value="Login" />
 		</div>
 	</form>
+	
+	<?php var_dump($_SESSION['tokens']); ?>
+	<br />
+	<br />
+	<?php var_dump($tokens); ?>
 
 	<br class="clear" />
 

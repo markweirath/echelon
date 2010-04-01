@@ -14,6 +14,8 @@ require 'inc/header.php';
 			<fieldset class="none">
 				<legend>Account Info</legend>
 				
+				<label class="uname">Username Name:</label>
+					<input type="text" name="uname" value="<?php echo $_SESSION['username']; ?>" disabled="disabled" />		
 				<label for="display">Display Name:</label>
 					<input type="text" name="name" value="<?php echo $_SESSION['name']; ?>" id="display" tabindex="1" />
 				<label for="email">Email:</label>
@@ -32,7 +34,9 @@ require 'inc/header.php';
 					<input type="password" name="pass2" id="pass2" value="" class="disable" disabled="disabled" tabindex="5" />
 			</fieldset>
 			
-			<fieldset class="none">
+			<br class="clear" />
+			
+			<!--<fieldset class="none">
 				<legend>My Echelon Connect</legend>
 				
 				
@@ -46,7 +50,7 @@ require 'inc/header.php';
 						$counter++;
 					endwhile;
 				?>
-			</fieldset>
+			</fieldset>-->
 			
 			<fieldset class="none" id="prove">
 				<legend>Prove Identiy</legend>

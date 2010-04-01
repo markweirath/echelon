@@ -19,6 +19,7 @@ if($cid == 0) {
 	send('index.php');
 }
 
+## Get Client information ##
 $query = "SELECT c.ip, c.connections, c.guid, c.name, c.mask_level, c.greeting, c.time_add, c.time_edit, c.group_bits, g.name
 		  FROM clients c LEFT JOIN groups g ON c.group_bits = g.id WHERE c.id = ? LIMIT 1";
 $stmt = $db->mysql->prepare($query) or die('Database Error '. $db->mysql->error);
@@ -28,7 +29,7 @@ $stmt->bind_result($ip, $connections, $guid, $name, $mask_level, $greeting, $tim
 $stmt->fetch();
 $stmt->close();
 
-// query for xlrstats
+## Get information for xlrstats ##
 $query_xlr = "SELECT id, kills, deaths, ratio, skill, rounds, hide, fixed_name FROM xlr_playerstats WHERE client_id = ? LIMIT 1";
 $stmt = $db->mysql->prepare($query_xlr) or die('2 - MySQL Error: #'.$db->mysql->errno.' '.$db->mysql->error);
 $stmt->bind_param('i', $cid);
@@ -78,7 +79,10 @@ require 'inc/header.php';
 				<td>
 				<?php 
 					$guid_len = strlen($guid);
-					if($mem->reqLevel('view_full_guid')) { // if allowed to see the full guid
+					if($guid_len == 0) {
+						echo '(There is no GUID availible)';
+					
+					} elseif($mem->reqLevel('view_full_guid')) { // if allowed to see the full guid
 						if($guid_len == 32) 
 							guidCheckLink($guid);
 						else 
@@ -160,6 +164,8 @@ require 'inc/header.php';
 </table>
 <?php endif; ?>
 
+<!-- Start Echelon Actions Panel -->
+
 <a name="tabs" />
 <div id="actions">
 	<ul class="cd-tabs">
@@ -171,7 +177,6 @@ require 'inc/header.php';
 	</ul>
 	<div id="actions-box">
 		<?php
-			$groups = $dbl->getGroups();
 			if($mem->reqLevel('comment')) :
 			$comment_token = genFormToken('comment');	
 		?>
@@ -179,21 +184,10 @@ require 'inc/header.php';
 			
 			<form action="actions/b3/comment.php" method="post">
 				<label for="comment">Comment:</label><br />
-					<textarea type="text" name="comment" id="comment"></textarea>
-					
-				<label for="com-level">Limit Access:</label>
-					<select name="limit" id="com-level">
-						<option value="all">All Access</option>
-						<?php
-							foreach($groups as $group) :
-								$gid = $group['id'];
-								$gname = $group['display'];
-								echo '<option value="'.$gid.'">'.$gname.'</option>';
-							endforeach;
-						?>
-					</select>
+					<textarea type="text" name="comment" id="comment"></textarea><br />
 					
 				<input type="hidden" name="token" value="<?php echo $comment_token; ?>" />
+				<input type="hidden" name="cid" value="<?php echo $cid; ?>" />
 				
 				<input type="submit" name="comment-sub" value="Add Comment" />
 			</form>
@@ -206,7 +200,7 @@ require 'inc/header.php';
 		<div id="cd-act-greeting" class="act-slide">
 			<form action="actions/b3/greeting.php" method="post">
 				<label for="greeting">Greeting Message:</label><br />
-					<textarea name="greeting" id="greeting"><?php echo $greeting; ?></textarea>
+					<textarea name="greeting" id="greeting"><?php echo $greeting; ?></textarea><br />
 					
 				<input type="hidden" name="token" value="<?php echo $greeting_token; ?>" />
 				<input type="hidden" name="cid" value="<?php echo $cid; ?>" />
@@ -226,18 +220,20 @@ require 'inc/header.php';
 					
 					<label for="pb">Permanent Ban?</label>
 						<input type="checkbox" name="pb" id="pb" /><br />
-						
-					<label for="duration">Duration:</label>
-						<input type="text" name="duration" id="duration" class="int" style="width: 60px" />
-						
-						<select name="time">
-							<option value="m">Minutes</option>
-							<option value="h">Hours</option>
-							<option value="d">Days</option>
-							<option value="w">Weeks</option>
-							<option value="mn">Months</option>
-							<option value="y">Years</option>
-						</select>			
+					
+					<div id="ban-duration">
+						<label for="duration">Duration:</label>
+							<input type="text" name="duration" id="duration" class="int dur" />
+							
+							<select name="time">
+								<option value="m">Minutes</option>
+								<option value="h">Hours</option>
+								<option value="d">Days</option>
+								<option value="w">Weeks</option>
+								<option value="mn">Months</option>
+								<option value="y">Years</option>
+							</select>
+					</div>
 				</fieldset>
 				<br class="clear" />
 				
@@ -245,6 +241,9 @@ require 'inc/header.php';
 					<input type="text" name="reason" id="reason" />
 					
 				<input type="hidden" name="cid" value="<?php echo $cid; ?>" />
+				<input type="hidden" name="c-name" value="<?php echo $name; ?>" />
+				<input type="hidden" name="c-ip" value="<?php echo $ip; ?>" />
+				<input type="hidden" name="c-pbid" value="<?php echo $guid; ?>" />
 				<input type="hidden" name="token" value="<?php echo $ban_token; ?>" />
 				<input type="submit" name="ban-sub" value="Ban User" />
 			</form>
@@ -272,6 +271,7 @@ require 'inc/header.php';
 						?>
 					</select>
 					
+				<input type="hidden" name="old-level" value="<?php echo $group_bits; ?>" />
 				<input type="hidden" name="cid" value="<?php echo $cid; ?>" />
 				<input type="hidden" name="token" value="<?php echo $level_token; ?>" />
 				<input type="submit" name="level-sub" value="Change Level" />
@@ -298,6 +298,7 @@ require 'inc/header.php';
 						?>
 					</select>
 				
+				<input type="hidden" name="old-level" value="<?php echo $group_bits; ?>" />
 				<input type="hidden" name="cid" value="<?php echo $cid; ?>" />
 				<input type="hidden" name="token" value="<?php echo $mask_lvl_token; ?>" />
 				<input type="submit" name="mlevel-sub" value="Change Mask" />
@@ -306,6 +307,8 @@ require 'inc/header.php';
 		<?php endif; ?>
 	</div><!-- end #actions-box -->
 </div><!-- end #actions -->
+
+<!-- Start Client Aliases -->
 
 <h3 class="cd-h">Aliases</h3>
 <table>
@@ -352,7 +355,7 @@ require 'inc/header.php';
 				// setup heredoc (table data)			
 				$data = <<<EOD
 				<tr class="$odd_even">
-					<td><strong>$alias</td>
+					<td><strong>$alias</strong></td>
 					<td>$num_used</td>
 					<td><em>$time_add</em></td>
 					<td><em>$time_edit</em></td>
@@ -370,6 +373,73 @@ EOD;
 	?>
 	</tbody>
 </table>
+
+<!-- Start Client Echelon Logs -->
+
+<?php
+	## Get Echelon Logs Client Logs (NOTE INFO IN THE ECHELON DB) ##
+	$ech_logs = $dbl->getEchLogs($cid);
+	
+	$count = count($ech_logs);
+	if($count > 0) : // if there are records
+?>
+<h3 class="cd-h">Echelon Logs</h3>
+<table>
+	<thead>
+		<tr>
+			<th>id</th>
+			<th>Type</th>
+			<th>Message</th>
+			<th>Time Added</th>
+			<th>Admin</th>
+		</tr>
+	</thead>
+	<tfoot>
+		<tr><th colspan="5"></th></tr>
+	</tfoot>
+	<tbody>
+		<?php
+		$rowcolor = 0;
+
+		foreach($ech_logs as $ech_log) :
+		
+			$id = $ech_log['id'];
+			$type = $ech_log['type'];
+			$msg = tableClean($ech_log['msg']);
+			$user_id = $ech_log['user_id'];
+			$user_name = tableClean($ech_log['user_name']);
+			$time_add = $ech_log['time_add'];
+			
+			## Row Color ##
+			$rowcolor = 1 - $rowcolor;
+			if($rowcolor == 0)
+				$odd_even = "odd";
+			else 
+				$odd_even = "even";
+			
+			## Tidy things up ##
+			$time_add_read = date($tformat, $time_add);
+			
+			$table = <<<EOD
+			<tr class="$odd_even">
+				<td>$id</td>
+				<td>$type</td>
+				<td>$msg</td>
+				<td><em>$time_add_read</em></td>
+				<td>$user_name</td>
+			</tr>
+EOD;
+			echo $table;
+				
+		endforeach;
+		?>
+	</tbody>
+</table>
+<?php
+	endif; // end hide is no records
+?>
+
+<!-- Client Penalties -->
 
 <div id="penalties">
 	<h3 class="cd-h" id="cd-h-pen" rel="pen">Penalties <img class="cd-open" src="images/add.png" alt="Open" /></h3>
@@ -394,6 +464,8 @@ EOD;
 	</table>
 </div>
 
+<!-- Admin History -->
+
 <div id="admin">
 	<h3 class="cd-h" id="cd-h-admin" rel="admin">Admin Actions <img class="cd-open" src="images/add.png" alt="Open" /></h3>
 	<table class="cd-table-fold" id="cd-table-admin" rel="<?php echo $cid; ?>">
@@ -416,4 +488,6 @@ EOD;
 		</tbody>
 	</table>
 </div>
+
+
 <?php require 'inc/footer.php'; ?>

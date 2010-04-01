@@ -1,12 +1,10 @@
 <?php
-error_reporting(E_ALL ^ E_NOTICE);
 $page = "error";
 $page_title = "Error";
-$b3_conn = false;
+$b3_conn = false; // no b3 connection is required
+$auth_user_here = false; // allow both logged in and logged out users to see this page
 $pagination = false;
-require 'inc/ctracker.php';
-require 'inc/functions.php';
-require 'inc/header.php'; 
+require 'inc.php';
 ?>
 
 <h1>Echelon Error!</h1>

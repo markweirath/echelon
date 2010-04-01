@@ -1,7 +1,36 @@
 <?php
-	#### FUNCTIONS.PHP ####
+#### FUNCTIONS.PHP ####
 ## Basic functions that help run all pages on this site ##
 ## This page is included on all pages in this project ##
+
+/**
+ * Sends an rcon comand to a server
+ *
+ * @param string $rcon_ip - IP for rcon connections
+ * @param string $rcon_port - Port for rcon connection
+ * @param string $rcon_pass - Server rcon Password
+ * @param string $command - The rcon command being sent
+ * @return string
+ */
+function rcon($rcon_ip, $rcon_port, $rcon_pass, $command) {
+
+	$fp = fsockopen("udp://$rcon_ip",$rcon_port, $errno, $errstr, 2);
+	@socket_set_timeout($fp,2); // if error, ignore because some servers block this command
+
+	if(!$fp) {
+		return "$errstr ($errno)<br>\n";
+	} else {
+		$query = "\xFF\xFF\xFF\xFFrcon \"" . $rcon_pass . "\" " . $command;
+		fwrite($fp,$query);
+	}
+	$data = '';
+	while($d = fread($fp, 10000)) {
+	    $data .= $d;
+	}
+	fclose($fp);
+	$data = preg_replace("/....print\n/", "", $data);
+	return $data;
+}
 
 /**
  * Generates a general hash with sha1 and md5
@@ -230,6 +259,12 @@ function sendError() {
 	header("Location: {$path}error.php");
 }
 
+/**
+ * Check if the current page is the clients page
+ *
+ * @param string $page - the current page name
+ * @return bool
+ */
 function is_clients($page) {
 	if($page == 'client')
 		return true;
@@ -338,12 +373,24 @@ function linkSortClients($keyword, $title, $is_search, $search_type, $search_str
 
 }
 
+/**
+ * Removes colour coding from a text string
+ *
+ * @param string $text - the text to clean
+ * @return string - the cleaned text
+ */
 function removeColorCode($text) {
 
 	$text = preg_replace('/\\^([0-9])/ie', '', $text);
 	return $text;
 }
 
+/**
+ * Cleans/Escapes data for use in tables
+ *
+ * @param string $text - the text to clean
+ * @return string - the cleaned/escaped text
+ */
 function tableClean($text) {
 
 	$text = htmlspecialchars($text);
@@ -420,6 +467,11 @@ function settingText($name, $title, $value, $type) {
 	return $text;
 }
 
+/**
+ * Send an email about a possible hack to the admin
+ *
+ * @param string $where - where the event happened
+ */
 function writeLog($where) {
     
 	$ip = getRealIp(); // Get the IP from superglobal
@@ -441,7 +493,14 @@ LOGMSGG;
 	$header = 'From: echelon@b3-echelon.com';
 	mail($to, $subject, $logging, $header);    
 } // end hackLog
-	
+
+/**
+ * Check if the suppled token is valid
+ *
+ * @param string $from - the form name
+ * @param string $tokens - the server-side tokens array
+ * @return bool
+ */
 function verifyFormToken($form, $tokens) {
         
 	// check if a session is started and a token is transmitted, if not return an error
@@ -459,6 +518,9 @@ function verifyFormToken($form, $tokens) {
 	return true;
 }
 
+/**
+ * Same as above function but slight chnage to account for some login form differences
+ */
 function verifyFormTokenLogin($form) {
         
 	// check if a session is started and a token is transmitted, if not return an error
@@ -476,6 +538,13 @@ function verifyFormTokenLogin($form) {
 	return true;
 }
 
+/**
+ * Generate and set a form token
+ *
+ * @param string $from - the form name
+ * @set session vars
+ * @return bool
+ */
 function genFormToken($form) {
     
 	// generate a token from an unique value, taken from microtime, you can also use salt-values, other crypting methods...
@@ -487,6 +556,11 @@ function genFormToken($form) {
 	return $token;
 }
 
+/**
+ * What to do if a bad token is found
+ *
+ * @param string $place - place this happened
+ */
 function ifTokenBad($place) {
 	hack(1); // plus 1 to hack counter
 	writeLog($place.' - Bad Token'); // make note in log
@@ -659,5 +733,3 @@ function time_duration($seconds, $use = null, $zeros = false) {
     $str = implode(', ', $array);
     return $str;
 }
-
-// end functions file

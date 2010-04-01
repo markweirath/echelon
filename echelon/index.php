@@ -10,7 +10,7 @@ require 'inc/header.php';
 ?>
 	<h1>Welcome to Echelon <small>v.2.0a</small></h1>
 	 
-	<div class="error-msg error" style="float: none;margin:15px;width:90%;padding:5px;">
+	<div class="error-msg error" style="float: none;margin:15px auto;width:90%;padding:5px;">
 		<p><strong>Note:</strong> This site uses a backup of a B3 Database that is more than 6 months old.</p>
 	</div>
 

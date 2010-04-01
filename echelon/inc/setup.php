@@ -75,19 +75,33 @@ endwhile;
 ## Get and setup the servers information into the array ##
 $servers = $dbl->getServers($game);
 
-$counter = 1; // restart counter to 1
-foreach($servers as $server) : // loop thro the list of servers
+if($config['game'.$game]['num_srvs'] == 1) : // if the current game has only ONE server then no loop is needed
 	
-	$config['game'.$game]['servers'][$counter] = array();
-	$config['game'.$game]['servers'][$counter]['name'] = $server['name'];
-	$config['game'.$game]['servers'][$counter]['ip'] = $server['ip'];
-	$config['game'.$game]['servers'][$counter]['pb_active'] = $server['pb_active'];
-	$config['game'.$game]['servers'][$counter]['rcon_pass'] = $server['rcon_pass'];
-	$config['game'.$game]['servers'][$counter]['rcon_ip'] = $server['rcon_ip'];
-	$config['game'.$game]['servers'][$counter]['rcon_port'] = $server['rcon_port'];
-	
-	$counter++; // increment counter
-endforeach;
+	$config['game'.$game]['servers'][1] = array();
+	$config['game'.$game]['servers'][1]['name'] = $server['name'];
+	$config['game'.$game]['servers'][1]['ip'] = $server['ip'];
+	$config['game'.$game]['servers'][1]['pb_active'] = $server['pb_active'];
+	$config['game'.$game]['servers'][1]['rcon_pass'] = $server['rcon_pass'];
+	$config['game'.$game]['servers'][1]['rcon_ip'] = $server['rcon_ip'];
+	$config['game'.$game]['servers'][1]['rcon_port'] = $server['rcon_port'];
+
+else: // there is only one server so only ONE loop is needed
+
+	$i = 1; // restart i to 1
+	foreach($servers as $server) : // loop thro the list of servers
+		
+		$config['game'.$game]['servers'][$i] = array();
+		$config['game'.$game]['servers'][$i]['name'] = $server['name'];
+		$config['game'.$game]['servers'][$i]['ip'] = $server['ip'];
+		$config['game'.$game]['servers'][$i]['pb_active'] = $server['pb_active'];
+		$config['game'.$game]['servers'][$i]['rcon_pass'] = $server['rcon_pass'];
+		$config['game'.$game]['servers'][$i]['rcon_ip'] = $server['rcon_ip'];
+		$config['game'.$game]['servers'][$i]['rcon_port'] = $server['rcon_port'];
+		
+		$i++; // increment counter
+	endforeach;
+
+endif;
 
 ## Setup some handy easy to access information for the CURRENT GAME only ##
 

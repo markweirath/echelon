@@ -16,27 +16,54 @@ require '../../inc.php';
 if($_POST['level-sub'] || $_POST['mlevel-sub']) : // if the form is submitted
 
 	## check that the sent form token is corret
-	if(!$is_mask) {
+	/*if(!$is_mask) {
 		if(verifyFormToken('level', $tokens) == false) // verify token
 			ifTokenBad('Change client level');
 	} else {
 		if(verifyFormToken('mask', $tokens) == false) // verify token
 			ifTokenBad('Change client mask level');
-	}
+	}*/
 	
 	## Set and clean vars ##
 	$level = cleanvar($_POST['level']);
 	$client_id = cleanvar($_POST['cid']);
+	$old_level = cleanvar($_POST['old-level']);
 	
 	## Check if the client_id is numeric ##
 	if(!is_numeric($client_id))
 		sendBack('Invalid data sent, greeting not changed');
 	
-	## Check if the group_bits provided match a known group (Knwon groups is a list of groups pulled from the DB -- this allow more control for custom groups)
-	$b3_groups = $db->getB3GroupsLevel();
-	if(!in_array($level, $b3_groups))
+	## Do some mojo with the B3 group information ##
+	$b3_groups = $db->getB3Groups();
+	
+	// change around the recieved data
+	$b3_groups_id = array();
+	foreach($b3_groups as $group) :
+		array_push($b3_groups_id, $group['id']); // make an array of all the group_bits that exsist
+		$b3_groups_name[$group['id']] = $group['name']; // make an array of group_bits to matching names
+	endforeach;
+	
+	// Check if the group_bits provided match a known group (Known groups is a list of groups pulled from the DB -- this allow more control for custom groups)
+	if(!in_array($level, $b3_groups_id))
 		sendBack('That group does not exist, please submit a real group');
-
+	
+	## Add Echelon Log ##
+	$level_name = $b3_groups_name[$level];
+	$old_level_name = $b3_groups_name[$old_level];
+	//die($level_name);
+	//var_dump($b3_groups_name);
+	//exit;
+	
+	if(!$is_mask) {
+		$comment = 'User level changed from '. $old_level_name .' to '. $level_name;
+	} else {
+		$comment = 'Mask level changed from '. $old_level_name .' to '. $level_name;
+	}
+	$user_id = $_SESSION['user_id'];
+	$type = 'Level Change';
+	
+	$dbl->addEchLog($type, $comment, $client_id, $user_id);
+	
 	## Query Section ##
 	if(!$is_mask)
 		$query = "UPDATE clients SET group_bits = ? WHERE id = ? LIMIT 1";

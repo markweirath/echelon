@@ -11,13 +11,22 @@ $(document).ready(function() {
 		var thisItem = this;
 		getPenInfo(thisItem, 'admin');		
 	}); // #cd-h-pen click
+	
+	if ($('#pb:checked').val() == 'on') {
+		$("#ban-duration").hide();
+	}
+	$('#pb').click(function(){
+		if ($('#pb:checked').val() == 'on') {
+			$("#ban-duration").slideUp();
+		} else {
+			$("#ban-duration").slideDown();
+		}
+	});
 	  
 });
 
 function formatError(msg) {
-	
 	return '<tr class="table-error"><td colspan="7"><span><strong>Error:</strong> ' + msg + '</span></td></tr>';
-	
 }
 
 function getPenInfo(thisItem, type) {

@@ -267,6 +267,9 @@ div.under-table { margin: 8px 3px 0; color: #444; }
 .suggestionList ol li:last-child { border-bottom: none; }
 .suggestionList ol li:hover { background-color: #a4c9e5; color: #222; cursor: pointer; opacity: 1; }
 #suggest { position:relative; }
+
+/* My Account Page */
+label.uname:hover { color: #bbb; }
 		
 /* Site Admin Styling */
 #add-user-form { margin: 0 auto; width: 91%; }
@@ -286,6 +289,10 @@ div.under-table { margin: 8px 3px 0; color: #444; }
 
 /* Error Styling */
 .error-msg { margin: 70px 20px; width: 46%; font-size: 18px; float: right; padding: 20px; border: 2px solid #ae2525; -moz-border-radius: 5px; -webkit-border-radius: 5px; }
+
+/* Public Ban List Page Styling */
+#pubbans-form { display: inline; }
+#pubbans-form  select { display: inline; padding: 2px; border: 1px solid #4cb1dc; margin: 0 3px; font-size: 10px; width: auto; }
 
 /* Registration Styling */
 .reg { font-style: italic; margin: 3px 25px 6px; }

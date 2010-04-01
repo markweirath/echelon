@@ -24,3 +24,6 @@ img.cd-open { float: right; padding: 3px; margin: 8px; }
 #cd-tr-load-pen td { text-align: center; }
 #cd-tr-load-pen:hover { background : #fff; }
 .load-large { margin: 15px; }
+
+#reason { width: 350px; }
+input.dur { width: 60px; }
