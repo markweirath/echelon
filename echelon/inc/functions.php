@@ -32,6 +32,25 @@ function rcon($rcon_ip, $rcon_port, $rcon_pass, $command) {
 	return $data;
 }
 
+function unbanButton($pen_id, $cid, $type, $inactive) {
+	
+	$token = genFormToken('unban'.$pen_id); // gen form token with appened penalty id in order to make all the tokens unique
+
+	// if pen is a tempban, ban or warning and it is still active then show unban
+	if( ($type == 'TempBan' || $type == 'Ban' || $type == 'Warning') && ($inactive == 0) ) {
+		return '<form method="post" action="actions/b3/unban.php">
+			<input type="hidden" name="token" value="'.$token.'" />
+			<input type="hidden" name="cid" value="'.$cid.'" />
+			<input type="hidden" name="banid" value="'.$pen_id.'" />
+			<input type="hidden" name="type" value="'.$type.'" />
+			<input type="image" value="Unban" src="images/delete.png" title="De-Activate / Unban" />
+		</form>';
+	} else {
+		return null;
+	}
+
+}
+
 /**
  * Generates a general hash with sha1 and md5
  *

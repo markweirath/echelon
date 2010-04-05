@@ -58,10 +58,14 @@ if($stmt->num_rows) : // if results exist
 		else
 			$admin_link = $admin_name;
 		
+		if($mem->reqLevel('unban'))
+			$unban = unbanButton($pid, $cid, $type, $inactive);
+		else
+			$unban = '';
 		
 		$row = <<<EOD
 		<tr class="$odd_even">
-			<td>$pid</td>
+			<td>$pid $unban</td>
 			<td>$type</td>
 			<td>$time_add</td>
 			<td>$duration</td>

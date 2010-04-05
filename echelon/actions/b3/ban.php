@@ -9,8 +9,8 @@ if(!$_POST['ban-sub']) { // if the form not is submitted
 }
 
 ## check that the sent form token is corret
-//if(verifyFormToken('ban', $tokens) == false) // verify token
-//	ifTokenBad('Add ban');
+if(verifyFormToken('ban', $tokens) == false) // verify token
+	ifTokenBad('Add ban');
 
 ## Type of ban and get and set vars ##
 $pb_ban = cleanvar($_POST['pb']);
@@ -20,6 +20,8 @@ if($pb_ban == 'on') {
 	$is_pb_ban = false;
 	$duration_form = cleanvar($_POST['duration']);
 	$time = cleanvar($_POST['time']);
+	emptyInput($time, 'time frame');
+	emptyInput($duration_form, 'penlaty duration');
 }
 
 $reason = cleanvar($_POST['reason']);
@@ -27,6 +29,9 @@ $client_id = cleanvar($_POST['cid']);
 $pbid = cleanvar($_POST['c-pbid']);
 $c_name = cleanvar($_POST['c-name']);
 $c_ip = cleanvar($_POST['c-ip']);
+
+// check for empty reason
+emptyInput($reason, 'ban reason');
 
 ## Check sent client_id is a number ##
 if(!is_numeric($client_id))

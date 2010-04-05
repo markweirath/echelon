@@ -2,9 +2,7 @@
 $auth_user_here = false;
 $pagination = false;
 $b3_conn = false;
-if(isset($_POST['f-name'])) { // this is a login attempt
-	$page = 'login'; // do not remove needed to keep the toke in the session array and not be moved into the $tokens array
-}
+$page = 'login'; // do not remove needed to keep the toke in the session array and not be moved into the $tokens array
 require 'inc.php';
 
 ##### start script #####
@@ -142,6 +140,8 @@ if($mem->loggedIn()) { // if logged in users may skip this page
 
 } elseif($_POST['lostpw']) { // if this is a lost password first step submit
 
+	$page = 'lostpw';
+
 	if(verifyFormTokenLogin('lostpw', $tokens) == false) // verify token
 		ifTokenBad('Lost Password'); // if bad log and send error
 	
@@ -265,7 +265,7 @@ if($mem->loggedIn()) { // if logged in users may skip this page
 	
 	// page normal setup
 	$page = "resetpw";
-	$page_title= "Reset Your Password";
+	$page_title = "Reset Your Password";
 	require 'inc/header.php'; // require the header
 	$token = genFormToken('resetpw'); // setup token
 	
@@ -386,11 +386,6 @@ if($mem->loggedIn()) { // if logged in users may skip this page
 			<input type="submit" value="Login" />
 		</div>
 	</form>
-	
-	<?php var_dump($_SESSION['tokens']); ?>
-	<br />
-	<br />
-	<?php var_dump($tokens); ?>
 
 	<br class="clear" />
 

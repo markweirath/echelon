@@ -13,6 +13,10 @@ if($_POST['comment-sub']) : // if the form is submitted
 	$cid = cleanvar($_POST['cid']);
 	$comment = cleanvar($_POST['comment']);
 	
+	// Check for empties
+	emptyInput($comment, 'comment');
+	emptyInput($cid, 'client id not sent');
+	
 	// set common vars	
 	$type = 'Comment';
 	$time_add = time();

@@ -90,6 +90,48 @@ class DB_B3 {
 			
 		$stmt->close();
 	}
+	
+	/**
+	 * Deactive a penalty
+	 *
+	 * @param string $pen_id - id of penalty to deactive
+	 * @return bool
+	 */
+	function makePenInactive($pen_id) {
+		$query = "UPDATE penalties SET inactive = 1 WHERE id = ? LIMIT 1";
+		$stmt = $this->mysql->prepare($query);
+		$stmt->bind_param('i', $pen_id);
+		$stmt->execute();
+		
+		if($stmt->affected_rows > 0)
+			return true;
+		else
+			return false;
+			
+		$stmt->close();
+	
+	}
+	
+	/**
+	 * Get the pbid of the client from a penalty id
+	 *
+	 * @param string $pen_id - id of penalty to search with
+	 * @return string - pbid of the client
+	 */
+	function getPBIDfromPID($pen_id) {
+		$query = "SELECT c.pbid FROM penalties p LEFT JOIN clients c ON p.client_id = c.id WHERE p.id = ? LIMIT 1";
+		$stmt = $this->mysql->prepare($query);
+		$stmt->bind_param('i', $pen_id);
+		$stmt->execute();
+		
+		$stmt->store_result();
+		$stmt->bind_result($pbid);
+		$stmt->fetch();
+		$stmt->free_result();
+		$stmt->close();
+	
+		return $pbid;
+	}
 
 #############################
 #############################
