@@ -105,7 +105,7 @@ Filtered string: ".$checkworm."
 Server: ".$_SERVER['SERVER_NAME']."
 Translated: ".$_SERVER['PATH_TRANSLATED']."
 ";
-	mail("eire32kevin@gmail.com", "CTracker: POST-Attack detected!", $mail, "From: ctracker@b3-echelon.com");
+	//mail("eire32kevin@gmail.com", "CTracker: POST-Attack detected!", $mail, "From: ctracker@b3-echelon.com");
 	$checkPOST = str_replace($postBlacklist, '*', $postTrack);
 	if ($checkPOST != $postTrack) {
 		// Block attempt

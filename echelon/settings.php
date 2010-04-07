@@ -8,10 +8,7 @@ require 'inc.php';
 // get a list of main Echelon settings from the config table
 $settings = $dbl->getSettings('cosmos');
 
-//var_dump($settings);
-//exit;
-
-$token = genFormToken('settings');
+$token_settings = genFormToken('settings');
 
 require 'inc/header.php';
 ?>
@@ -48,6 +45,8 @@ require 'inc/header.php';
 			<label for="email_footer">Text to end all emails:</label><br />
 				<textarea name="email_footer"><?php echo tableClean($settings['email_footer']); ?></textarea>
 				
+			<p><small>There are some varibles that can be used in the email templates, <strong>%name%</strong> is replaced with the users name, and <strong>%ech_name%</strong> is replaced with the name of the website (eg. your clan name)</small></p>	
+				
 		</fieldset>
 		
 		<br class="clear" />
@@ -75,7 +74,7 @@ require 'inc/header.php';
 		
 		<br class="clear" />
 		
-		<input type="hidden" name="token" value="<?php echo $token; ?>" />
+		<input type="hidden" name="token" value="<?php echo $token_settings; ?>" />
 		<input type="submit" name="settings-sub" value="Save Changes" />
 		
 	</form>

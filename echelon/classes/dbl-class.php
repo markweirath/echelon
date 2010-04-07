@@ -869,10 +869,26 @@ class DbL {
 	/**
 	 * Update the settings
 	 *
+	 * @param string/int $value - the new value for the setting
+	 * @param string $name - the name of the settings
+	 * @param string $value_type - wheather the value provided is a string or an int
 	 * @return bool
 	 */
-    function setSettings() {
+    function setSettings($value, $name, $value_type) {
+	
+		//if($value_type != 's' || $value_type != 'i')
+		//	return false;
         
+		$query = "UPDATE config SET value = ? WHERE name = ? LIMIT 1";
+		$stmt = $this->mysql->prepare($query);
+		$stmt->bind_param($value_type.'s', $value, $name);
+		$stmt->execute();
+		
+		if($stmt->affected_rows > 0)
+			return true;
+		else
+			return false;
+		
     }
 
 } // end class
