@@ -42,30 +42,35 @@ if($stmt->num_rows) : // if results exist
 		$admin_name = tableClean($admin_name);
 		
 		if($type != 'Kick' && $type != 'Notice' && $time_expire != '-1')
-			$duration = time_duration($duration*60); // all penalty durations are stored in minutes, so multiple by 60 in order to get seconds
+			$duration = time_duration($duration*60, 'yMwdhm'); // all penalty durations are stored in minutes, so multiple by 60 in order to get seconds
 		else
 			$duration = '';
 		
-		// Row odd/even
+		// Row odd/even colouring
 		$rowcolor = 1 - $rowcolor;
 		if($rowcolor == 0)
 			$odd_even = "odd";
 		else 
 			$odd_even = "even";
 			
-		if($admin_id != 1)
+		if($admin_id != 1) // if admin is not B3 show clientdetails link else show just the name
 			$admin_link = '<a href="clientdetails.php?id='.$admin_id.'" title="View the admin\'s client page">'.$admin_name.'</a>';
 		else
 			$admin_link = $admin_name;
 		
-		if($mem->reqLevel('unban'))
+		if($mem->reqLevel('unban')) // if user has access to unban show unban button
 			$unban = unbanButton($pid, $cid, $type, $inactive);
 		else
 			$unban = '';
+			
+		if($mem->reqLevel('edit_ban')) // if user  has access to edit bans show the button
+			$edit_ban = editBanButton($type, $pid, $inactive);
+		else
+			$edit_ban = '';
 		
 		$row = <<<EOD
 		<tr class="$odd_even">
-			<td>$pid $unban</td>
+			<td>$pid<br /> $unban $edit_ban</td>
 			<td>$type</td>
 			<td>$time_add</td>
 			<td>$duration</td>

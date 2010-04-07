@@ -3,13 +3,19 @@ $auth_name = 'unban';
 $b3_conn = true; // this page needs to connect to the B3 database
 require '../../inc.php';
 
+## Check the form was submitted ##
+if(!$_POST['unban-sub']) { // if the form not is submitted
+	set_error('Please do not call that page directly, thank you.');
+	send('../../index.php');
+}
+
 ## get vars ##
 $ban_id = $_POST['banid'];
 $type = cleanvar($_POST['type']);
 
 ## check that the sent form token is correct ##
 if(verifyFormToken('unban'.$ban_id, $tokens) == false) // verify token
-	ifTokenBad('Add ban');
+	ifTokenBad('Unban');
 
 ## Check for empties ##
 emptyInput($type, 'data not sent');

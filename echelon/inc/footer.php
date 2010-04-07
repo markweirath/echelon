@@ -86,6 +86,7 @@
 	<?php } ?>
 	
 	<?php if($page == 'clientdetails') { ?>
+		<script src="<?php echo $path; ?>js/jquery.colorbox-min.js" type="text/javascript" charset="utf-8"></script>
 		<script src="<?php echo $path; ?>js/cd.js" type="text/javascript" charset="utf-8"></script>
 	<?php } ?>
 	

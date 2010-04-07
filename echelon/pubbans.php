@@ -1,6 +1,5 @@
 <?php
-$auth_name = 'penalties';
-$auth_user_false = false;
+$auth_user_here = false;
 $b3_conn = true; // this page needs to connect to the B3 database
 $pagination = true; // this page requires the pagination part of the footer
 require 'inc.php';

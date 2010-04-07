@@ -22,11 +22,34 @@ $(document).ready(function() {
 			$("#ban-duration").slideDown();
 		}
 	});
+	
+	if ($('#eb-pb:checked').val() == 'on') {
+		$("#eb-ban-duration").hide();
+	}
+	$('#eb-pb').click(function(){
+		editBanCheck();
+	});
 	  
 });
 
+// Formats an error messge for failed AJAX requests for the client penalties tables
 function formatError(msg) {
 	return '<tr class="table-error"><td colspan="7"><span><strong>Error:</strong> ' + msg + '</span></td></tr>';
+}
+
+function editBanBox(thisItem) {
+
+	var ban_id = $(thisItem).attr('rel');
+	$.fn.colorbox({href:"inc/cd/editban.php?banid="+ ban_id}); 
+
+}
+
+function editBanCheck() {
+	if ($('#eb-pb:checked').val() == 'on') {
+		$("#eb-ban-duration").slideUp();
+	} else {
+		$("#eb-ban-duration").slideDown();
+	}
 }
 
 function getPenInfo(thisItem, type) {
@@ -65,7 +88,7 @@ function getPenInfo(thisItem, type) {
 			if(error == 'timeout'){errormsg = 'There was a communication error, your request timed out.';}
 			
 			var errormsg = formatError(errormsg);
-			container.html(errormsg);
+			container.html(errormsg); // put error in the container
 		},
 	}); // end ajax
 	

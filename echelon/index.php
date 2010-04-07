@@ -9,14 +9,18 @@ require 'inc.php';
 
 require 'inc/header.php';
 ?>
-	<h1>Welcome to Echelon <small>v.2.0a</small></h1>
+	<h1>Welcome to Echelon <small><?php echo ECH_VER; ?></small></h1>
 	 
-	<div class="error-msg error" style="float: none;margin:15px auto;width:90%;padding:5px;">
-		<p><strong>Note:</strong> This site uses a backup of a B3 Database that is more than 6 months old.</p>
-	</div>
+	<p class="welcome">Welcome <?php echo $mem->displayName($_SESSION['name']); ?> You are logged into the <?php echo $game_name; ?> database.<br />
+		<small>You can change what game ifnormation you would like to see under the 'game' dropdown above.</small></p>
+
+	<ul class="padd">
+		<li><a href="clients.php" title="Enter the repositorty and start exploring Echelon">Enter the Respository</a></li>
+		<li><a href="<?php echo $path; ?>actions/logout.php" class="logout" title="Sign out of Echelon">Log Out</a></li>
+	</ul>
 
 	<div id="change-log">	   
-		<h3>Changelog v.2.0a</h3>
+		<h3>Changelog <?php echo ECH_VER; ?></h3>
 		
 		<ul>
 			<li>Better user management, allowing more flexible permissions for Echelon users and managers</li>

@@ -32,21 +32,48 @@ function rcon($rcon_ip, $rcon_port, $rcon_pass, $command) {
 	return $data;
 }
 
+/**
+ * Spits out the unban/remove penalty button
+ *
+ * @param string $pen_id - id of the penalty to remove
+ * @param string $cid - client_id of the client the penalty is against
+ * @param string $type - the type of penalty it is
+ * @param string $inactive - whether the penalty is active or not
+ * @return string
+ */
 function unbanButton($pen_id, $cid, $type, $inactive) {
 	
 	$token = genFormToken('unban'.$pen_id); // gen form token with appened penalty id in order to make all the tokens unique
 
 	// if pen is a tempban, ban or warning and it is still active then show unban
 	if( ($type == 'TempBan' || $type == 'Ban' || $type == 'Warning') && ($inactive == 0) ) {
-		return '<form method="post" action="actions/b3/unban.php">
+		return '<form method="post" action="actions/b3/unban.php" class="unban-form">
 			<input type="hidden" name="token" value="'.$token.'" />
 			<input type="hidden" name="cid" value="'.$cid.'" />
 			<input type="hidden" name="banid" value="'.$pen_id.'" />
 			<input type="hidden" name="type" value="'.$type.'" />
-			<input type="image" value="Unban" src="images/delete.png" title="De-Activate / Unban" />
+			<input type="image" value="Unban" name="unban-sub" src="images/delete.png" title="De-Activate / Unban" />
 		</form>';
 	} else {
 		return null;
+	}
+
+}
+
+/**
+ * Spits out the edit ban button
+ *
+ * @param string $type - the type of penalty it is
+ * @param string $pen_id - id of the penalty to remove
+ * @param string $inactive - whether the penalty is active or not
+ * @return string
+ */
+function editBanButton($type, $pen_id, $inactive) {
+
+	if( ($inactive == 0) && ($type == 'TempBan' || $type == 'Ban') ) { // if ban is active and the penalty is a Ban or Tempban show link
+		return '<a onclick="editBanBox(this)" rel="'.$pen_id.'" class="edit-ban" title="Edit ban id &ldquo;'.$pen_id.'&rdquo;"><img src="images/edit.png" alt="[EB]" /></a>';
+	} else { // else show nothing
+		return NULL;
 	}
 
 }
@@ -460,6 +487,32 @@ function timeExpirePen($time_expire, $tformat) {
 	return $msg;
 }
 
+/**
+ * Get a penalty duration from your number and time frame
+ *
+ * @param string $time - time frame
+ * @param int $duration - duration
+ * @return int
+ */
+function penDuration($time, $duration) {
+
+	if($time == 'h') { // if time is in hours
+		$duration = $duration*60;
+	} elseif($time == 'd') { // time in days
+		$duration = $duration*60*24;
+	} elseif($time == 'w') { // time in weeks
+		$duration = $duration*60*24*7;
+	} elseif($time == 'mn') { // time in months (lets just say 30 days to a month)
+		$duration = $duration*60*24*30;
+	} elseif($time == 'y') { // time in years
+		$duration = $duration*60*24*365;
+	} else { // default time to mintues
+		$duration = $duration;
+	}
+	
+	return $duration;
+
+}
 
 function settingText($name, $title, $value, $type) {
 	switch ($type) {
@@ -583,7 +636,7 @@ function genFormToken($form) {
 function ifTokenBad($place) {
 	hack(1); // plus 1 to hack counter
 	writeLog($place.' - Bad Token'); // make note in log
-	sendBack('Hack Attempt Detected - If you continue you will be removed from this site'); // return to login page
+	sendBack('Hack Attempt Detected - If you continue you will be removed from this site');
 	exit;
 }
 

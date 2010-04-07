@@ -1,49 +1,33 @@
 <?php
-$auth_name = 'ban';
+$auth_name = 'edit_ban';
 $b3_conn = true; // this page needs to connect to the B3 database
 require '../../inc.php';
 
-if(!$_POST['ban-sub']) { // if the form not is submitted
+if(!$_POST['eb-sub']) { // if the form not is submitted
 	set_error('Please do not call that page directly, thank you.');
 	send('../../index.php');
 }
 
 ## check that the sent form token is corret
-if(verifyFormToken('ban', $tokens) == false) // verify token
-	ifTokenBad('Add ban');
-
-## Type of ban and get and set vars ##
+if(verifyFormToken('editban', $tokens) == false) // verify token
+	ifTokenBad('Edit ban');
+	
+$ban_id = cleanvar($_POST['banid']);
+$pbid = cleanvar($_POST['pbid']);
 $pb_ban = cleanvar($_POST['pb']);
+$reason = cleanvar($_POST['reason']);
 if($pb_ban == 'on') {
 	$is_pb_ban = true;
+	$type = 'Ban';
+	$duration = 0;
+	$time_expire = '-1';
 } else {
 	$is_pb_ban = false;
+	$type = 'TempBan';
 	$duration_form = cleanvar($_POST['duration']);
 	$time = cleanvar($_POST['time']);
 	emptyInput($time, 'time frame');
 	emptyInput($duration_form, 'penalty duration');
-}
-
-$reason = cleanvar($_POST['reason']);
-$client_id = cleanvar($_POST['cid']);
-$pbid = cleanvar($_POST['c-pbid']);
-$c_name = cleanvar($_POST['c-name']);
-$c_ip = cleanvar($_POST['c-ip']);
-
-// check for empty reason
-emptyInput($reason, 'ban reason');
-
-## Check sent client_id is a number ##
-if(!is_numeric($client_id))
-	sendBack('Invalid data sent, ban not added');
-	
-## Sort out some ban information
-if($is_pb_ban) { // if the ban is perma ban
-	$type = 'Ban';
-	$time_expire = '-1';
-	$duration = 0;
-} else {
-	$type = 'TempBan';
 	
 	// NOTE: the duration in the DB is done in MINUTES and the time_expire is written in unix timestamp (in seconds)
 	$duration = penDuration($time, $duration_form);
@@ -51,16 +35,26 @@ if($is_pb_ban) { // if the ban is perma ban
 	$duration_secs = $duration*60; // find the duration in seconds
 	
 	$time_expire = time() + $duration_secs; // time_expire is current time plus the duration in seconds
+}
 
-} // end if pb/tempban var setup
+// check for empty reason
+emptyInput($reason, 'ban reason');
 
-$data = '(Echelon: '.$_SESSION['name']. ' ['. $_SESSION['user_id'] .'])'; // since this ban goes down as a B3 ban, tag on some user information (display name and echelon user id)
+## Query Section ##
+$query = "UPDATE penalties SET type = ?, duration = ?, time_edit = UNIX_TIMESTAMP(), time_expire = ?, reason = ? WHERE id = ? LIMIT 1";
+$stmt = $db->mysql->prepare($query) or die('DB Error');
+$stmt->bind_param('siisi', $type, $duration, $time_expire, $reason, $ban_id);
+$stmt->execute();
 
-## Add Ban to the penalty table ##
-$result = $db->penClient($type, $client_id, $duration, $reason, $data, $time_expire);
+if($stmt->affected_rows > 0)
+	$results = true;
+else
+	sendBack('Something went wrong');
+
+## If a permaban send unban rcon command (the ban will still be enforced then by the B3 DB ##
+if($type == 'Ban') :
 	
-## Make PB ban to server if Pb is enabled ##
-if($is_pb_ban == true) :
+	## Loop thro server for this game and send unban command and update ban file
 	$i = 1;
 	while($i <= $game_num_srvs) :
 
@@ -69,10 +63,9 @@ if($is_pb_ban == true) :
 			$rcon_pass = $config['game'.$game]['servers'][$i]['rcon_pass'];
 			$rcon_ip = $config['game'.$game]['servers'][$i]['rcon_ip'];
 			$rcon_port = $config['game'.$game]['servers'][$i]['rcon_port'];
-			$c_ip = trim($c_ip);
 		
 			// PB_SV_BanGuid [guid] [player_name] [IP_Address] [reason]
-			$command = "pb_sv_banguid " . $pbid . " " . $c_name . " " . $c_ip . " " . $reason;
+			$command = "pb_sv_unbanguid " . $pbid;
 			rcon($rcon_ip, $rcon_port, $rcon_pass, $command); // send the ban command
 			sleep(1); // sleep for 1 sec in ordere to the give server some time
 			$command_upd = "pb_sv_updbanfile"; // we need to update the ban files
@@ -81,11 +74,12 @@ if($is_pb_ban == true) :
 
 		$i++;
 	endwhile;
-endif; // end if a $is_pb_ban == true
 
-if($result)
-	sendGood('Ban added to banlist and to the DB');
+endif;
+
+if($results)
+	sendGood('Ban edited');
 else
-	sendBack('Something went wrong the ban was not added');
+	sendBack('NO!');
 
 exit;

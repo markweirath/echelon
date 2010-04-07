@@ -47,7 +47,7 @@ $start_row = $page_no * $limit_rows;
 if($type_admin)
 	$query = "SELECT p.type, p.time_add, p.time_expire, p.reason, p.duration, target.id as target_id, target.name as target_name, c.id as admins_id, c.name as admins_name FROM penalties p, clients c, clients as target WHERE admin_id != '0' AND (p.type = 'Ban' OR p.type = 'TempBan') AND inactive = 0 AND p.time_expire <> 0 AND p.client_id = target.id AND p.admin_id = c.id";
 else
-	$query = "SELECT p.type, p.time_add, p.time_expire, p.reason, p.duration, p.client_id, c.name FROM penalties p LEFT JOIN clients c ON p.client_id = c.id WHERE p.admin_id = 0 AND (p.type = 'Ban' OR p.type = 'TempBan') AND p.inactive = 0";
+	$query = "SELECT p.type, p.time_add, p.time_expire, p.reason, p.data, p.duration, p.client_id, c.name FROM penalties p LEFT JOIN clients c ON p.client_id = c.id WHERE p.admin_id = 0 AND (p.type = 'Ban' OR p.type = 'TempBan') AND p.inactive = 0";
 
 
 $query .= sprintf(" ORDER BY %s ", $orderby);
@@ -84,7 +84,7 @@ if($type_admin) :
 	endwhile;
 	
 else :
-	$stmt->bind_result($type, $time_add, $time_expire, $reason, $duration, $client_id, $client_name);
+	$stmt->bind_result($type, $time_add, $time_expire, $reason, $data, $duration, $client_id, $client_name);
 
 	while($stmt->fetch()) : // get results and put results in an array
 		$pens_data[] = array(
@@ -92,9 +92,10 @@ else :
 			'time_add' => $time_add,
 			'time_expire' => $time_expire,
 			'reason' => $reason,
+			'data' => $data,
 			'duration' => $duration,
 			'client_id' => $client_id,
-			'client_name' => $client_name,
+			'client_name' => $client_name
 		);
 	endwhile;
 
@@ -161,6 +162,7 @@ endif;
 			$time_add = $pen['time_add'];
 			$time_expire = $pen['time_expire'];
 			$reason = tableClean($pen['reason']);
+			$data = tableClean($pen['data']);
 			$duration = $pen['duration'];
 			$client_id = $pen['client_id'];
 			$client_name = tableClean($pen['client_name']);
@@ -201,7 +203,9 @@ endif;
 				<td>$time_add_read</td>
 				<td>$duration_read</td>
 				<td>$time_expire_read</td>
-				<td>$reason_read</td>
+				<td>$reason_read
+					<br /><em>$data</em>
+				</td>
 				$admin_line
 			</tr>
 EOD;

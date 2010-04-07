@@ -78,9 +78,9 @@ class DB_B3 {
 	function penClient($type, $cid, $duration, $reason, $data, $time_expire) {
 	
 		// id(), type, client_id, admin_id(0), duration, inactive(0), keyword(Echelon), reason, data, time_add(time), time_edit(time), time_expire
-		$query = "INSERT INTO penalties (type, client_id, admin_id, duration, inactive, keyword, reason, data, time_add, time_edit, time_expire) VALUES(?, ?, 0, ?, 0, 'Echelon', ?, '', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), ?)";
+		$query = "INSERT INTO penalties (type, client_id, admin_id, duration, inactive, keyword, reason, data, time_add, time_edit, time_expire) VALUES(?, ?, 0, ?, 0, 'Echelon', ?, ?, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), ?)";
 		$stmt = $this->mysql->prepare($query) or die('MySQL Error');
-		$stmt->bind_param('siisi', $type, $cid, $duration, $reason, $time_expire);
+		$stmt->bind_param('siissi', $type, $cid, $duration, $reason, $data, $time_expire);
 		$stmt->execute();
 		
 		if($stmt->affected_rows > 0) // if something happened
