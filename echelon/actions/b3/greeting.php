@@ -11,6 +11,9 @@ if($_POST['greeting-sub']) : // if the form is submitted
 
 	$greeting = cleanvar($_POST['greeting']);
 	$client_id = cleanvar($_POST['cid']);
+	
+	// NOTE: allow for an empty comment. An empty comment means no comment
+	emptyInput($client_id, 'data not sent');
 
 	if(!is_numeric($client_id))
 		sendBack('Invalid data sent, greeting not changed');

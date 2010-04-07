@@ -1,5 +1,7 @@
 <?php
 $auth_user_here = false;
+$page = 'pubbans';
+$page_title = 'Public Ban List';
 $b3_conn = true; // this page needs to connect to the B3 database
 $pagination = true; // this page requires the pagination part of the footer
 require 'inc.php';

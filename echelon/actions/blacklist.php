@@ -11,7 +11,7 @@ if($_POST['deact']) { // if this is a deactivation request
 	
 	$dbl->BLactive($bl_id, false); // run query to deact BL ban
 	sendGood('This blacklist ban has been de-activated');
-	exit;
+	exit; // no need to continue
 
 } elseif($_POST['react']) { // if this is a re-activation request
 
@@ -21,7 +21,7 @@ if($_POST['deact']) { // if this is a deactivation request
 	
 	$dbl->BLactive($bl_id, true); // run query to reactivate BL ban
 	sendGood('This blacklist ban has been re-activiated');
-	exit;
+	exit; // no need to continue
 
 } elseif($_POST['ip']) { // if this is an add request
 	$admin_id = $_SESSION['user_id']; // find out what client this request is for
@@ -67,7 +67,7 @@ if($_POST['deact']) { // if this is a deactivation request
 	
 	// if got this far we are doing well so lets send back a good message
 	sendGood('The IP has been added to the banlist');
-	exit;
+	exit; // no need to continue
 
 } else { // if this page was not posted and a user indirectly ends up on this page then sent to SA page with error
 	set_error('Please do not load that page without submitting the ban IP address form');

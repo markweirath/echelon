@@ -121,6 +121,18 @@ function detectAJAX() {
 }
 
 /**
+ * Detect an AJAX MS Internet Explorer
+ *
+ * @return bool
+ */
+function detectIE() {
+    if (isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false))
+        return true;
+    else
+        return false;
+}
+
+/**
  * Checks if a user has attempted to login to many times or has been caught hacking the site
  */
 function locked() {
@@ -301,8 +313,11 @@ function sendHome() {
 /**
  * Send to the error page
  */
-function sendError() {
-	header("Location: {$path}error.php");
+function sendError($add = NULL) {
+	if($add == NULL)
+		header("Location: {$path}error.php");
+	else
+		header("Location: {$path}error.php?t={$add}");
 }
 
 /**
@@ -512,31 +527,6 @@ function penDuration($time, $duration) {
 	
 	return $duration;
 
-}
-
-function settingText($name, $title, $value, $type) {
-	switch ($type) {
-		case 'int':
-			$text = '<input type="text" class="int" value="'.$value.'" name="'.$name.'" /><label for="'.$name.'">'.$title.'</label><br />';
-		break;
-		case 'password':
-			$text = '<label for="'.$name.'">'.$title.':</label><input type="password" value="'.$value.'" name="'.$name.'" /><br />';
-		break;
-		case 'textarea':
-			$text = '<label for="'.$name.'">'.$title.':</label><textarea rows="6" name="'.$name.'">'.$value.'</textarea><br />';
-		break;
-		case 'check':
-			if($value == 1) {
-				$text = '<input type="checkbox" name="'.$name.'" checked="checked"><label for="'.$name.'">'.$title.'</label><br /><br />';
-			} else {
-				$text = '<input type="checkbox" name="'.$name.'"><label for="'.$name.'">'.$title.'</label><br /><br />';
-			}
-		break;
-		default: // if text
-			$text = '<label for="'.$name.'">'.$title.':</label><input type="text" value="'.$value.'" name="'.$name.'" /><br />';
-		break;
-	}
-	return $text;
 }
 
 /**

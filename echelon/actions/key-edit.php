@@ -24,12 +24,15 @@ elseif($_POST['comment']) : // if this is an edit comment request
 	$key = cleanvar($_POST['key']);
 	$comment = cleanvar($_POST['comment']);
 	
+	emptyInput($comment, 'comment');
+	
 	$result = $dbl->editKeyComment($key, $comment, $admin_id);
 	// this is an ajax request, so we need to echo error/success messages
 	if($result)
 		echo 'yes';
 	else
 		echo 'no';
+	exit; // no need to continue
 
 else : // if form not submitted
 	set_error('Please do not load that page directly, thank you.');

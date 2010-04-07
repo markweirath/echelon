@@ -21,6 +21,7 @@ if($_POST['t'] == 'del') :
 		sendGood('User has been deleted');
 	else
 		sendBack('There is a problem. The user has not been deleted');
+		
 	exit;
 
 elseif($_POST['ad-edit-user']):

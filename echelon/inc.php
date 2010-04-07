@@ -42,7 +42,19 @@ $https = detectSSL(); // find out if SSL is enabled for this site
 if($https_enabled) : // if https is FORCE enabled
 	if($https == FALSE) { // Check if https is off // If off throw error, logout and end script
 		set_error('An SSL connection is required for this site, and you did not seem to have one.');
-		logout();
+		if($mem->loggedIn())
+			$mem->logout();
 		exit;
 	}
 endif;
+
+## if no time zone set display error ##
+if($no_time_zone == true)
+	set_error('Setup Error: Site time zone not set, using Europe/London');
+
+#### Block Internet Explorer #####
+if($allow_ie == 0) {
+	if (detectIE() && $page != 'error') { // alow IE on the pubbans page aswell as the error page
+		sendError('ie');
+	}
+}

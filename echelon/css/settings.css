@@ -1,2 +1,2 @@
 /* Settings Page Styling */
-#cosmos-settings { float: none; width: 94%; }
+.email-msg textarea { height: 120px; width: 340px; max-width: 340px; }

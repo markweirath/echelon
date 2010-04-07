@@ -6,24 +6,6 @@ require_once 'config.php';
 
 $this_page = $_SERVER["PHP_SELF"];
 
-## setup the game var ##
-if($_GET['game']) {
-	$game = $_GET['game'];
-	setcookie("game", $game, time()*60*60*24*31, $path); // set the cookie to game value
-
-} elseif($_POST['game']) {
-	$game = addslashes($_POST['game']);
-	setcookie("game", $game, time()*60*60*24*31, $path); // set the cookie to game value
-
-} elseif($_COOKIE['game']) {
-	$game = $_COOKIE['game'];
-	
-} else {
-	$game = 1;
-	setcookie("game", $game, time()*60*60*24*31, $path); // set the cookie to game value
-	//die('Default Error');
-}
-
 ## Get the config array ##
 $config_info = $dbl->getConfig();
 // NOTE: $config_info holds all the information that is stored in the config table in the DB while
@@ -47,6 +29,31 @@ $https_enabled = $config['cosmos']['https'];
 $key_expire = $config['cosmos']['user_key_expire']; // This var says how long it takes for a user creation key to expire
 global $tformat; // make global to allow the formatting to be used inside functions
 $tformat = $config['cosmos']['time_format'];
+$time_zone = $config['cosmos']['time_zone'];
+
+if($time_zone == '') {
+	$time_zone == 'Europe/London';
+	$no_time_zone = true;
+}
+date_default_timezone_set($time_zone);
+
+## setup the game var ##
+if($_GET['game']) {
+	$game = $_GET['game'];
+	setcookie("game", $game, time()*60*60*24*31, $path); // set the cookie to game value
+
+} elseif($_POST['game']) {
+	$game = addslashes($_POST['game']);
+	setcookie("game", $game, time()*60*60*24*31, $path); // set the cookie to game value
+
+} elseif($_COOKIE['game']) {
+	$game = $_COOKIE['game'];
+	
+} else {
+	$game = 1;
+	setcookie("game", $game, time()*60*60*24*31, $path); // set the cookie to game value
+	//die('Default Error');
+}
 
 // if $game is greater than num_games then game doesn't exist so send to error page with error and reset game to 1
 if($game > $num_games) {

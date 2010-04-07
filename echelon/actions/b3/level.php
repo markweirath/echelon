@@ -1,5 +1,5 @@
 <?php
-## NOTE: this page deals with both the request from the change lient user level as well the requests to change a user's mask level ##
+## NOTE: this page deals with both the request from the change client user level as well the requests to change a user's mask level ##
 if($_POST['level-sub']) // what kind of request is it
 	$is_mask = false;
 else
@@ -16,18 +16,23 @@ require '../../inc.php';
 if($_POST['level-sub'] || $_POST['mlevel-sub']) : // if the form is submitted
 
 	## check that the sent form token is corret
-	/*if(!$is_mask) {
+	if(!$is_mask) {
 		if(verifyFormToken('level', $tokens) == false) // verify token
 			ifTokenBad('Change client level');
 	} else {
 		if(verifyFormToken('mask', $tokens) == false) // verify token
 			ifTokenBad('Change client mask level');
-	}*/
+	}
 	
 	## Set and clean vars ##
 	$level = cleanvar($_POST['level']);
 	$client_id = cleanvar($_POST['cid']);
 	$old_level = cleanvar($_POST['old-level']);
+	
+	## Check Empties ##
+	emptyInput($level, 'data not sent');
+	emptyInput($client_id, 'data not sent');
+	emptyInput($old_level, 'data not sent');
 	
 	## Check if the client_id is numeric ##
 	if(!is_numeric($client_id))

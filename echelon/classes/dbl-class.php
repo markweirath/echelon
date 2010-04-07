@@ -843,22 +843,26 @@ class DbL {
 	/**
 	 * Gets an array of data for the settings form
 	 *
+	 * @param string $cat - category of settigs to retrieve
 	 * @return array
 	 */
-	function getSettings() {
-        $query = "SELECT * FROM config ORDER BY category ASC, id";
-        $results = $this->mysql->query($query);
+	function getSettings($cat) {
+        $query = "SELECT name, value FROM config WHERE category = ?";
+        $stmt = $this->mysql->prepare($query);
+		$stmt->bind_param('s', $cat);
+		$stmt->execute();
+		
+		$stmt->store_result();
+		$stmt->bind_result($name, $value);
         
-        while ($row = $results->fetch_object()) : // get results
-            $settings[] = array(
-                'id' => $row->id,
-				'type' => $row->type,
-                'name' => $row->name,
-                'title' => $row->title,
-				'value' => $row->value,
-				'category' => $row->category
-                );
+		$settings = array();
+		
+        while($stmt->fetch()) : // get results
+            $settings[$name] = $value;
         endwhile;
+		
+		$stmt->close();
+		
         return $settings;
     }
     

@@ -190,7 +190,7 @@ endif;
 			<?php } else { ?>
 			
 				<li class="login<?php if($page == 'login') echo ' selected'; ?>"><a href="<?php echo $path; ?>login.php" title="Login to Echelon to see the good stuff!">Login</a></li>
-				<li class="pubbans"><a href="<?php echo $path; ?>pubbans.php" title="Public Ban List">Public Ban List</a></li>
+				<li class="pubbans<?php if($page == 'pubbans') echo ' selected'; ?>"><a href="<?php echo $path; ?>pubbans.php" title="Public Ban List">Public Ban List</a></li>
 				
 			<?php } ?>
 		</ul><!-- end #nav -->
