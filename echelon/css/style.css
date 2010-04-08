@@ -150,7 +150,7 @@ body { color: black; font: 17px; background: url(../images/body-bg.jpg) repeat; 
 
 #mc { margin: 0 auto 30px; width: 94%; }
 
-#content { background: #FFF; padding: 15px 20px 10px; border-bottom: 1px solid #bbb; border-right: 1px solid #ccc; }
+#content { background: #FFFFFF; padding: 15px 20px 10px; border-bottom: 1px solid #bbb; border-right: 1px solid #ccc; }
 
 #content-lower { font-size: 12px; padding: 5px; background: #d7d7d7 url(../images/content-lower.png) repeat-x; border: 1px solid #fdfdfd; -moz-border-radius: 0 0 10px 10px; -webkit-border-radius: 0 0 10px 10px; border-radius: 0 0 10px 10px; }
 	#content-lower a { color: #999; text-decoration: none; text-shadow: 1px 1px 2px #bbb; }

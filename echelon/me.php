@@ -36,22 +36,6 @@ require 'inc/header.php';
 			
 			<br class="clear" />
 			
-			<!--<fieldset class="none">
-				<legend>My Echelon Connect</legend>
-				
-				
-				<?php
-					$counter = 1;
-					while($counter <= $num_games) :
-						
-						echo '<label for="">'.$config['game'.$counter]['name'].' @id</label>';
-							echo '<input type="text" name="game'.$counter.'" value="" />';
-						
-						$counter++;
-					endwhile;
-				?>
-			</fieldset>-->
-			
 			<fieldset class="none" id="prove">
 				<legend>Prove Identiy</legend>
 					

@@ -17,34 +17,94 @@ class DbL {
 		// connect to the database or die with an error
 	}
 	
+	
 	/**
-	 * This function returns an array of information from the config table. Needed to make the $config setings array
+	 * Gets an array of data for the settings form
 	 *
+	 * @param string $cat - category of settigs to retrieve
 	 * @return array
 	 */
-	function getConfig() {
-		$query = "SELECT category, name, value FROM config ORDER BY category ASC";
-		$results = $this->mysql->query($query) or die('Database error');
+	function getSettings($cat) {
+        $query = "SELECT name, value FROM config WHERE category = ?";
+        $stmt = $this->mysql->prepare($query);
+		$stmt->bind_param('s', $cat);
+		$stmt->execute();
 		
-		while($row = $results->fetch_object()) : // get results		
-			$config[] = array(
-				'category' => $row->category,
+		$stmt->store_result();
+		$stmt->bind_result($name, $value);
+        
+		$settings = array();
+		
+        while($stmt->fetch()) : // get results
+            $settings[$name] = $value;
+        endwhile;
+		
+		$stmt->close();
+		
+        return $settings;
+    }
+	
+	function getGamesInfo() {
+	
+		$query = "SELECT id, game_id, game, name, name_short, num_srvs, db_host, db_user, db_pw, db_name FROM games ORDER BY game_id ASC";
+		$results = $this->mysql->query($query);
+        
+		$games = array();
+		
+		$i = 1;
+        while($row = $results->fetch_object()) : // get results		
+			$games[$i] = array(
+				'id' => $row->id,
+				'game_id' => $row->game_id,
+				'game' => $row->game,
 				'name' => $row->name,
-				'value' => $row->value
+				'name_short' => $row->name_short,
+				'num_srvs' => $row->num_srvs,
+				'db_host' => $row->db_host,
+				'db_user' => $row->db_user,
+				'db_pw' => $row->db_pw,
+				'db_name' => $row->db_name
 			);
+			$i++; // increment counter
 		endwhile;
-		return $config;
+		
+		return $games;
 	}
+    
+	/**
+	 * Update the settings
+	 *
+	 * @param string/int $value - the new value for the setting
+	 * @param string $name - the name of the settings
+	 * @param string $value_type - wheather the value provided is a string or an int
+	 * @return bool
+	 */
+    function setSettings($value, $name, $value_type) {
+	
+		//if($value_type != 's' || $value_type != 'i')
+		//	return false;
+        
+		$query = "UPDATE config SET value = ? WHERE name = ? LIMIT 1";
+		$stmt = $this->mysql->prepare($query);
+		$stmt->bind_param($value_type.'s', $value, $name);
+		$stmt->execute();
+		
+		if($stmt->affected_rows > 0)
+			return true;
+		else
+			return false;
+		
+    }
 	
 	function getServers($cur_game) {
 		$query = "SELECT id, name, ip, pb_active, rcon_pass, rcon_ip, rcon_port FROM servers WHERE game = ?";
 		$stmt = $this->mysql->prepare($query);
 		$stmt->bind_param('i', $cur_game);
 		$stmt->execute();
-		
+
 		$stmt->store_result(); // store results
 		$stmt->bind_result($id, $name, $ip, $pb_active, $rcon_pass, $rcon_ip, $rcon_port); // bind results into vars
-		
+
 		while($stmt->fetch()) : // get results and store in an array
 			$servers[] = array(
 				'id' => $id,
@@ -59,7 +119,7 @@ class DbL {
 
 		$stmt->free_result();
 		$stmt->close();
-		return $servers;	
+		return $servers;
 	}
 	
 	function getGamesList() {
@@ -839,56 +899,5 @@ class DbL {
 			return false;
 	
 	}
-	
-	/**
-	 * Gets an array of data for the settings form
-	 *
-	 * @param string $cat - category of settigs to retrieve
-	 * @return array
-	 */
-	function getSettings($cat) {
-        $query = "SELECT name, value FROM config WHERE category = ?";
-        $stmt = $this->mysql->prepare($query);
-		$stmt->bind_param('s', $cat);
-		$stmt->execute();
-		
-		$stmt->store_result();
-		$stmt->bind_result($name, $value);
-        
-		$settings = array();
-		
-        while($stmt->fetch()) : // get results
-            $settings[$name] = $value;
-        endwhile;
-		
-		$stmt->close();
-		
-        return $settings;
-    }
-    
-	/**
-	 * Update the settings
-	 *
-	 * @param string/int $value - the new value for the setting
-	 * @param string $name - the name of the settings
-	 * @param string $value_type - wheather the value provided is a string or an int
-	 * @return bool
-	 */
-    function setSettings($value, $name, $value_type) {
-	
-		//if($value_type != 's' || $value_type != 'i')
-		//	return false;
-        
-		$query = "UPDATE config SET value = ? WHERE name = ? LIMIT 1";
-		$stmt = $this->mysql->prepare($query);
-		$stmt->bind_param($value_type.'s', $value, $name);
-		$stmt->execute();
-		
-		if($stmt->affected_rows > 0)
-			return true;
-		else
-			return false;
-		
-    }
 
 } // end class

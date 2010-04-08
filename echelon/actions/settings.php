@@ -8,13 +8,15 @@ if(!$_POST['settings-sub']) :
 	send('../index.php');
 endif;
 
+// NOTE: This page only changes the general (cosmos) Echelon settings. There is one exception, 'num_games', num_games is not chnaged by this page
+
+
 ## Check Token ##
-//if(verifyFormToken('settings', $tokens) == false) // verify token
-//	ifTokenBad('Settings Edit');
+if(verifyFormToken('settings', $tokens) == false) // verify token
+	ifTokenBad('Settings Edit');
 
 ## Get Vars ##
 $f_name = cleanvar($_POST['name']);
-$f_num_games  = cleanvar($_POST['num_games']);
 $f_limit_rows = cleanvar($_POST['limit_rows']);
 $f_min_pw_len = cleanvar($_POST['min_pw_len']);
 $f_user_key_expire = cleanvar($_POST['user_key_expire']);
@@ -39,7 +41,6 @@ else
 
 ## Check for empty vars ##
 emptyInput($f_name, 'site name');
-emptyInput($f_num_games, 'number of games');
 emptyInput($f_limit_rows, 'no of rows per table page');
 emptyInput($f_min_pw_len, 'minimum password length');
 emptyInput($f_user_key_expire, 'user registration key length');
@@ -51,7 +52,7 @@ emptyInput($f_email_header, 'email header text');
 emptyInput($f_email_footer, 'email footer text');
 
 ## Check no. ##
-if(!is_numeric($f_num_games) || !is_numeric($f_limit_rows) || !is_numeric($f_min_pw_len) || !is_numeric($f_user_key_expire) )
+if(!is_numeric($f_limit_rows) || !is_numeric($f_min_pw_len) || !is_numeric($f_user_key_expire) )
 	sendBack('That some of information is suppose to be a number!');
 	
 ## Check Email is valid ##
@@ -81,16 +82,15 @@ $settings_table = $dbl->getSettings('cosmos'); // get the values of the settings
 
 $updates = array_diff($sent_settings, $settings_table); // find the differences (thoses differs are the only things we need to update)
 
-//var_dump($updates);
-//exit;
 ## Update DB ##
 foreach($updates as $key => $value) :
-	if($key == 'num_games' || $key == 'limit_rows' || $key == 'min_pw_len' || $key == 'user_key_expire')
+	if($key == 'limit_rows' || $key == 'min_pw_len' || $key == 'user_key_expire')
 		$value_type = 'i';
 	else
 		$value_type = 's';
 		
-	$result = $dbl->setSettings($value, $key, $value_type); /// update the settings in the DB
+	if($key != 'num_games') // num_games is the only cosmos setting not to be changed by this page
+		$result = $dbl->setSettings($value, $key, $value_type); /// update the settings in the DB
 	
 	if($result == false)
 		sendBack('Something did not update');
