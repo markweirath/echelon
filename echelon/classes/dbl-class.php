@@ -102,7 +102,6 @@ class DbL {
 		$stmt->bind_param('i', $cur_game);
 		$stmt->execute();
 
-		$stmt->store_result(); // store results
 		$stmt->bind_result($id, $name, $ip, $pb_active, $rcon_pass, $rcon_ip, $rcon_port); // bind results into vars
 
 		while($stmt->fetch()) : // get results and store in an array
@@ -116,20 +115,42 @@ class DbL {
 				'rcon_port' => $rcon_port
 			);
 		endwhile;
-
-		$stmt->free_result();
+		
 		$stmt->close();
 		return $servers;
 	}
 	
+	function getPlugins($game) {
+	
+		$query = "SELECT id, name, title, info FROM plugins WHERE game_id = ? AND enabled = 1";
+		$stmt = $this->mysql->prepare($query) or die('DB Error');
+		$stmt->bind_param('i', $game);
+		$stmt->execute();
+		
+		$stmt->bind_result($id, $name, $title, $info);
+		
+		while($stmt->fetch()) :
+			$plugins[$name] = array(
+				'id' => $id,
+				'title' => $title,
+				'info' => $info,
+				'enabled' => 1 // it must be enabled because the query said so
+			);
+		endwhile;
+		
+		$stmt->close();
+		return $plugins;
+	
+	}
+	
 	function getGamesList() {
-		$query = "SELECT category, value FROM config WHERE category != 'cosmos' AND name = 'name' ORDER BY id ASC";
+		$query = "SELECT game_id, name FROM games ORDER BY game_id ASC";
 		$results = $this->mysql->query($query) or die('Database error');
 		
 		while($row = $results->fetch_object()) :	
 			$games[] = array(
-				'category' => $row->category,
-				'value' => $row->value
+				'id' => $row->game_id,
+				'name' => $row->name
 			);
 		endwhile;
 		return $games;
@@ -890,7 +911,7 @@ class DbL {
 		// id, type, msg, client_id, user_id, time_add
 		$query = "INSERT INTO ech_logs VALUES(NULL, ?, ?, ?, ?, UNIX_TIMESTAMP())";
 		$stmt = $this->mysql->prepare($query) or die('MySQL Error: '. $this->mysql->error);
-		$stmt->bind_param('ssiii', $type, $comment, $cid, $user_id);
+		$stmt->bind_param('ssii', $type, $comment, $cid, $user_id);
 		$stmt->execute();
 		
 		if($stmt->affected_rows )

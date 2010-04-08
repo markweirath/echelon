@@ -36,23 +36,23 @@ if($page != 'login') { // stop login page from using this and moving the vars
 }
 
 
-## Check for HTTPS
+## Check for HTTPS ##
 $https = detectSSL(); // find out if SSL is enabled for this site
 
 if($https_enabled) : // if https is FORCE enabled
-	if($https == FALSE) { // Check if https is off // If off throw error, logout and end script
-		set_error('An SSL connection is required for this site, and you did not seem to have one.');
+	if($https == FALSE && $page != 'error') { // Check if https is off // If off throw error, logout and end script
 		if($mem->loggedIn())
 			$mem->logout();
 		exit;
+		sendError('ssl');
 	}
 endif;
 
 ## if no time zone set display error ##
 if($no_time_zone == true)
-	set_error('Setup Error: Site time zone not set, using Europe/London');
+	set_warning("Setup Error: The website's time zone is not set, defaulting to use Europe/London (GMT)");
 
-#### Block Internet Explorer #####
+## Block Internet Explorer ###
 if($allow_ie == 0) {
 	if (detectIE() && $page != 'error') { // alow IE on the pubbans page aswell as the error page
 		sendError('ie');

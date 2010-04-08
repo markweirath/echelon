@@ -49,6 +49,8 @@ $time_zone = $config['cosmos']['time_zone'];
 if($time_zone == '') {
 	$time_zone == 'Europe/London';
 	$no_time_zone = true;
+} else {
+	$no_time_zone = false;
 }
 date_default_timezone_set($time_zone);
 
@@ -100,6 +102,15 @@ else: // there is more than one server so a loop is needed
 	endforeach;
 
 endif;
+
+## Get plguin Information ##
+$config['games'][$game]['plugins'] = $dbl->getPlugins($game);
+
+## Handy's ##
+if($config['games'][$game]['plugins']['xlrstats']['enabled'] == 1) {
+	$plugin_xlrstats_enabled = true;
+}
+
 
 ## Setup some handy easy to access information for the CURRENT GAME only ##
 

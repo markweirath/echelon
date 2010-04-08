@@ -3,7 +3,7 @@ $auth_name = 'siteadmin';
 $b3_conn = true;
 require '../inc.php';
 
-if(!isset$_GET['s'])) {
+if(!isset($_GET['s'])) {
 	echo 'There should be no direct access to this script!';
 	exit;
 }

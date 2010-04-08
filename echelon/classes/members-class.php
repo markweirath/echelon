@@ -86,7 +86,7 @@ function logout() {
  */
 function genAndSetNewPW($password, $user_id) {
 	// generate a new salt for the user
-	$salt_new = randPass(12);
+	$salt_new = genSalt();
 	
 	// find the hash of the supplied password and the new salt
 	$password_new = genPW($password, $salt_new);

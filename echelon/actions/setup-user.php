@@ -37,7 +37,7 @@ if(!$valid_key) // if the key sent is a valid one
 
 ## Add user to users table ##
 // generate a new salt for the user
-$salt = randPass(12);
+$salt = genSalt();
 
 // find the hash of the supplied password and the new salt
 $password = genPW($pw1, $salt);

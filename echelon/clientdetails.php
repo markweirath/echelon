@@ -29,25 +29,28 @@ $stmt->bind_result($ip, $connections, $guid, $name, $mask_level, $greeting, $tim
 $stmt->fetch();
 $stmt->close();
 
-## Get information for xlrstats ##
-$query_xlr = "SELECT id, kills, deaths, ratio, skill, rounds, hide, fixed_name FROM xlr_playerstats WHERE client_id = ? LIMIT 1";
-$stmt = $db->mysql->prepare($query_xlr) or die('2 - MySQL Error: #'.$db->mysql->errno.' '.$db->mysql->error);
-$stmt->bind_param('i', $cid);
-$stmt->execute();
-$stmt->store_result();
+if($plugin_xlrstats_enabled == true) :
+	## Get information for xlrstats ##
+	$query_xlr = "SELECT id, kills, deaths, ratio, skill, rounds, hide, fixed_name FROM xlr_playerstats WHERE client_id = ? LIMIT 1";
+	$stmt = $db->mysql->prepare($query_xlr) or die('2 - MySQL Error: #'.$db->mysql->errno.' '.$db->mysql->error);
+	$stmt->bind_param('i', $cid);
+	$stmt->execute();
+	$stmt->store_result();
 
-if($stmt->num_rows) {
-	
-	$is_xlrstats_user = true;	
-	$stmt->bind_result($xlr_id, $kills, $deaths, $ratio, $skill, $rounds, $hide, $fixed_name);
-	$stmt->fetch();
-	
-} else {
-	$is_xlrstats_user = false;
-}
+	if($stmt->num_rows) {
+		
+		$is_xlrstats_user = true;	
+		$stmt->bind_result($xlr_id, $kills, $deaths, $ratio, $skill, $rounds, $xlr_hide, $fixed_name);
+		$stmt->fetch();
+		
+	} else {
+		$is_xlrstats_user = false;
+	}
 
-$stmt->free_result();
-$stmt->close();
+	$stmt->free_result();
+	$stmt->close();
+	
+endif; // endif xlrstats is enabled
 
 ## Require Header ##
 $page_title .= ' '.$name;
@@ -133,7 +136,9 @@ require 'inc/header.php';
 	</tbody>
 </table>
 
-<?php if($is_xlrstats_user) : ?>
+<?php 
+if($is_xlrstats_user && $plugin_xlrstats_enabled) : // if the user has xlrstats information and the XLRStats plugin is enabled
+?>
 <table class="cd-table" id="xlrstats-table">
 	<tbody>
 	<tr>
@@ -158,11 +163,11 @@ require 'inc/header.php';
 		<th>Fixed Name</th>
 			<td><?php if($fixed_name == "") { echo "Non Set"; } else { echo tableClean($fixed_name); } ?></td>
 		<th>Hidden</th>
-			<td><?php if($hide == 1) { echo "Yes"; } else { echo "No"; } ?></td>
+			<td><?php if($xlr_hide == 1) { echo "Yes"; } else { echo "No"; } ?></td>
 	</tr>
 	</tbody>
 </table>
-<?php endif; ?>
+<?php endif; /* endif xlr enabled and are records */ ?>
 
 <!-- Start Echelon Actions Panel -->
 
@@ -174,6 +179,7 @@ require 'inc/header.php';
 		<?php if($mem->reqLevel('ban')) { ?><li><a href="#tabs" title="Add Ban/Tempban to this user" rel="cd-act-ban" class="cd-tab">Ban</a></li><?php } ?>
 		<?php if($mem->reqLevel('edit_client_level')) { ?><li><a href="#tabs" title="Change this user's user level" rel="cd-act-lvl" class="cd-tab">Change Level</a></li><?php } ?>
 		<?php if($mem->reqLevel('edit_mask')) { ?><li><a href="#tabs" title="Change this user's mask level" rel="cd-act-mask" class="cd-tab">Mask Level</a></li><?php } ?>
+		<?php if($mem->reqLevel('edit_xlrstats')) { ?><li><a href="#tabs" title="Edit some XLRStats information" rel="cd-act-xlrstats" class="cd-tab">XLRStats</a></li><?php } ?>
 	</ul>
 	<div id="actions-box">
 		<?php
@@ -302,6 +308,27 @@ require 'inc/header.php';
 				<input type="hidden" name="cid" value="<?php echo $cid; ?>" />
 				<input type="hidden" name="token" value="<?php echo $mask_lvl_token; ?>" />
 				<input type="submit" name="mlevel-sub" value="Change Mask" />
+			</form>
+		</div>
+		<?php 
+			endif; 
+			if($mem->reqLevel('edit_xlrstats')) :
+			$xlr_token = genFormToken('xlrstats');
+		?>
+		<div id="cd-act-xlrstats" class="act-slide">
+			<form action="actions/b3/xlrstats.php" method="post">
+			
+				<label for="xlr-name">Fixed Name:</label>
+					<input type="text" name="fixed-name" value="<?php echo $fixed_name; ?>" id="xlr-name" /><br />
+				
+				<label for="xlr-hid">Hide Stats:</label>
+					<input type="checkbox" name="hidden" id="xlr-hid"<?php if($xlr_hide == '1') echo ' checked="checked"'; ?> />
+					
+				<div class="xlr"></div>
+				
+				<input type="hidden" name="cid" value="<?php echo $cid; ?>" />
+				<input type="hidden" name="token" value="<?php echo $xlr_token; ?>" />
+				<input type="submit" name="xlrstats-sub" value="Save Changes" />
 			</form>
 		</div>
 		<?php endif; ?>

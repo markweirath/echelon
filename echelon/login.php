@@ -370,11 +370,15 @@ if($mem->loggedIn()) { // if logged in users may skip this page
 			<select name="f-game" id="f-game" tabindex="3">
 				<?php
 					$games_list = $dbl->getGamesList();
-					foreach($games_list as $item) :
-						$loop_game_id = substr($item['category'], -1); // the id of the game is at the end of the string (eg. 'game1') so substr gets the last character (ie. the id)
-						$loop_game_name = $item['value'];
-						echo '<option value="'.$loop_game_id.'">'.$loop_game_name.'</option>';
-					endforeach;
+					$i = 0;
+					$count = count($games_list);
+					$count--; // minus 1
+					while($i <= $count) :
+						
+						echo '<option value="'. $games_list[$i]['id'] .'">'. $games_list[$i]['name'] .'</option>';
+						
+						$i++;
+					endwhile;
 				?>	
 			</select>
 

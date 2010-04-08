@@ -12,7 +12,7 @@ require 'inc/header.php';
 	<h1>Welcome to Echelon <small><?php echo ECH_VER; ?></small></h1>
 	 
 	<p class="welcome">Welcome <?php echo $mem->displayName($_SESSION['name']); ?> You are logged into the <?php echo $game_name; ?> database.<br />
-		<small>You can change what game ifnormation you would like to see under the 'game' dropdown above.</small></p>
+		<small>You can change what game information you would like to see under the 'game' dropdown above.</small></p>
 
 	<ul class="padd">
 		<li><a href="clients.php" title="Enter the repositorty and start exploring Echelon">Enter the Respository</a></li>
@@ -25,7 +25,6 @@ require 'inc/header.php';
 		<ul>
 			<li>Better user management, allowing more flexible permissions for Echelon users and managers</li>
 			<li>IP Blacklist, allows troublesome people to be banned from accessing the Echelon site</li>
-			<li>Echelon connect, lets people connect their B3 client with their Echelon user</li>
 			<li>Editable settings lets Echelon managers keep things simple</li>
 			<li>Regular visitors page shows a list of people who are not clan members and who connect regularly.</li>
 			<li>In-active admins page shows a list of admins who have not connected to the servers in a while</li>

@@ -106,6 +106,16 @@ function genPW($input, $salt) {
 }
 
 /**
+ * Generates a new password salt
+ *
+ * @return string $salt
+ */
+function genSalt() {
+	$salt = randPass(12);
+	return $salt;
+}
+
+/**
  * Detect an AJAX request
  *
  * @return bool
@@ -211,6 +221,15 @@ function set_error($msg) {
  */
 function set_good($msg) {
 	$_SESSION['good'] = $msg;
+}
+
+/**
+ * Set a warning message to be sent to the user
+ *
+ * @param string $msg - the warning message
+ */
+function set_warning($msg) {
+	$_SESSION['warning'] = $msg;
 }
 
 /**
@@ -334,7 +353,6 @@ function is_clients($page) {
 }
 
 function guidCheckLink($guid) {
-
 	echo '<a class="external" href="http://www.punksbusted.com/cgi-bin/membership/guidcheck.cgi?guid='.$guid.'" title="Check this guid is not banned by PunksBusted.com">'.$guid.'</a>';
 
 }
@@ -636,15 +654,15 @@ function ifTokenBad($place) {
 function errors() {
     $message = '';
     if($_SESSION['good'] != '') {
-        $message = '<div id="msg" class="success"><strong>Success:</strong> '.$_SESSION['good'].'<a class="err-close">Dismiss</a></div>';
+        $message .= '<div id="msg" class="success"><strong>Success:</strong> '.$_SESSION['good'].'<a class="err-close">Dismiss</a></div>';
         $_SESSION['good'] = '';
     }
     if($_SESSION['error'] != '') {
-        $message = '<div id="msg" class="error"><strong>Error:</strong> '.$_SESSION['error'].'<a class="err-close">Dismiss</a></div>';
+        $message .= '<div id="msg" class="error"><strong>Error:</strong> '.$_SESSION['error'].'<a class="err-close">Dismiss</a></div>';
         $_SESSION['error'] = '';
     }
 	if($_SESSION['warning'] != '') {
-        $message = '<div id="msg" class="warning"><strong>Warning:</strong> '.$_SESSION['warning'].'<a class="err-close">Dismiss</a></div>';
+        $message .= '<div id="msg" class="warning"><strong>Warning:</strong> '.$_SESSION['warning'].'<a class="err-close">Dismiss</a></div>';
         $_SESSION['warning'] = '';
     }
     
@@ -750,6 +768,7 @@ function decrypt($algo = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC, $key_sent
  * @param       int     number of seconds elapsed
  * @param       string  which time periods to display
  * @param       bool    whether to show zero time periods
+ * @return 		string 	the human readable time
  */
 function time_duration($seconds, $use = null, $zeros = false) {
 
