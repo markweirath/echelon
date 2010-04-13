@@ -13,20 +13,6 @@ $(document).ready(function() {
 			$(this).find('ul.dd').slideUp('fast');
 		});
 	});
-
-	// Tabs
-	$("a.cd-tab").click(function() {
-		
-		$(".cd-active").removeClass("cd-active");
-		
-		$(this).parent().addClass("cd-active");
-		
-		$(".act-slide").slideUp();
-		
-		var content_show = $(this).attr("rel");
-		$("#"+content_show).slideDown('slow');
-	  
-	});
 	
 	// Expand Panel
 	$("#open").click(function(){

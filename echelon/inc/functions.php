@@ -148,7 +148,7 @@ function detectIE() {
 function locked() {
 	if($_SESSION['wrong'] >= 3 || $_SESSION['hack'] >= 3) {
 		if($mem->loggedIn()) {
-			logout(); // if they are logged in log them out
+			$mem->logout(); // if they are logged in log them out
 		}
 		if(!isset($dbl)){ // if no Db object
 			$dbl = new DBl(); // create DB
@@ -158,6 +158,29 @@ function locked() {
 		writeLog('Locked out automatically.');
 		sendLocked();
 	}
+}
+
+function logout(){
+
+	$error = $_SESSION['error']; // perserve errors if the person is loggedout by error
+
+	$_SESSION = array(); // unsets all varibles
+
+	// If it's desired to kill the session, also delete the session cookie.
+	// Note: This will destroy the session, and not just the session data!
+	if(isset($_COOKIE[session_name()])) {
+	setcookie(session_name(), '', time()-42000, '/');
+	}
+
+	// This is useful for when you change authentication states as it also invalidates the old session. 
+	session::regenerateSession();
+
+	// Finally, destroy the session.
+	session_destroy();
+
+	session::sesStart(); // start session
+	$_SESSION['error'] = $error; // add error to new session
+
 }
 
 /**

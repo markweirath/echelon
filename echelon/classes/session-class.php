@@ -25,13 +25,15 @@ class Session {
 				// httpOnly is set to true // this can help prevent identiy theft with XSS hacks
                 session_set_cookie_params($limit, $path, $domain, $https, true);
                 session_start();
+				
+				
 
                 // Make sure the session hasn't expired, and destroy it if it has
                 if(self::validateSession())
                 {
 					// Check to see if the session is new or a hijacking attempt
-					if(!self::preventHijacking())
-					{
+					if(!self::preventHijacking()) {
+					
 							// Reset session data and regenerate id
 							$_SESSION['finger'] = member::getFinger();
 							self::regenerateSession();
@@ -41,9 +43,12 @@ class Session {
 							self::regenerateSession();
 					}
                 } else {
-					logout(); // uses echelon logout function
+					// logout and send to home page
+					logout();
+					sendHome();
                 }
-        }
+				
+        } // end sesStart
 
         /**
          * This function regenerates a new ID and invalidates the old session. This should be called whenever permission
@@ -100,10 +105,7 @@ class Session {
          */
         static protected function preventHijacking() {
 	
-                if( !isset($_SESSION['finger']) )
-                	return false;
-
-                if($_SESSION['finger'] != member::getFinger())
+                if(!isset($_SESSION['finger']) )
                 	return false;
 
                 if($_SESSION['finger'] != member::getFinger())

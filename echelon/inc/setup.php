@@ -111,7 +111,6 @@ if($config['games'][$game]['plugins']['xlrstats']['enabled'] == 1) {
 	$plugin_xlrstats_enabled = true;
 }
 
-
 ## Setup some handy easy to access information for the CURRENT GAME only ##
 
 $game_name = $config['games'][$game]['name'];

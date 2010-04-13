@@ -516,5 +516,12 @@ EOD;
 	</table>
 </div>
 
+<?php
+## Chat Logger ##
+// If the chat logger plugin is enabled then include the chat log code onto this page
+if($config['games'][$game]['plugins']['chatlog']['enabled'] == 1) :
+	include 'inc/cd/chatlogs.php';
 
-<?php require 'inc/footer.php'; ?>
+// Close page off with the footer
+require 'inc/footer.php'; 
+?>

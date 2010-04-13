@@ -137,20 +137,25 @@ endif;
 					<a href="#">Games</a>
 					<ul class="dd games-list">
 						<?php
-							$this_cur_page = basename($_SERVER['SCRIPT_NAME']);
+							$this_cur_page = basename($_SERVER['SCRIPT_NAME']);						
 							$games_list = $dbl->getGamesList();
-							foreach($games_list as $item) :
-								$loop_game_id = substr($item['category'], -1); // the id of the game is at the end of the string (eg. 'game1') so substr gets the last character (ie. the id)
-								$loop_game_name = $item['value'];
-								if($game == $loop_game_id)
+							$i = 0;
+							$count = count($games_list);
+							$count--; // minus 1
+							while($i <= $count) :
+	
+								if($game == $games_list[$i]['id'])
 									echo '<li class="selected">';
 								else
 									echo '<li>';
-								echo '<a href="'.$path . $this_cur_page .'?game='.$loop_game_id.'" title="Switch to this game">'.$loop_game_name.'</a></li>';
-							endforeach;
+								echo '<a href="'.$path . $this_cur_page .'?game='.$games_list[$i]['id'].'" title="Switch to this game">'.$games_list[$i]['name'].'</a></li>';
+								
+								$i++;
+							endwhile;
 						?>	
 					</ul>
 				</li>
+				<?php if($mem->reqLevel('clients')) : ?>
 				<li class="cdd">
 					<a href="#">Clients</a>
 					<ul class="dd">
@@ -160,6 +165,10 @@ endif;
 						<li class="admins<?php if($page == 'admins') echo ' selected'; ?>"><a href="<?php echo $path; ?>admins.php" title="A list of all admins">Admin Listing</a></li>
 					</ul>
 				</li>
+				<?php
+					endif; // reqLevel clients DD
+					if($mem->reqLevel('penalties')) :
+				?>
 				<li class="cdd">
 					<a href="#">Penalties</a>
 					<ul class="dd">
@@ -169,12 +178,15 @@ endif;
 						<li class="pubbans<?php if($page == 'pubbans') echo ' selected'; ?>"><a href="<?php echo $path; ?>pubbans.php" title="A public list of bans in the database">Public Ban List</a></li>
 					</ul>
 				</li>
+				<?php
+					endif; // end reqLevel penalties DD
+				?>
 				<li class="cdd">
 					<a href="#">Other</a>
 					<ul class="dd">
 						<li class="pbss<?php if($page == 'pbss') echo ' selected'; ?>"><a href="<?php echo $path; ?>clients.php" title="Punkbuster&trade; screenshots">PBSS</a></li>
 						<li class="chat<?php if($page == 'chat') echo ' selected'; ?>"><a href="<?php echo $path; ?>clients.php" title="Logs of chats from the servers">Chat Logs</a></li>
-						<li class="ctime<?php if($page == 'ctime') echo ' selected'; ?>"><a href="<?php echo $path; ?>clients.php" title="Records of how long people are spending on the server">Current Activity</a></li>
+						<li class="ctime<?php if($page == 'ctime') echo ' selected'; ?>"><a href="<?php echo $path; ?>ctime.php" title="Records of how long people are spending on the server">Current Activity</a></li>
 						<li class="notices<?php if($page == 'notices') echo ' selected'; ?>"><a href="<?php echo $path; ?>clients.php" title="In-game Notices">Notices</a></li>
 					</ul>
 				</li>

@@ -23,6 +23,34 @@ $(document).ready(function() {
 		}
 	});
 	
+	// Tabs
+	$("a.cd-tab").click(function() {
+		
+		$(".cd-active").removeClass("cd-active");
+		
+		$(this).parent().addClass("cd-active");
+		
+		$(".act-slide").slideUp();
+		
+		var content_show = $(this).attr("rel");
+		$("#"+content_show).slideDown('slow');
+	  
+	});
+	
+	// Chats Tabs
+	$("a.chat-tab").click(function() {
+		
+		$(".chat-active").removeClass("chat-active");
+		
+		$(this).parent().addClass("chat-active");
+		
+		$(".chat-content").slideUp();
+		
+		var content_show = $(this).attr("rel");
+		$("#"+content_show).slideDown('slow');
+	  
+	});
+	
 	if ($('#eb-pb:checked').val() == 'on') {
 		$("#eb-ban-duration").hide();
 	}

@@ -71,6 +71,11 @@ input[type=checkbox] { margin: 3px; display: inline !important; }
 
 input[disabled=disabled], input[disabled=disabled]:hover { opacity: 0.5; }
 	
+/* Small DESC Forms */
+.sm-f-select { display: inline; }
+.sm-f-select  select { display: inline; padding: 2px; border: 1px solid #4cb1dc; margin: 0 3px; font-size: 10px; width: auto; }
+.sm-f-select  small, small.n { border: none; padding: 0; margin: 0; }	
+	
 #search { width: 210px; }
 #change-pw { display: inline; margin: 3px 0 14px 3px; }
 #pass1 { float: left; }
@@ -148,7 +153,7 @@ body { color: black; font: 17px; background: url(../images/body-bg.jpg) repeat; 
 		#title a:hover { color: #fff; text-decoration: none; }
 	#subtitle { position: absolute; top: 82px; left: 185px; color: #eee; font-size: 14px; font-style: italic; border-top: 1px solid #f0f0f0; line-height: 14px; letter-spacing: 0.22px; }
 
-#mc { margin: 0 auto 30px; width: 94%; }
+#mc { margin: 0 auto 45px; width: 94%; }
 
 #content { background: #FFFFFF; padding: 15px 20px 10px; border-bottom: 1px solid #bbb; border-right: 1px solid #ccc; }
 
@@ -289,10 +294,6 @@ label.uname:hover { color: #bbb; }
 
 /* Error Styling */
 .error-msg { margin: 70px 20px; width: 46%; font-size: 18px; float: right; padding: 20px; border: 2px solid #ae2525; -moz-border-radius: 5px; -webkit-border-radius: 5px; }
-
-/* Public Ban List Page Styling */
-#pubbans-form { display: inline; }
-#pubbans-form  select { display: inline; padding: 2px; border: 1px solid #4cb1dc; margin: 0 3px; font-size: 10px; width: auto; }
 
 /* Registration Styling */
 .reg { font-style: italic; margin: 3px 25px 6px; }
