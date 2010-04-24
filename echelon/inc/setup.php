@@ -123,3 +123,7 @@ $game_db_name = $config['games'][$game]['db_name'];
 
 ## setup default page number so this doesn't have to be in every file ##
 $page_no = 0;
+
+## Check plugin is enabled ##
+if($config['games'][$game]['plugins']['ctime']['enabled'] == 0 && $page == 'ctime')
+	sendHome();

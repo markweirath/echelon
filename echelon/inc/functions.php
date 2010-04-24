@@ -116,6 +116,43 @@ function genSalt() {
 }
 
 /**
+ * Useing a user's password this func sees if the user inputed the right password for action verification
+ *
+ * @param string $password
+ */
+function reAuthUser($password, $dbl) {
+
+	// Check to see if this person is real
+	$salt = $dbl->getUserSaltById($_SESSION['user_id']);
+
+	if($salt == false) // only returns false if no salt found, ie. user does not exist
+		sendBack('There is a problem, you do not seem to exist!');
+
+	$hash_pw = genPW($password, $salt); // hash the inputted pw with the returned salt
+
+	// Check to see that the supplied password is correct
+	$validate = $dbl->validateUserRequest($_SESSION['user_id'], $hash_pw);
+	if($validate == false) {
+		hack(1); // add one to hack counter to stop brute force
+		sendBack('You have supplied an incorrect current password');
+	}
+	
+}
+
+/**
+ * Generate a random password or string
+ *
+ * @param int $count - lenght of the string
+ * @return string
+ */
+function randPass($count) {  
+
+	$pass = str_shuffle('abcefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890@#%$*'); //shuffle
+	
+	return substr($pass,3,$count); //returns the password  
+}
+
+/**
  * Detect an AJAX request
  *
  * @return bool
@@ -362,17 +399,8 @@ function sendError($add = NULL) {
 		header("Location: {$path}error.php?t={$add}");
 }
 
-/**
- * Check if the current page is the clients page
- *
- * @param string $page - the current page name
- * @return bool
- */
-function is_clients($page) {
-	if($page == 'client')
-		return true;
-	else
-		return false;
+function tooltip($msg) {
+	echo '<a class="tooltip" title="'. $msg .'"></a>';
 }
 
 function guidCheckLink($guid) {
@@ -591,7 +619,7 @@ function writeLog($where) {
 LOGMSGG;
 // Awkward but LOG must be flush left
 
-	$to = HACK_EMAIL;  
+	$to = EMAIL;  
 	$subject = 'HACK ATTEMPT';
 	$header = 'From: echelon@b3-echelon.com';
 	mail($to, $subject, $logging, $header);    
@@ -690,19 +718,6 @@ function errors() {
     }
     
 	echo $message;
-}
-
-/**
- * Generate a random password or string
- *
- * @param int $count - lenght of the string
- * @return string
- */
-function randPass($count) {  
-
-	$pass = str_shuffle('abcefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890@#%$*'); //shuffle
-	
-	return substr($pass,3,$count); //returns the password  
 }
 
 /**
@@ -836,4 +851,79 @@ function time_duration($seconds, $use = null, $zeros = false) {
 
     $str = implode(', ', $array);
     return $str;
+}
+
+
+/**
+ * Read current version of Echelon from master server
+ *
+ * @return	string	contents of that page
+ */
+ function getEchVer(){
+
+	$c = file_get_contents('http://b3-echelon.com/update/version.txt');
+	$string = cleanvar($c);
+	return $string;
+	
+}
+
+/**
+ * Simple isPage($page) functions
+ *
+ */
+
+function isHome($page) {
+	if($page == 'home')
+		return true;
+	else
+		return false;
+}
+
+function isClients($page) {
+	if($page == 'client')
+		return true;
+	else
+		return false;
+}
+
+function isCD($page) {
+	if($page == 'clientdetails')
+		return true;
+	else
+		return false;
+}
+
+function isLogin($page) {
+	if($page == 'login')
+		return true;
+	else
+		return false;
+}
+
+function isSettings($page) {
+	if($page == 'settings')
+		return true;
+	else
+		return false;
+}
+
+function isSA($page) {
+	if($page == 'sa')
+		return true;
+	else
+		return false;
+}
+
+function isMe($page) {
+	if($page == 'me')
+		return true;
+	else
+		return false;
+}
+
+function isPubbans($page) {
+	if($page == 'pubbans')
+		return true;
+	else
+		return false;
 }

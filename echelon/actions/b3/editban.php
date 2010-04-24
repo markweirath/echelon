@@ -16,6 +16,7 @@ $ban_id = cleanvar($_POST['banid']);
 $pbid = cleanvar($_POST['pbid']);
 $pb_ban = cleanvar($_POST['pb']);
 $reason = cleanvar($_POST['reason']);
+$cid = cleanvar($_POST['cid']);
 if($pb_ban == 'on') {
 	$is_pb_ban = true;
 	$type = 'Ban';
@@ -76,6 +77,14 @@ if($type == 'Ban') :
 	endwhile;
 
 endif;
+
+// set common vars	
+$type = 'Edit Ban';
+$user_id = $_SESSION['user_id'];
+$comment = 'A ban for this user was edited';
+
+## Query ##
+$result = $dbl->addEchLog($type, $comment, $cid, $user_id);
 
 if($results)
 	sendGood('Ban edited');

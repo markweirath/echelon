@@ -5,14 +5,14 @@ require '../../inc.php';
 
 $pen_id = cleanvar($_GET['banid']);
 
-$query = "SELECT p.reason, p.time_add, p.duration, p.time_expire, c.name, c.pbid FROM penalties p LEFT JOIN clients c ON p.client_id = c.id WHERE p.id = ?";
+$query = "SELECT p.reason, p.time_add, p.duration, p.time_expire, c.id, c.name, c.pbid FROM penalties p LEFT JOIN clients c ON p.client_id = c.id WHERE p.id = ?";
 $stmt = $db->mysql->prepare($query) or die('DB Error'. $db->mysql->error);
 $stmt->bind_param('i', $pen_id);
 $stmt->execute();
 $stmt->store_result(); // store results (needed to count num_rows)
 $num_rows = $stmt->num_rows; // finds the number fo rows retrieved from the database
 if($num_rows > 0) {
-	$stmt->bind_result($reason, $time_add, $duration, $time_expire, $name, $pbid);
+	$stmt->bind_result($reason, $time_add, $duration, $time_expire, $cid, $name, $pbid);
 	$stmt->fetch();
 }
 ?>
@@ -87,6 +87,7 @@ if($num_rows > 0) {
 			<label for="eb-reason">Reason:</label>
 				<input type="text" name="reason" id="eb-reason" value="<?php echo $reason_read; ?>" />
 			
+			<input type="hidden" name="cid" value="<?php echo $cid; ?>" />
 			<input type="hidden" name="pbid" value="<?php echo $pbid; ?>" />
 			<input type="hidden" name="banid" value="<?php echo $pen_id; ?>" />
 			<input type="hidden" name="token" value="<?php echo $token_eb; ?>" />

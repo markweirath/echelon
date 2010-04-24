@@ -75,6 +75,16 @@ require 'inc/header.php';
 				<p class="tip">If checked, this bans users from using IE anywhere but the Pub. Ban List</p>
 		
 		</fieldset>
+
+		<br class="clear" />
+		
+		<fieldset class="none">
+			<legend>Verify Yourself</legend>
+		
+			<label for="verify-pw">Your current password:</label>
+				<input type="password" name="password" id="verify-pw" />
+		
+		</fieldset>
 		
 		<br class="clear" />
 		

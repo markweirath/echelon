@@ -31,27 +31,27 @@ $start_row = $page_no * $limit_rows;
 ######### QUERIES #########
 
 $query = "SELECT c.name, g.name as level, c.connections, c.id, sum(gone - came) as czas
-                            FROM ctime ct, clients c, groups g
-                            WHERE ct.guid = c.guid AND c.group_bits = g.id ";
+		FROM ctime ct, clients c, groups g
+		WHERE ct.guid = c.guid AND c.group_bits = g.id ";
 							
 if($filter == "ad")
    $query .= "AND c.group_bits >= 16 ";
    
 if($duration) {
     if($duration == "fn") {
-        $query .= "AND ct.came > 1250637003-1209600";
+        $query .= "AND ct.came > UNIX_TIMESTAMP()-1209600";
 		$duration = "fn";
 		
     } elseif($duration == "w") {
-        $query .= "AND ct.came > 1250637003-604800";
+        $query .= "AND ct.came > UNIX_TIMESTAMP()-604800";
 		$duration = "w";
 		
     } elseif($duration == "d") {
-        $query .= "AND ct.came > 1250637003-86400";
+        $query .= "AND ct.came > UNIX_TIMESTAMP()-86400";
 		$duration = "d";
     }
 } else {
-    $query .= "AND ct.came > 1250637003-2419200"; // default to one month if nothing else works
+    $query .= "AND ct.came > UNIX_TIMESTAMP()-2419200"; // default to one month if nothing else works
 	$duration = "m";
 }
 
@@ -161,7 +161,11 @@ EOD;
 		$no_data = false;
 	} else {
 		$no_data = true;
-		echo '<tr class="odd"><td colspan="6">There are no admins that have been in active for more than '. $lenght . ' days.</td></tr>';
+		echo '<tr class="odd"><td colspan="6">';
+		if($filter == 'ad')
+			echo 'There have been no admins active in a while!</td></tr>';
+		else
+			echo 'There have been no clients active in a while!</td></tr>';
 	} // end if query contains information
 	?>
 	</tbody>

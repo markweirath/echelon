@@ -165,7 +165,7 @@ if($is_edit_user) : ?>
 			$ip = ipLink($ip);
 			$email_link = emailLink($email, $name);
 			
-			$grav_url = $mem->getGravatar($email);
+			$grav = $mem->getGravatar($email);
 			
 			$rowcolor = 1 - $rowcolor;
 			
@@ -179,7 +179,7 @@ if($is_edit_user) : ?>
 			// setup heredoc (table data)			
 			$data = <<<EOD
 			<tr class="$odd_even">
-				<td><img src="$grav_url" alt="" /></td>
+				<td>$grav</td>
 				<td>$id</td>
 				<td><strong><a href="sa.php?t=user&amp;id=$id" title="View $name in more detail">$name</a></strong></td>
 				<td>$group</td>

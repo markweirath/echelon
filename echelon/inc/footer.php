@@ -77,17 +77,36 @@
 	
 	<!-- load jQuery off google CDN -->
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+	
+	<!-- Load in some jquery plugins -->
 	<script src="<?php echo $path; ?>js/jquery.numeric.pack.js" type="text/javascript" charset="utf-8"></script>
 	<script src="<?php echo $path; ?>js/jquery.timers.js" type="text/javascript" charset="utf-8"></script>
-	
+	<script src="<?php echo $path; ?>js/jquery.tooltip.js" type="text/javascript" charset="utf-8"></script>
+
 	<?php if($page == 'me') { ?>
-		<script src="<?php echo $path; ?>js/me.js" type="text/javascript" charset="utf-8"></script>
-		<script src="<?php echo $path; ?>js/password_strength_plugin.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/me.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/password_strength_plugin.js" type="text/javascript" charset="utf-8"></script>
 	<?php } ?>
 	
 	<?php if($page == 'clientdetails') { ?>
-		<script src="<?php echo $path; ?>js/jquery.colorbox-min.js" type="text/javascript" charset="utf-8"></script>
-		<script src="<?php echo $path; ?>js/cd.js" type="text/javascript" charset="utf-8"></script>
+		
+		<script src="js/jquery.colorbox-min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/cd.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			$('#level-pw').hide();
+	
+			// check for show/hide PW required for level change 
+			if ($('#level').val() >= <?php echo $config['cosmos']['pw_req_level_group']; ?>) {
+				$("#level-pw").show();
+			}
+			$('#level').change(function(){
+				if ($('#level').val() >= 64) {
+					$("#level-pw").slideDown();
+				} else {
+					$("#level-pw").slideUp();
+				}
+			});
+		</script>
 	<?php } ?>
 	
 	<!-- load main site js -->

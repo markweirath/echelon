@@ -47,6 +47,10 @@ if($is_change_display_email == false && $is_change_pw == false)
 ## Query Section ##
 // Check to see if this person is real
 $salt = $dbl->getUserSaltById($user_id);
+
+if($salt == false) // only returns false if no salt returned
+	sendBack("There was an error, you don't seem to exist!");
+
 $hash_pw = genPW($cur_pw, $salt); // hash the inputted pw with the returned salt
 
 // Check to see that the supplied password is correct

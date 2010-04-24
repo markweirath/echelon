@@ -14,7 +14,7 @@ require 'inc/header.php';
 			<fieldset class="none">
 				<legend>Account Info</legend>
 				
-				<label class="uname">Username Name:</label>
+				<label class="uname">Username:</label>
 					<input type="text" name="uname" value="<?php echo $_SESSION['username']; ?>" disabled="disabled" />		
 				<label for="display">Display Name:</label>
 					<input type="text" name="name" value="<?php echo $_SESSION['name']; ?>" id="display" tabindex="1" />

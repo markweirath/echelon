@@ -1,7 +1,7 @@
 // Clientdetails Page JS Document
 
 $(document).ready(function() {
-	
+
 	$('#cd-h-pen').click(function(){
 		var thisItem = this;
 		getPenInfo(thisItem, 'client');

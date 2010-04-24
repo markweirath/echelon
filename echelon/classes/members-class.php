@@ -116,10 +116,10 @@ static function getFinger() {
 
 /**
  * Echo out the display name in a link, if the display name is not set echo guest.
- *
- * @param string $name - display name of the user
  */
-function displayName($name) {
+function displayName() {
+	$name = $_SESSION['name'];
+
 	if($name == '')
 		echo 'Guest';
 	else
@@ -148,15 +148,24 @@ function lastSeen($time_format = 'd M y') {
  * @return string
  */
 function getGravatar($email) {
-	$default = "https://s.eire32designs.com/echelon/images/nav/default-person.jpg"; // get variable from config.php
 	$size = 32;
+
+	$https = detectSSL();
 	
-	$grav_url = "https://secure.gravatar.com/avatar.php?
-	gravatar_id=".md5( strtolower($email) ).
-	"&amp;default=".urlencode($default).
-	"&amp;size=".$size; 
+	if($https) {
+		$grav_url = "https://secure.gravatar.com/avatar.php?
+		gravatar_id=".md5( strtolower($email) );
+	} else {
+		$grav_url = "http://www.gravatar.com/avatar/" . md5( strtolower( $email ) );
+	}
 	
-	return $grav_url;
+	$gravatar = '<span class="gravatar">
+			<a href="http://gravatar.com/" target="_blank" title="Get your own personalised image">
+				<img width="32" src="'.$grav_url.'" alt="" />
+			</a>
+		</span>';
+	
+	return $gravatar;
 }
 
 #############################

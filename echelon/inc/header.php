@@ -20,22 +20,22 @@ endif;
 	<!-- Load CSS Stylesheet -->
 	<link href="<?php echo $path; ?>css/style.css" rel="stylesheet" media="screen" type="text/css" />
 	
-	<?php if($page == 'login') { ?>
+	<?php if(isLogin($page)) { ?>
 		<!-- Load Login CSS Stylesheet -->
 		<link href="<?php echo $path; ?>css/login.css" rel="stylesheet" media="screen" type="text/css" />
 	<?php } ?>
 	
-	<?php if($page == 'clientdetails') { ?>
+	<?php if(isCD($page)) { ?>
 		<!-- Load Client details CSS Stylesheet -->
 		<link href="<?php echo $path; ?>css/cd.css" rel="stylesheet" media="screen" type="text/css" />
 	<?php } ?>
 	
-	<?php if($page == 'settings') { ?>
+	<?php if(isSettings($page)) { ?>
 		<!-- Load settings page CSS Stylesheet -->
 		<link href="<?php echo $path; ?>css/settings.css" rel="stylesheet" media="screen" type="text/css" />
 	<?php } ?>
 	
-	<?php if($page == 'home') { ?>
+	<?php if(isHome($page)) { ?>
 		<!-- Load Home page CSS Stylesheet -->
 		<link href="<?php echo $path; ?>css/home.css" rel="stylesheet" media="screen" type="text/css" />
 	<?php } ?>
@@ -75,12 +75,12 @@ endif;
 				<li>In-active admins page</li>
 				<li>Multi server for a DB support</li>
 				<li>Ability to change a client's mask, greeting, login details, edit a ban</li>
-				<li>Security: Anti-session hijacking and fixation, tokens to stop CSRF attacks, prepared statments to prevent SQL injection.</li>
+				<li>Security: Anti-session hijacking and fixation; tokens to stop CSRF attacks; prepared statments to prevent SQL injection.</li>
 			</ul>
 		</div>
 		
 		<div class="left right">
-			<?php if(!is_clients($page)) : ?>
+			<?php if(!isClients($page)) : ?>
 				<h3>Client Search</h3>
 				<form action="../clients.php" method="get" id="c-search">
 					<input type="text" name="s" id="search" value="Search clients list...." class="clr-txt" style="width: 170px;" />
@@ -132,7 +132,7 @@ endif;
 		<ul id="nav">
 			<?php if($mem->loggedIn()) { ?>
 			
-				<li class="home<?php if($page == 'home') echo ' selected'; ?>"><a href="<?php echo $path; ?>" title="Home Page">Home</a></li>
+				<li class="home<?php if(isHome($page)) echo ' selected'; ?>"><a href="<?php echo $path; ?>" title="Home Page">Home</a></li>
 				<li class="cdd">
 					<a href="#">Games</a>
 					<ul class="dd games-list">
@@ -159,10 +159,10 @@ endif;
 				<li class="cdd">
 					<a href="#">Clients</a>
 					<ul class="dd">
-						<li class="clients<?php if($page == 'client') echo ' selected'; ?>"><a href="<?php echo $path; ?>clients.php" title="Clients Listing">Clients</a></li>
-						<li class="active<?php if($page == 'active') echo ' selected'; ?>"><a href="<?php echo $path; ?>active.php" title="In-active admins">In-active Admins</a></li>
-						<li class="regular<?php if($page == 'regular') echo ' selected'; ?>"><a href="<?php echo $path; ?>regular.php" title="Regular non admin visitors to your servers">Regular Visitors</a></li>
-						<li class="admins<?php if($page == 'admins') echo ' selected'; ?>"><a href="<?php echo $path; ?>admins.php" title="A list of all admins">Admin Listing</a></li>
+						<li class="n-clients<?php if(isClients($page)) echo ' selected'; ?>"><a href="<?php echo $path; ?>clients.php" title="Clients Listing">Clients</a></li>
+						<li class="n-active<?php if($page == 'active') echo ' selected'; ?>"><a href="<?php echo $path; ?>active.php" title="In-active admins">In-active Admins</a></li>
+						<li class="n-regular<?php if($page == 'regular') echo ' selected'; ?>"><a href="<?php echo $path; ?>regular.php" title="Regular non admin visitors to your servers">Regular Visitors</a></li>
+						<li class="n-admins<?php if($page == 'admins') echo ' selected'; ?>"><a href="<?php echo $path; ?>admins.php" title="A list of all admins">Admin Listing</a></li>
 					</ul>
 				</li>
 				<?php
@@ -172,10 +172,10 @@ endif;
 				<li class="cdd">
 					<a href="#">Penalties</a>
 					<ul class="dd">
-						<li class="adminkicks<?php if($page == 'adminkicks') echo ' selected'; ?>"><a href="<?php echo $path; ?>adminkicks.php">Admin Kicks</a></li>
-						<li class="adminbans<?php if($page == 'adminbans') echo ' selected'; ?>"><a href="<?php echo $path; ?>bans.php?t=a">Admin Bans</a></li>
-						<li class="b3pen<?php if($page == 'b3pen') echo ' selected'; ?>"><a href="<?php echo $path; ?>bans.php?t=b" title="All Kicks/Bans added automatically by B3">B3 Bans</a></li>
-						<li class="pubbans<?php if($page == 'pubbans') echo ' selected'; ?>"><a href="<?php echo $path; ?>pubbans.php" title="A public list of bans in the database">Public Ban List</a></li>
+						<li class="n-adminkicks<?php if($page == 'adminkicks') echo ' selected'; ?>"><a href="<?php echo $path; ?>adminkicks.php">Admin Kicks</a></li>
+						<li class="n-adminbans<?php if($page == 'adminbans') echo ' selected'; ?>"><a href="<?php echo $path; ?>bans.php?t=a">Admin Bans</a></li>
+						<li class="n-b3pen<?php if($page == 'b3pen') echo ' selected'; ?>"><a href="<?php echo $path; ?>bans.php?t=b" title="All Kicks/Bans added automatically by B3">B3 Bans</a></li>
+						<li class="n-pubbans<?php if(isPubbans($page)) echo ' selected'; ?>"><a href="<?php echo $path; ?>pubbans.php" title="A public list of bans in the database">Public Ban List</a></li>
 					</ul>
 				</li>
 				<?php
@@ -184,25 +184,27 @@ endif;
 				<li class="cdd">
 					<a href="#">Other</a>
 					<ul class="dd">
-						<li class="pbss<?php if($page == 'pbss') echo ' selected'; ?>"><a href="<?php echo $path; ?>clients.php" title="Punkbuster&trade; screenshots">PBSS</a></li>
-						<li class="chat<?php if($page == 'chat') echo ' selected'; ?>"><a href="<?php echo $path; ?>clients.php" title="Logs of chats from the servers">Chat Logs</a></li>
-						<li class="ctime<?php if($page == 'ctime') echo ' selected'; ?>"><a href="<?php echo $path; ?>ctime.php" title="Records of how long people are spending on the server">Current Activity</a></li>
-						<li class="notices<?php if($page == 'notices') echo ' selected'; ?>"><a href="<?php echo $path; ?>clients.php" title="In-game Notices">Notices</a></li>
+						<li class="n-pbss<?php if($page == 'pbss') echo ' selected'; ?>"><a href="<?php echo $path; ?>clients.php" title="Punkbuster&trade; screenshots">PBSS</a></li>
+						<li class="n-chat<?php if($page == 'chat') echo ' selected'; ?>"><a href="<?php echo $path; ?>clients.php" title="Logs of chats from the servers">Chat Logs</a></li>
+						<?php if($config['games'][$game]['plugins']['ctime']['enabled'] == 1) : /* if the plugin is enabled show the link */ ?>
+							<li class="n-ctime<?php if($page == 'ctime') echo ' selected'; ?>"><a href="<?php echo $path; ?>ctime.php" title="Records of how long people are spending on the server">Current Activity</a></li>
+						<?php endif; ?>
+						<li class="n-notices<?php if($page == 'notices') echo ' selected'; ?>"><a href="<?php echo $path; ?>notices.php" title="In-game Notices">Notices</a></li>
 					</ul>
 				</li>
 				<li class="cdd">
 					<a href="#">Echelon</a>
 					<ul class="dd">
-						<li class="settings<?php if($page == 'settings') echo ' selected'; ?>"><a href="<?php echo $path; ?>settings.php" title="Site Settings">Site Settings</a></li>
-						<li class="sa<?php if($page == 'sa') echo ' selected'; ?>"><a href="<?php echo $path; ?>sa.php" title="Site Administration">Site Admin</a></li>
-						<li class="me<?php if($page == 'me') echo ' selected'; ?>"><a href="<?php echo $path; ?>me.php" title="Edit your account">My Account</a></li>
+						<?php if($mem->reqLevel('manage_settings')) : ?><li class="n-settings<?php if(isSettings($page)) echo ' selected'; ?>"><a href="<?php echo $path; ?>settings.php" title="Site Settings">Site Settings</a></li><?php endif; ?>
+						<?php if($mem->reqLevel('siteadmin')) : ?><li class="n-sa<?php if(isSA($page)) echo ' selected'; ?>"><a href="<?php echo $path; ?>sa.php" title="Site Administration">Site Admin</a></li><?php endif; ?>
+						<li class="n-me<?php if(isMe($page)) echo ' selected'; ?>"><a href="<?php echo $path; ?>me.php" title="Edit your account">My Account</a></li>
 					</ul>
 				</li>			
 				
 			<?php } else { ?>
 			
-				<li class="login<?php if($page == 'login') echo ' selected'; ?>"><a href="<?php echo $path; ?>login.php" title="Login to Echelon to see the good stuff!">Login</a></li>
-				<li class="pubbans<?php if($page == 'pubbans') echo ' selected'; ?>"><a href="<?php echo $path; ?>pubbans.php" title="Public Ban List">Public Ban List</a></li>
+				<li class="login<?php if(isLogin($page)) echo ' selected'; ?>"><a href="<?php echo $path; ?>login.php" title="Login to Echelon to see the good stuff!">Login</a></li>
+				<li class="pubbans<?php if(isPubbans($page)) echo ' selected'; ?>"><a href="<?php echo $path; ?>pubbans.php" title="Public Ban List">Public Ban List</a></li>
 				
 			<?php } ?>
 		</ul><!-- end #nav -->
@@ -215,9 +217,11 @@ endif;
 			<?php } ?>
 			
 			<div class="info">
-				<?php $grav_url = $mem->getGravatar($_SESSION['email']); ?>
-				<span class="gravatar"><a href="http://gravatar.com/" target="_blank" title="Get your own personalised image"><img src="<?php echo $grav_url; ?>" alt="" /></a></span>
-				<span class="display-name"><?php $mem->displayName($_SESSION['name']); ?></span>
+				<?php 
+					$grav = $mem->getGravatar($_SESSION['email']); 
+					echo $grav;
+				?>
+				<span class="display-name"><?php $mem->displayName(); ?></span>
 				<?php if($mem->loggedIn()) {
 					echo '<span class="last-seen">';
 						$mem->lastSeen();
@@ -233,4 +237,16 @@ endif;
 		
 	<div id="content">
 	
-	<?php errors(); ?>
+	<?php 
+	
+		## if Site Admin check for current Echelon Version and if not equal add warning
+		if($mem->reqLevel('see_update_msg')) :
+			if(isSA($page) || isSettings($page) || isHome($page)) {
+				$latest = getEchVer();
+				if(ECH_VER !== $latest) // if current version does not equal latest version show warning message
+					set_warning('You are not using the lastest version of Echelon, please check the <a href="http://www.bigbrotherbot.com/forums/" title="Check the B3 Forums">B3 Forums</a> for more information.');
+			}
+		endif;
+		
+		errors(); // echo out all errors/success/warnings
+	?>

@@ -7,10 +7,10 @@ require 'inc.php';
 
 ##### start script #####
 
-if($mem->loggedIn()) { // if logged in users may skip this page
+if($mem->loggedIn()) { ## if logged in users may skip this page
 	sendHome(); // send to the index/home page
 	
-} elseif ($_POST['f-name']) { // if this is a log in request 
+} elseif ($_POST['f-name']) { ## if this is a log in request 
 
 	// if over the maxium amount of wrong attempts, if on BL
 	// or if hack attempts detected, BL and remove user
@@ -79,62 +79,58 @@ if($mem->loggedIn()) { // if logged in users may skip this page
 	} else {
 		$login_success = false;
 	}
-	##
 	
-	if($login_success) { // if true follow login procedure
-
-		## get premissions
-		$perms = $dbl->getPermissions(); // use user's id
-		$perms_list = $results[6]; // value of perms for users group db
-
-		$_SESSION['perms'] = array();
-		
-		$perms_list_items = array();
-		$perms_list_items = explode(",", $perms_list);
-		
-		foreach($perms as $perm) :
-			$id = $perm['id'];
-			$name = $perm['name'];
-			$_SESSION['perms'][$name] = false;
-			
-			if(in_array($id, $perms_list_items)) {
-				$_SESSION['perms'][$name] = true;
-			}	
-		endforeach;
-		
-		if($_SESSION['perms']['login'] == false) { // if the perm login is not granted the account has been deactivated
-			wrong(1);
-			sendBack('Your account has beeen de-activated, please contact your site admin.');
-			exit;
-		}
-		
-		$_SESSION['user_id'] = $results[0]; // set user id	
-		$_SESSION['last_ip'] = $results[1]; // set last known ip
-		$_SESSION['last_seen'] = $results[2]; // set last time seen.
-		$_SESSION['username'] = $username; // set username equal to the username that was used to login
-		$_SESSION['name'] = $results[3]; // get the users display name
-		$_SESSION['email'] = $results[4]; // users email address
-		$_SESSION['group'] = $results[5]; // what ecg-group is the user in
-		
-		$_SESSION['auth'] = true; // authorise user to access logged in areas
-		$_SESSION['wrong'] = 0; // reset wrong counter
-		$_SESSION['hack'] = 0; // reset hack atempt count
-		
-		setcookie("game", $game_input, time()*60*60*24*31, $path); // set the game cookie equal to the game choosen in the login form
-
-		$_SESSION['finger'] = $mem->getFinger(); // find the hash of user agent plus salt
-
-		$ip = getRealIp(); // get users current IP
-		$result = $dbl->newUserInfo($ip, $results[0]); // update user to have new time and IP
-		
-		sendHome(); // return to home page
-		
-	} else { // failed attempt
 	
+	if(!$login_success) { // send back if user login failed
 		wrong(1); // add one to wrong counter
 		sendBack('Bad login attempt, please try again.'); // return to login page with the error
+	}
+	
+	## get premissions
+	$perms = $dbl->getPermissions(); // use user's id
+	$perms_list = $results[6]; // value of perms for users group db
+
+	$_SESSION['perms'] = array();
+	
+	$perms_list_items = array();
+	$perms_list_items = explode(",", $perms_list);
+	
+	foreach($perms as $perm) :
+		$id = $perm['id'];
+		$name = $perm['name'];
+		$_SESSION['perms'][$name] = false;
 		
-	} // end if attempt failed/success
+		if(in_array($id, $perms_list_items)) {
+			$_SESSION['perms'][$name] = true;
+		}	
+	endforeach;
+		
+	if($_SESSION['perms']['login'] == false) { // if the perm login is not granted the account has been deactivated
+		wrong(1);
+		sendBack('Your account has beeen de-activated, please contact your site admin.');
+		exit;
+	}
+	
+	$_SESSION['user_id'] = $results[0]; // set user id	
+	$_SESSION['last_ip'] = $results[1]; // set last known ip
+	$_SESSION['last_seen'] = $results[2]; // set last time seen.
+	$_SESSION['username'] = $username; // set username equal to the username that was used to login
+	$_SESSION['name'] = $results[3]; // get the users display name
+	$_SESSION['email'] = $results[4]; // users email address
+	$_SESSION['group'] = $results[5]; // what ecg-group is the user in
+	
+	$_SESSION['auth'] = true; // authorise user to access logged in areas
+	$_SESSION['wrong'] = 0; // reset wrong counter
+	$_SESSION['hack'] = 0; // reset hack atempt count
+	
+	setcookie("game", $game_input, time()*60*60*24*31, $path); // set the game cookie equal to the game choosen in the login form
+
+	$_SESSION['finger'] = $mem->getFinger(); // find the hash of user agent plus salt
+
+	$ip = getRealIp(); // get users current IP
+	$result = $dbl->newUserInfo($ip, $results[0]); // update user to have new time and IP
+	
+	sendHome(); // return to home page
 	
 	exit; // We are done with this page so we can end here
 
@@ -149,9 +145,8 @@ if($mem->loggedIn()) { // if logged in users may skip this page
 	$email = cleanvar($_POST['email']);
 	
 	// check the new email address is a valid email address
-	if(!filter_var($email,FILTER_VALIDATE_EMAIL)) {  
+	if(!filter_var($email,FILTER_VALIDATE_EMAIL))
 		sendBack('That email is not valid');
-	}
 	
 	$verify = $dbl->verifyUser($name, $email);
 	if($verify == false) // no user, return error
@@ -194,9 +189,8 @@ if($mem->loggedIn()) { // if logged in users may skip this page
 	$subject = "Echelon Password Reset";
 	
 	// send email
-	if(!mail($email, $subject, $body, $headers)) {
+	if(!mail($email, $subject, $body, $headers))
 		sendback('There was a problem sending the email.');
-	}
 	
 	// all good set good message
 	set_good('The final instructions have been emailed to you. Please check your inbox.');
@@ -311,7 +305,7 @@ if($mem->loggedIn()) { // if logged in users may skip this page
 
 <?php
 	require 'inc/footer.php';
-	exit;
+	exit; // no need to continue with this page
 
 } elseif($_GET['t'] == 'lost') { // if this is a lost password page
 
@@ -343,7 +337,7 @@ if($mem->loggedIn()) { // if logged in users may skip this page
 
 <?php
 	require 'inc/footer.php';
-	exit;
+	exit; // no need to continue with this page
 	
 } else { // else if not logged in and not a login request
 	$page = "login";

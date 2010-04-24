@@ -6,6 +6,7 @@ if (!empty($_SERVER['SCRIPT_FILENAME']) && 'config.php' == basename($_SERVER['SC
 ## General ##
 global $path; // ignore line
 $path = "/echelon/"; // path to echelon from root of web directory. include starting and trailing /'s (eg. "/echelon/" )
+define("PATH", "/echelon/");
 
 ## Echelon Version ##
 define("ECH_VER", 'v.2.0a');

@@ -275,7 +275,16 @@ if($is_xlrstats_user && $plugin_xlrstats_enabled) : // if the user has xlrstats 
 									echo '<option value="'.$gid.'">'.$gname.'</option>';
 							endforeach;
 						?>
-					</select>
+					</select><br />
+					
+				<div id="level-pw">
+					<label for="password">Your Current Password:</label>
+						<input type="password" name="password" id="password" />
+						
+						<?php tooltip('We need you password to make sure it is really you'); ?>
+						
+					<br />
+				</div>
 					
 				<input type="hidden" name="old-level" value="<?php echo $group_bits; ?>" />
 				<input type="hidden" name="cid" value="<?php echo $cid; ?>" />

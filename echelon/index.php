@@ -11,7 +11,7 @@ require 'inc/header.php';
 ?>
 	<h1>Welcome to Echelon <small><?php echo ECH_VER; ?></small></h1>
 	 
-	<p class="welcome">Welcome <?php echo $mem->displayName($_SESSION['name']); ?> You are logged into the <?php echo $game_name; ?> database.<br />
+	<p class="welcome">Welcome <?php echo $mem->displayName(); ?> You are logged into the &ldquo;<?php echo $game_name; ?>&rdquo; database.<br />
 		<small>You can change what game information you would like to see under the 'game' dropdown above.</small></p>
 
 	<ul class="padd">

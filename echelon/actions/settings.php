@@ -29,6 +29,10 @@ $f_time_zone = cleanvar($_POST['time_zone']);
 $f_email_header = cleanvar($_POST['email_header']);
 $f_email_footer = cleanvar($_POST['email_footer']);
 
+// Verify Password
+$password = cleanvar($_POST['password']);
+
+// Set Checkboxes
 if($f_https == 'on')
 	$f_https = 1;
 else
@@ -50,16 +54,20 @@ emptyInput($f_time_format, 'time format');
 emptyInput($f_time_zone, 'time zone');
 emptyInput($f_email_header, 'email header text');
 emptyInput($f_email_footer, 'email footer text');
+emptyInput($password, 'your current password');
 
 ## Check no. ##
 if(!is_numeric($f_limit_rows) || !is_numeric($f_min_pw_len) || !is_numeric($f_user_key_expire) )
-	sendBack('That some of information is suppose to be a number!');
+	sendBack('Some of that information is suppose to be a number!');
 	
 ## Check Email is valid ##
 if(!filter_var($f_email, FILTER_VALIDATE_EMAIL)) 
 	sendBack('The email supplied is not valid');
 	
-## Create arr ay of sent vars ##
+## Check that authorisation passsword is correct ##
+reAuthUser($password, $dbl);
+	
+## Create array of sent vars ##
 $sent_settings = array(
 	'name' => $f_name,
 	'num_games' => $f_num_games,
@@ -99,4 +107,3 @@ endforeach;
 
 ## Return ##
 sendGood('Your settings have been updated');
-	
