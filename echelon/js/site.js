@@ -13,21 +13,7 @@ $(document).ready(function() {
 		});
 	});
 	
-	// Expand Panel
-	$("#open").click(function(){
-		$("div#panel").slideDown("slow");
-	});
-
-	// Collapse Panel
-	$("#close").click(function(){
-		$("div#panel").slideUp("slow");
-	});
-
-	// Switch buttons from "Log In | Register" to "Close Panel" on click
-	$("#toggle a").click(function () {
-		$("#toggle a").toggle();
-	});
-	
+	// Clear Inpt of Text
 	$(".clr-txt").focus(function(){
 	   if (this.value == this.defaultValue){
 		  this.value = '';
