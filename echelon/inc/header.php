@@ -47,77 +47,6 @@ endif;
 		
 <div id="page-wrap">
 	
-<?php if($mem->loggedIn()) { ?>
-<!-- Panel -->
-<div id="toppanel">
-
-<div id="panel">
-	<div class="content clearfix">
-		<div class="left">
-			<h3>External Links</h3>
-			<ul>
-				<li><a href="http://eire32designs.com/" title="The developers site">E32D</a></li>
-				<li><a href="http://edgegamers.org/" title="A clan that helped with the development of Echelon">EdgeGamers&trade;</a></li>
-				<li><a href="http://bigbrotherbot.com/forums/" title="B3 Website">B3 Forms</a></li>
-				<li><a href="#" title="Help and information for Echelon">Echelon Help</a></li>
-				<li><a href="http://cback.de/" title="Anti worm injection software">CTracker</a></li>
-			</ul>
-		</div>
-		
-		<div class="left">
-			<h3>Changelog v2.0</h3>
-			<ul>
-				<li>Better user management</li>
-				<li>IP Blacklist</li>
-				<li>Echelon connect</li>
-				<li>Editable settings</li>
-				<li>Regular visitors page</li>
-				<li>In-active admins page</li>
-				<li>Multi server for a DB support</li>
-				<li>Ability to change a client's mask, greeting, login details, edit a ban</li>
-				<li>Security: Anti-session hijacking and fixation; tokens to stop CSRF attacks; prepared statments to prevent SQL injection.</li>
-			</ul>
-		</div>
-		
-		<div class="left right">
-			<?php if(!isClients($page)) : ?>
-				<h3>Client Search</h3>
-				<form action="../clients.php" method="get" id="c-search">
-					<input type="text" name="s" id="search" value="Search clients list...." class="clr-txt" style="width: 170px;" />
-					
-					<select name="t">
-						<option value="all" <?php if($search_type == "all") echo 'selected="selected"' ?>>All</option>
-						<option value="alias" <?php if($search_type == "alias") echo 'selected="selected"' ?>>Alias</option>
-						<option value="pbid" <?php if($search_type == "pbid") echo 'selected="selected"' ?>>PBID</option>
-						<option value="ip" <?php if($search_type == "ip") echo 'selected="selected"' ?>>IP</option>
-						<option value="id" <?php if($search_type == "id") echo 'selected="selected"' ?>>Player ID</option>
-					</select><br />
-					
-					<input type="submit" id="sub-search" value="Search" />
-				</form>
-			<?php endif; ?>
-		</div>
-	</div>
-</div>
-
-<!-- The tab on top -->	
-<div class="tab">
-	<ul class="login">
-		<li class="left">&nbsp;</li>
-		<li>Hello <?php echo $_SESSION['name']; ?></li>
-		<li class="sep">|</li>
-		<li id="toggle">
-			<a id="open" class="open" href="#">Help | Search</a>
-			<a id="close" style="display: none;" class="close" href="#">Close Panel</a>			
-		</li>
-		<li class="right">&nbsp;</li>
-	</ul> 
-</div> <!-- / top -->
-	
-</div> <!--panel -->
-<?php } ?>
-
-
 <div id="header">
 	<a name="t"></a>
 	<h1 id="title"><a href="<?php echo $path; ?>" title="Go to the home page">Echelon</a></h1>
@@ -133,6 +62,8 @@ endif;
 			<?php if($mem->loggedIn()) { ?>
 			
 				<li class="home<?php if(isHome($page)) echo ' selected'; ?>"><a href="<?php echo $path; ?>" title="Home Page">Home</a></li>
+				
+				
 				<li class="cdd">
 					<a href="#">Games</a>
 					<ul class="dd games-list">
@@ -155,6 +86,8 @@ endif;
 						?>	
 					</ul>
 				</li>
+				
+				
 				<?php if($mem->reqLevel('clients')) : ?>
 				<li class="cdd">
 					<a href="#">Clients</a>
@@ -167,6 +100,8 @@ endif;
 				</li>
 				<?php
 					endif; // reqLevel clients DD
+					
+					
 					if($mem->reqLevel('penalties')) :
 				?>
 				<li class="cdd">
@@ -181,6 +116,8 @@ endif;
 				<?php
 					endif; // end reqLevel penalties DD
 				?>
+				
+				
 				<li class="cdd">
 					<a href="#">Other</a>
 					<ul class="dd">
@@ -189,15 +126,41 @@ endif;
 						<?php if($config['games'][$game]['plugins']['ctime']['enabled'] == 1) : /* if the plugin is enabled show the link */ ?>
 							<li class="n-ctime<?php if($page == 'ctime') echo ' selected'; ?>"><a href="<?php echo $path; ?>ctime.php" title="Records of how long people are spending on the server">Current Activity</a></li>
 						<?php endif; ?>
-						<li class="n-notices<?php if($page == 'notices') echo ' selected'; ?>"><a href="<?php echo $path; ?>notices.php" title="In-game Notices">Notices</a></li>
+						<li class="n-notices<?php if($page == 'notices') echo ' selected'; ?>">
+							<a href="<?php echo $path; ?>notices.php" title="In-game Notices">Notices</a>
+						</li>
 					</ul>
 				</li>
+				
+				
 				<li class="cdd">
 					<a href="#">Echelon</a>
 					<ul class="dd">
-						<?php if($mem->reqLevel('manage_settings')) : ?><li class="n-settings<?php if(isSettings($page)) echo ' selected'; ?>"><a href="<?php echo $path; ?>settings.php" title="Site Settings">Site Settings</a></li><?php endif; ?>
-						<?php if($mem->reqLevel('siteadmin')) : ?><li class="n-sa<?php if(isSA($page)) echo ' selected'; ?>"><a href="<?php echo $path; ?>sa.php" title="Site Administration">Site Admin</a></li><?php endif; ?>
-						<li class="n-me<?php if(isMe($page)) echo ' selected'; ?>"><a href="<?php echo $path; ?>me.php" title="Edit your account">My Account</a></li>
+					
+						<?php if($mem->reqLevel('manage_settings')) : ?>
+							<li class="cdd-2 n-settings">
+								<a href="#">Settings</a>
+								
+								<ul class="dd-2">
+									<li class="<?php if(isSettings($page)) echo 'selected'; ?>">
+										<a href="<?php echo $path; ?>settings.php" title="Site Settings">Site Settings</a>
+									</li>
+									<li class="<?php if(isSettingsGame($page)) echo 'selected'; ?>">
+										<a href="<?php echo $path; ?>settings-games.php" title="Game Settings">Game Settings</a>
+									</li>
+								</ul>
+							</li>
+						<?php endif; ?>
+						
+						<?php if($mem->reqLevel('siteadmin')) : ?>
+							<li class="n-sa<?php if(isSA($page)) echo ' selected'; ?>">
+								<a href="<?php echo $path; ?>sa.php" title="Site Administration">Site Admin</a>
+							</li>
+						<?php endif; ?>
+						
+						<li class="n-me<?php if(isMe($page)) echo ' selected'; ?>">
+							<a href="<?php echo $path; ?>me.php" title="Edit your account">My Account</a>
+						</li>
 					</ul>
 				</li>			
 				

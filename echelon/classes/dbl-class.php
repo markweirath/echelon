@@ -96,12 +96,39 @@ class DbL {
 		
     }
 	
+	/**
+	 * Update game settings
+	 *
+	 * @return bool
+	 */
+    function setGameSettings($game, $name, $name_short, $db_user, $db_host, $db_name, $db_pw, $change_db_pw) {
+		
+		$query = "UPDATE games SET name = ?, name_short = ?, db_host = ?, db_user = ?, db_name = ?";
+		
+		if($change_db_pw) // if the DB password is to be chnaged
+			$query .= ", db_pw = ?";
+
+		$query .= " WHERE id = ? LIMIT 1";
+			
+		$stmt = $this->mysql->prepare($query);
+		if($change_db_pw)
+			$stmt->bind_param('ssssssi', $name, $name_short, $db_host, $db_user, $db_name, $db_pw, $game);
+		else
+			$stmt->bind_param('sssssi', $name, $name_short, $db_host, $db_user, $db_name, $game);
+		$stmt->execute();
+		
+		if($stmt->affected_rows > 0)
+			return true;
+		else
+			return false;
+		
+    }
+	
 	function getServers($cur_game) {
 		$query = "SELECT id, name, ip, pb_active, rcon_pass, rcon_ip, rcon_port FROM servers WHERE game = ?";
 		$stmt = $this->mysql->prepare($query);
 		$stmt->bind_param('i', $cur_game);
 		$stmt->execute();
-
 		$stmt->bind_result($id, $name, $ip, $pb_active, $rcon_pass, $rcon_ip, $rcon_port); // bind results into vars
 
 		while($stmt->fetch()) : // get results and store in an array

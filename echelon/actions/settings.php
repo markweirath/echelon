@@ -1,5 +1,5 @@
 <?php
-$auth_name = 'add_user';
+$auth_name = 'manage_settings';
 require '../inc.php';
 
 ## Check that the form was posted and that the user did not just stumble here ##

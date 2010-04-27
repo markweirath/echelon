@@ -1,5 +1,4 @@
 <?php
-set_time_limit(10);
 $page = "settings";
 $page_title = "Settings";
 $auth_name = 'manage_settings';
@@ -14,7 +13,7 @@ require 'inc/header.php';
 ?>
 
 <fieldset>
-	<legend>Settings</legend>
+	<legend>Echelon Settings</legend>
 	
 	<form action="actions/settings.php" method="post" id="settings-f">
 	
@@ -89,7 +88,7 @@ require 'inc/header.php';
 		<br class="clear" />
 		
 		<input type="hidden" name="token" value="<?php echo $token_settings; ?>" />
-		<input type="submit" name="settings-sub" value="Save Changes" />
+		<input type="submit" name="settings-sub" value="Save Echelon Settings" />
 		
 	</form>
 		

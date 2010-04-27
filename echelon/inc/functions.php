@@ -399,13 +399,22 @@ function sendError($add = NULL) {
 		header("Location: {$path}error.php?t={$add}");
 }
 
-function tooltip($msg) {
-	echo '<a class="tooltip" title="'. $msg .'"></a>';
+/**
+ * Handy tooltip creation function
+ */
+function tooltip($msg, $float = false) {
+
+	if($float == true)
+		echo '<a class="tooltip" style="float: left; display: block;" title="'. $msg .'"></a>';
+	else
+		echo '<a class="tooltip" title="'. $msg .'"></a>';
 }
 
+/**
+ * Echo out external link to punkbusted GUID banlist checker
+ */
 function guidCheckLink($guid) {
 	echo '<a class="external" href="http://www.punksbusted.com/cgi-bin/membership/guidcheck.cgi?guid='.$guid.'" title="Check this guid is not banned by PunksBusted.com">'.$guid.'</a>';
-
 }
 
 /**
@@ -902,6 +911,13 @@ function isLogin($page) {
 
 function isSettings($page) {
 	if($page == 'settings')
+		return true;
+	else
+		return false;
+}
+
+function isSettingsGame($page) {
+	if($page == 'settings-game')
 		return true;
 	else
 		return false;

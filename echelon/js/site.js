@@ -4,13 +4,12 @@ $(document).ready(function() {
 	$(".int").numeric();
 	
 	// Site navigation dropdown menus
-	$('li.cdd').hover(function(){
-		$('ul.dd').slideUp(150);
-		$(this).find('ul.dd').slideDown('fast');
+	$('#nav li.cdd').hover(function(){
+		$('#nav li.cdd ul.dd').slideUp(150); // hide all other dd
+		$(this).children('#nav li.cdd ul.dd').slideDown('fast');
 	}, function(){
-		//setTimeout('alert("Hello")'), 500);
 		$(this).oneTime(250, function() {
-			$(this).find('ul.dd').slideUp('fast');
+			$(this).children('#nav li.cdd ul.dd').slideUp('fast');
 		});
 	});
 	
@@ -70,6 +69,17 @@ $(document).ready(function() {
 			return true;
 		} else {
 			return false;
+		}
+	});
+	
+	// Gmae Settings //
+	$('#change-pw-box').hide();
+	
+	$('#cng-pw').click(function(){
+		if ($('#cng-pw:checked').val() == 'on') {
+			$("#change-pw-box").slideDown();
+		} else {
+			$("#change-pw-box").slideUp();
 		}
 	});
 	
