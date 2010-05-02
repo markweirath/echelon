@@ -52,47 +52,19 @@ function reqLevel($name) {
 }
 
 /**
- * Logs a user out
- */
-function logout() {
-
-	$error = $_SESSION['error']; // perserve errors if the person is loggedout by error
-
-	$_SESSION = array(); // unsets all varibles
-
-	// If it's desired to kill the session, also delete the session cookie.
-	// Note: This will destroy the session, and not just the session data!
-	if (isset($_COOKIE[session_name()])) {
-	   setcookie(session_name(), '', time()-42000, '/');
-	}
-	
-	// This is useful for when you change authentication states as it also invalidates the old session. 
-	session::regenerateSession();
-	
-	// Finally, destroy the session.
-	session_destroy();
-
-	session::sesStart(); // start session
-	$_SESSION['error'] = $error; // add error to new session
-	
-}
-
-/**
  * Takes password and generates salt and hash. Then updates their password in the DB
  *
  * @param string $password - the new password the user
  * @param int $user_id - the id of the user that is being edited
+ * @param object $dbl - the instance of the local DB connection class
  * @return bool
  */
-function genAndSetNewPW($password, $user_id) {
+function genAndSetNewPW($password, $user_id, $dbl) {
 	// generate a new salt for the user
 	$salt_new = genSalt();
 	
 	// find the hash of the supplied password and the new salt
 	$password_new = genPW($password, $salt_new);
-	
-	if(!isset($dbl))
-		$dbl = new DBL();
 	
 	// update the user with new password and new salt
 	$results_pw = $dbl->editMePW($password_new, $salt_new, $user_id);
@@ -166,6 +138,30 @@ function getGravatar($email) {
 		</span>';
 	
 	return $gravatar;
+}
+
+/**
+ * Using a user's password this func sees if the user inputed the right password for action verification
+ *
+ * @param string $password
+ */
+function reAuthUser($password, $dbl) {
+
+	// Check to see if this person is real
+	$salt = $dbl->getUserSaltById($_SESSION['user_id']);
+
+	if($salt == false) // only returns false if no salt found, ie. user does not exist
+		sendBack('There is a problem, you do not seem to exist!');
+
+	$hash_pw = genPW($password, $salt); // hash the inputted pw with the returned salt
+
+	// Check to see that the supplied password is correct
+	$validate = $dbl->validateUserRequest($_SESSION['user_id'], $hash_pw);
+	if($validate == false) {
+		hack(1); // add one to hack counter to stop brute force
+		sendBack('You have supplied an incorrect current password');
+	}
+	
 }
 
 #############################

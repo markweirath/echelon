@@ -55,7 +55,7 @@ if(!in_array($level, $b3_groups_id))
 ## Check that authorisation passsword is correct ##
 if($config['cosmos']['pw_req_level'] == 1) : // if requiring a pw auth for edit-level is on or off
 	if($level >= $config['cosmos']['pw_req_level_group']) // site setting to see if only certain levels need a pw check and if the selected level is above the threshold
-		reAuthUser($password, $dbl);
+		$mem->reAuthUser($password, $dbl);
 endif;
 
 ## Add Echelon Log ##

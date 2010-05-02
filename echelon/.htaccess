@@ -1,9 +1,17 @@
+# Disable bad PHP settings #
+php_flag magic_quotes_gpc off
+php_flag magic_quotes_runtime off
 php_value register_globals off
+
+# directory settings #
 Options All -Indexes
+DirectoryIndex index.php
+
+# Deny Access to .htaccess file #
 <Files .htaccess>
 order deny,allow
 deny from all
 </Files>
-DirectoryIndex index.php
+
+# Make sure we're running php5 #
 AddHandler php5-script .php
-php_flag magic_quotes_gpc off

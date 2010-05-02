@@ -46,7 +46,7 @@ $https = detectSSL(); // find out if SSL is enabled for this site
 if($https_enabled) : // if https is FORCE enabled
 	if($https == FALSE && $page != 'error') { // Check if https is off // If off throw error, logout and end script
 		if($mem->loggedIn())
-			$mem->logout();
+			$ses->logout();
 		exit;
 		sendError('ssl');
 	}

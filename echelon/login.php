@@ -238,7 +238,7 @@ if($mem->loggedIn()) { ## if logged in users may skip this page
 		
 	
 	// generate and reset password in this whole function
-	$result = genAndSetNewPW($pw1, $id_with_key);
+	$result = genAndSetNewPW($pw1, $id_with_key, $dbl);
 	if(!$result) { // if non key
 		sendBack('There was a problem updating your password');
 		exit;

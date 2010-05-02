@@ -116,30 +116,6 @@ function genSalt() {
 }
 
 /**
- * Useing a user's password this func sees if the user inputed the right password for action verification
- *
- * @param string $password
- */
-function reAuthUser($password, $dbl) {
-
-	// Check to see if this person is real
-	$salt = $dbl->getUserSaltById($_SESSION['user_id']);
-
-	if($salt == false) // only returns false if no salt found, ie. user does not exist
-		sendBack('There is a problem, you do not seem to exist!');
-
-	$hash_pw = genPW($password, $salt); // hash the inputted pw with the returned salt
-
-	// Check to see that the supplied password is correct
-	$validate = $dbl->validateUserRequest($_SESSION['user_id'], $hash_pw);
-	if($validate == false) {
-		hack(1); // add one to hack counter to stop brute force
-		sendBack('You have supplied an incorrect current password');
-	}
-	
-}
-
-/**
  * Generate a random password or string
  *
  * @param int $count - lenght of the string
@@ -183,41 +159,20 @@ function detectIE() {
  * Checks if a user has attempted to login to many times or has been caught hacking the site
  */
 function locked() {
-	if($_SESSION['wrong'] >= 3 || $_SESSION['hack'] >= 3) {
+	if($_SESSION['wrong'] >= 3 || $_SESSION['hack'] >= 3) {#
+		if(!$dbl)
+			$dbl = new DBL();
+		if(!$mem)
+			$mem = new member(); 
+		
 		if($mem->loggedIn()) {
-			$mem->logout(); // if they are logged in log them out
-		}
-		if(!isset($dbl)){ // if no Db object
-			$dbl = new DBl(); // create DB
+			session::logout(); // if they are logged in log them out
 		}
 		$ip = getRealIp(); // get users ip
 		$dbl->blacklist($ip); // add top blacklist
 		writeLog('Locked out automatically.');
 		sendLocked();
 	}
-}
-
-function logout(){
-
-	$error = $_SESSION['error']; // perserve errors if the person is loggedout by error
-
-	$_SESSION = array(); // unsets all varibles
-
-	// If it's desired to kill the session, also delete the session cookie.
-	// Note: This will destroy the session, and not just the session data!
-	if(isset($_COOKIE[session_name()])) {
-	setcookie(session_name(), '', time()-42000, '/');
-	}
-
-	// This is useful for when you change authentication states as it also invalidates the old session. 
-	session::regenerateSession();
-
-	// Finally, destroy the session.
-	session_destroy();
-
-	session::sesStart(); // start session
-	$_SESSION['error'] = $error; // add error to new session
-
 }
 
 /**
@@ -292,6 +247,10 @@ function set_warning($msg) {
 	$_SESSION['warning'] = $msg;
 }
 
+function css_file($name) {
+	echo '<link href="css/'. $name. '.css" rel="stylesheet" media="screen" type="text/css" />';
+}
+
 /**
  * Get the IP address of the current user
  *
@@ -331,7 +290,7 @@ function emptyInput($var_name, $field) {
  * @return string
  */
 function cleanvar($var) {
-	$var = trim(strip_tags($var));
+	$var = trim(htmlentities(strip_tags($var)));
 	return $var;
 } // end clean var
 
@@ -424,7 +383,7 @@ function guidCheckLink($guid) {
  * @return string $msg - the link to whois of IP
  */
 function ipLink($ip) {
-	$msg = '<a href="http://whois.domaintools.com/'.$ip.'/" target="_blank" title="WhoIs IP Search this User">'.$ip.'</a>';
+	$msg = '<a href="http://whois.domaintools.com/'.$ip.'/" class="external" title="WhoIs IP Search this User">'.$ip.'</a>';
 	return $msg;
 }
 
@@ -490,9 +449,9 @@ function linkSort($keyword, $title) {
 
 	$this_p = $_SERVER['PHP_SELF'];
 	
-	echo '<a title="Sort information by '.$title.' ascending." href="'.$this_p.'?ob='.$keyword.'&amp;o=asc"><img src="'. $path .'images/asc.png" alt="ASC" class="asc-img" /></a>
+	echo '<a title="Sort information by '.$title.' ascending." href="'.$this_p.'?ob='.$keyword.'&amp;o=ASC"><img src="'. $path .'images/asc.png" alt="ASC" class="asc-img" /></a>
 			&nbsp;
-			<a title="Sort information by '.$title.' descending." href="'.$this_p.'?ob='.$keyword.'&amp;o=desc"><img src="'. $path .'images/desc.png" alt="DESC" class="desc-img" /></a>';
+			<a title="Sort information by '.$title.' descending." href="'.$this_p.'?ob='.$keyword.'&amp;o=DESC"><img src="'. $path .'images/desc.png" alt="DESC" class="desc-img" /></a>';
 
 }
 
@@ -501,13 +460,13 @@ function linkSortClients($keyword, $title, $is_search, $search_type, $search_str
 	$this_p = $_SERVER['PHP_SELF'];
 	
 	if($is_search == false) {
-		echo'<a title="Sort information by '.$title.' ascending." href="'.$this_p.'?ob='.$keyword.'&amp;o=asc"><img src="'. $path .'images/asc.png" alt="ASC" class="asc-img" /></a>
+		echo'<a title="Sort information by '.$title.' ascending." href="'.$this_p.'?ob='.$keyword.'&amp;o=ASC"><img src="'. $path .'images/asc.png" alt="ASC" class="asc-img" /></a>
 			&nbsp;
-		<a title="Sort information by '.$title.' descending." href="'.$this_p.'?ob='.$keyword.'&amp;o=desc"><img src="'. $path .'images/desc.png" alt="DESC" class="desc-img" /></a>';
+		<a title="Sort information by '.$title.' descending." href="'.$this_p.'?ob='.$keyword.'&amp;o=DESC"><img src="'. $path .'images/desc.png" alt="DESC" class="desc-img" /></a>';
 	} else {
-		echo'<a title="Sort information by '.$title.' ascending." href="'.$this_p.'?ob='.$keyword.'&amp;o=asc&amp;s='.urlencode($search_string).'&amp;t='.$search_type.'"><img src="'. $path .'images/asc.png" alt="ASC" class="asc-img" /></a>
+		echo'<a title="Sort information by '.$title.' ascending." href="'.$this_p.'?ob='.$keyword.'&amp;o=ASC&amp;s='.urlencode($search_string).'&amp;t='.$search_type.'"><img src="'. $path .'images/asc.png" alt="ASC" class="asc-img" /></a>
 			&nbsp;
-		<a title="Sort information by '.$title.' descending." href="'.$this_p.'?ob='.$keyword.'&amp;o=desc&amp;s='.urlencode($search_string).'&amp;t='.$search_type.'"><img src="'. $path .'images/desc.png" alt="DESC" class="desc-img" /></a>';
+		<a title="Sort information by '.$title.' descending." href="'.$this_p.'?ob='.$keyword.'&amp;o=DESC&amp;s='.urlencode($search_string).'&amp;t='.$search_type.'"><img src="'. $path .'images/desc.png" alt="DESC" class="desc-img" /></a>';
 	}
 
 }
@@ -878,7 +837,6 @@ function time_duration($seconds, $use = null, $zeros = false) {
 
 /**
  * Simple isPage($page) functions
- *
  */
 
 function isHome($page) {
@@ -923,6 +881,13 @@ function isSettingsGame($page) {
 		return false;
 }
 
+function isSettingsServer($page) {
+	if($page == 'settings-server')
+		return true;
+	else
+		return false;
+}
+
 function isSA($page) {
 	if($page == 'sa')
 		return true;
@@ -939,6 +904,13 @@ function isMe($page) {
 
 function isPubbans($page) {
 	if($page == 'pubbans')
+		return true;
+	else
+		return false;
+}
+
+function isMap($page) {
+	if($page == 'map')
 		return true;
 	else
 		return false;

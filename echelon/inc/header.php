@@ -1,4 +1,5 @@
 <?php
+## Pagination for pages with tables ##
 if($pagination == true) : // if pagination is needed on the page
 	## Find total rows ##
 	$result_rows = $db->mysql->query($query);
@@ -20,25 +21,25 @@ endif;
 	<!-- Load CSS Stylesheet -->
 	<link href="<?php echo $path; ?>css/style.css" rel="stylesheet" media="screen" type="text/css" />
 	
-	<?php if(isLogin($page)) { ?>
-		<!-- Load Login CSS Stylesheet -->
-		<link href="<?php echo $path; ?>css/login.css" rel="stylesheet" media="screen" type="text/css" />
-	<?php } ?>
+	<?php 
+	## Include CSS For pages ##
+	if(isLogin($page))
+		css_file('login');
+
+	if(isCD($page))
+		css_file('cd');
+		
+	if(isSettings($page))
+		css_file('settings');
+		
+	if(isHome($page))
+		css_file('home');
 	
-	<?php if(isCD($page)) { ?>
-		<!-- Load Client details CSS Stylesheet -->
-		<link href="<?php echo $path; ?>css/cd.css" rel="stylesheet" media="screen" type="text/css" />
-	<?php } ?>
-	
-	<?php if(isSettings($page)) { ?>
-		<!-- Load settings page CSS Stylesheet -->
-		<link href="<?php echo $path; ?>css/settings.css" rel="stylesheet" media="screen" type="text/css" />
-	<?php } ?>
-	
-	<?php if(isHome($page)) { ?>
-		<!-- Load Home page CSS Stylesheet -->
-		<link href="<?php echo $path; ?>css/home.css" rel="stylesheet" media="screen" type="text/css" />
-	<?php } ?>
+	## Header JS for Map Page ##
+	if(isMap($page))
+		echo $map_js;
+		
+	?>
 	
 	<!-- ALL JS TO BE LOADED INTO THE FOOTER -->
 </head>
@@ -96,6 +97,7 @@ endif;
 						<li class="n-active<?php if($page == 'active') echo ' selected'; ?>"><a href="<?php echo $path; ?>active.php" title="In-active admins">In-active Admins</a></li>
 						<li class="n-regular<?php if($page == 'regular') echo ' selected'; ?>"><a href="<?php echo $path; ?>regular.php" title="Regular non admin visitors to your servers">Regular Visitors</a></li>
 						<li class="n-admins<?php if($page == 'admins') echo ' selected'; ?>"><a href="<?php echo $path; ?>admins.php" title="A list of all admins">Admin Listing</a></li>
+						<li class="n-world<?php if(isMap($page)) echo ' selected'; ?>"><a href="<?php echo $path; ?>map.php" title="Player map">World Player Map</a></li>
 					</ul>
 				</li>
 				<?php
@@ -138,15 +140,15 @@ endif;
 					<ul class="dd">
 					
 						<?php if($mem->reqLevel('manage_settings')) : ?>
-							<li class="cdd-2 n-settings">
-								<a href="#">Settings</a>
+							<li class="cdd-2 n-settings <?php if(isSettings($page)) echo 'selected'; ?>">
+								<a href="<?php echo $path; ?>settings.php">Site Settings</a>
 								
 								<ul class="dd-2">
-									<li class="<?php if(isSettings($page)) echo 'selected'; ?>">
-										<a href="<?php echo $path; ?>settings.php" title="Site Settings">Site Settings</a>
-									</li>
 									<li class="<?php if(isSettingsGame($page)) echo 'selected'; ?>">
 										<a href="<?php echo $path; ?>settings-games.php" title="Game Settings">Game Settings</a>
+									</li>
+									<li class="<?php if(isSettingsServer($page)) echo 'selected'; ?>">
+										<a href="<?php echo $path; ?>settings-server.php" title="Server Settings">Server Settings</a>
 									</li>
 								</ul>
 							</li>

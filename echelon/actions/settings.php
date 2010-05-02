@@ -65,7 +65,7 @@ if(!filter_var($f_email, FILTER_VALIDATE_EMAIL))
 	sendBack('The email supplied is not valid');
 	
 ## Check that authorisation passsword is correct ##
-reAuthUser($password, $dbl);
+$mem->reAuthUser($password, $dbl);
 	
 ## Create array of sent vars ##
 $sent_settings = array(

@@ -14,10 +14,12 @@ if($_GET['id'])
 if(!is_numeric($cid))
 	die('Invalid data sent');
 	
-if($cid == 0) {
+if($cid == '') {
 	set_error('No user specified, please select one');
 	send('index.php');
 }
+
+$cid = (int)$cid;
 
 ## Get Client information ##
 $query = "SELECT c.ip, c.connections, c.guid, c.name, c.mask_level, c.greeting, c.time_add, c.time_edit, c.group_bits, g.name
@@ -54,6 +56,9 @@ endif; // endif xlrstats is enabled
 
 ## Require Header ##
 $page_title .= ' '.$name;
+
+header_css('cd'); // include the CD styling
+
 require 'inc/header.php';
 ?>
 <table class="cd-table">
@@ -114,9 +119,9 @@ require 'inc/header.php';
 						if ($ip != "") { ?>
 						<a href="<?php echo $path; ?>clients.php?s=<?php echo $ip; ?>&amp;t=ip" title="Search for other users with this IP adreess"><?php echo $ip; ?></a>
 							&nbsp;&nbsp;
-						<a href="http://whois.domaintools.com/<?php echo $ip; ?>" target="_blank" title="Whois IP Search">W</a>
+						<a href="http://whois.domaintools.com/<?php echo $ip; ?>" title="Whois IP Search">W</a>
 							&nbsp;&nbsp;
-						<a href="http://geotool.servehttp.com/?ip=<?php echo $ip; ?>" target="_blank" title="Show Location of IP origin on map">L</a>
+						<a href="http://geotool.servehttp.com/?ip=<?php echo $ip; ?>" title="Show Location of IP origin on map">L</a>
 					<?php
 						} else {
 							echo "(No IP address available)";

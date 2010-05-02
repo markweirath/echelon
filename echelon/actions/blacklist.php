@@ -35,14 +35,12 @@ if($_POST['deact']) { // if this is a deactivation request
 	emptyInput($ip, 'IP Address');
 	
 	// if reason is default comment msg, send back with error
-	if($reason == "Enter a reason for this ban...") {
+	if($reason == "Enter a reason for this ban...")
 		sendBack('You must add a reason as to why this IP ban is being added');
-	}
 	
 	// check if it is a valid IP address
-	if(!filter_var($ip, FILTER_VALIDATE_IP)) {
+	if(!filter_var($ip, FILTER_VALIDATE_IP))
 		sendBack('That IP address is not valid');
-	}
 	
 	if(!verifyFormToken('addbl', $tokens)) // verify token
 		ifTokenBad('BL Add'); // if bad log, add hack counter and throw error

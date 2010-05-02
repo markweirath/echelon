@@ -76,6 +76,8 @@ $config['games'][$game]['servers'] = array(); // create array
 
 if($config['games'][$game]['num_srvs'] == 1) : // if the current game has only ONE server then NO loop is needed
 	
+	$multi_server = false; // there is only one server connected with this game
+	
 	$config['games'][$game]['servers'][1] = array();
 	$config['games'][$game]['servers'][1]['name'] = $servers[0]['name'];
 	$config['games'][$game]['servers'][1]['ip'] = $servers[0]['ip'];
@@ -85,6 +87,8 @@ if($config['games'][$game]['num_srvs'] == 1) : // if the current game has only O
 	$config['games'][$game]['servers'][1]['rcon_port'] = $servers[0]['rcon_port'];
 
 else: // there is more than one server so a loop is needed
+
+	$multi_server = true; // there is more than one server connected with this game
 
 	$i = 1; // restart i to 1
 	foreach($servers as $server) : // loop thro the list of servers

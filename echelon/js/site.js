@@ -58,7 +58,7 @@ $(document).ready(function() {
 		}
 	});
 	
-	// Gmae Settings //
+	// Game Settings //
 	$('#change-pw-box').hide();
 	
 	$('#cng-pw').click(function(){
@@ -130,7 +130,7 @@ $(document).ready(function() {
 			
 	}); // end .edit-key-comment clikc
 	
-	// Check Username Function
+	// Check Username Function (registration setup user page)
 	$("#uname-check").blur(function(){
 		
 		var loading = $(".loader").fadeIn("normal");

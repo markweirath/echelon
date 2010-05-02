@@ -80,9 +80,6 @@ class DbL {
 	 * @return bool
 	 */
     function setSettings($value, $name, $value_type) {
-	
-		//if($value_type != 's' || $value_type != 'i')
-		//	return false;
         
 		$query = "UPDATE config SET value = ? WHERE name = ? LIMIT 1";
 		$stmt = $this->mysql->prepare($query);
@@ -111,9 +108,9 @@ class DbL {
 		$query .= " WHERE id = ? LIMIT 1";
 			
 		$stmt = $this->mysql->prepare($query);
-		if($change_db_pw)
+		if($change_db_pw) // if chnage DB PW append var
 			$stmt->bind_param('ssssssi', $name, $name_short, $db_host, $db_user, $db_name, $db_pw, $game);
-		else
+		else // else var info not needed in bind_param
 			$stmt->bind_param('sssssi', $name, $name_short, $db_host, $db_user, $db_name, $game);
 		$stmt->execute();
 		
@@ -146,6 +143,82 @@ class DbL {
 		$stmt->close();
 		return $servers;
 	}
+	
+	function getServer($id) {
+		$query = "SELECT game, name, ip, pb_active, rcon_pass, rcon_ip, rcon_port FROM servers WHERE id = ?";
+		$stmt = $this->mysql->prepare($query);
+		$stmt->bind_param('i', $id);
+		$stmt->execute();
+		$stmt->bind_result($game, $name, $ip, $pb_active, $rcon_pass, $rcon_ip, $rcon_port); // bind results into vars
+
+		while($stmt->fetch()) : // get results and store in an array
+			$server = array(
+				'game' => $game,
+				'name' => $name,
+				'ip' => $ip,
+				'pb_active' => $pb_active,
+				'rcon_pass' => $rcon_pass,
+				'rcon_ip' => $rcon_ip,
+				'rcon_port' => $rcon_port
+			);
+		endwhile;
+		
+		$stmt->close();
+		return $server;
+	}
+	
+	/**
+	 * Gets a list of all the servers from all the games for the servers table
+	 *
+	 * @param string $orderby - what var to order by
+	 * @param string $order - which way to order (ASC/DESC)
+	 * @return bool
+	 */
+	function getServerList($orderby, $order) {
+			
+		$query = "SELECT s.id, s.name, s.ip, s.game, s.pb_active, g.name as g_name FROM servers s LEFT JOIN games g ON s.game = g.game_id ORDER BY ".$orderby." ".$order;
+		$result = $this->mysql->query($query);
+
+        while($row = $result->fetch_object()) : // get results		
+			$servers[] = array(
+				'id' => $row->id,
+				'game' => $row->game,
+				'name' => $row->name,
+				'ip' => $row->ip,
+				'pb_active' => $row->pb_active,
+				'game_name' => $row->g_name
+			);
+		endwhile;
+		
+		return $servers;
+	}
+	
+	/**
+	 * Update server settings
+	 *
+	 * @return bool
+	 */
+    function setServerSettings($server_id, $name, $ip, $pb, $rcon_ip, $rcon_port, $rcon_pw, $change_rcon_pw) {
+		
+		$query = "UPDATE servers SET name = ?, ip = ?, pb_active = ?, rcon_ip = ?, rcon_port = ?";
+		
+		if($change_rcon_pw) // if the DB password is to be chnaged
+			$query .= ", rcon_pass = ?";
+
+		$query .= " WHERE id = ? LIMIT 1";
+			
+		$stmt = $this->mysql->prepare($query);
+		if($change_rcon_pw) // if change RCON PW append
+			$stmt->bind_param('ssisisi', $name, $ip, $pb, $rcon_ip, $rcon_port, $rcon_pw, $server_id);
+		else // else info not needed in bind_param
+			$stmt->bind_param('ssisii', $name, $ip, $pb, $rcon_ip, $rcon_port, $server_id);
+		$stmt->execute();
+		
+		if($stmt->affected_rows > 0)
+			return true;
+		else
+			return false;	
+    }
 	
 	function getPlugins($game) {
 	

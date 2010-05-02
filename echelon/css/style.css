@@ -41,7 +41,6 @@ h1, h2, h3, h4 {
 }
 
 /* Form Styling */
-
 input[type=text], input[type=password], textarea, select {
 	padding: 9px; border: solid 1px #C9C9C9; outline: 0; font: normal 13px/100% Verdana, Tahoma, sans-serif; width: 200px; margin: 4px;
 	background: #FFFFFF url('bg_form.png') left top repeat-x; background: -webkit-gradient(linear, left top, left 25, from(#FFFFFF), color-stop(4%, #EEEEEE), to(#FFFFFF)); background: -moz-linear-gradient(top, #FFFFFF, #EEEEEE 1px, #FFFFFF 25px);
@@ -135,6 +134,9 @@ fieldset.none { width: 44%; float: left; border: 1px solid #ddd; padding: 12px; 
 	fieldset.none input[type=password], fieldset.none input[type=text] { width: 225px; }
 	
 fieldset.none fieldset.none{ width: 88%; }
+
+fieldset.wide { width: 93% !important; }
+fieldset.wide input { display: inline; margin-right: 10px; }
 	
 /* Error Messages Styling */
 #msg { border: 2px solid; font-size: 15px; padding: 4px; margin: 3px 0 12px; text-align: center; position: relative; }
@@ -170,6 +172,7 @@ body { color: black; font: 17px; background: url(../images/body-bg.jpg) repeat; 
 
 #menu { height: 48px; background: #fff url(../images/nav/blue-repeat.png) repeat-x; }
 
+/* Navigartion Styling */
 #nav { height: 36px; float: left; background: url(../images/nav/blue-corner.png) no-repeat; padding-left: 8px; }
 	#nav li { display: block; float: left; margin: 11px 11px 7px 0; font-size: 17px; }
 		#nav li.selected  a { background: #fff url(../images/nav/selected-tab.png) repeat-x; opacity: 1; padding: 3px 7px 7px; 
@@ -265,6 +268,9 @@ tr.table-good:hover, tr.table-error:hover { background: #fff; }
 tr.table-good td span, tr.table-error td span { display: block; background: #e19d9d; color: white; font-size: 15px; padding: 3px 8px; border: 2px solid #ae2525; -moz-border-radius: 3px; -webkit-border-radius: 3px; margin: 8px; }
 tr.table-good td span { border-color: #3fa244 !important; background: #a5e9a8 !important; color: #333; }
 
+span.off { color: #ba110d; }
+span.on { color: #57b054; }
+
 /* Under the Table and Pagination Styling */
 div.under-table { margin: 8px 3px 0; color: #444; }
 .num-rows { float: left; font-size: 15px; font-family: "Times New Roman", Times, serif; }
@@ -311,6 +317,9 @@ div.under-table { margin: 8px 3px 0; color: #444; }
 
 /* My Account Page */
 label.uname:hover { color: #bbb; }
+
+/* Map Page Styling */
+#map-box { margin: 20px auto; border: 1px solid #ddd; width: 801px; }
 		
 /* Site Admin Styling */
 #add-user-form { margin: 0 auto; width: 91%; }
