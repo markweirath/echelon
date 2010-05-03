@@ -12,26 +12,26 @@
 					
 								<a href="<?php printf("%25s?p=%d%s", $this_page, max(0, $page_no - 1), $query_string_page); ?>" class="page" title="Go to the previous page">&lsaquo; Previous</a>
 								
-								<?php if($page_no - 2 > 0) { ?>
-									<a href="<?php printf("%25s?p=%d%s", $this_page, max(0, $page_no - 2), $query_string_page); ?>" class="page"><?php echo $page_no - 2; ?></a>
+								<?php if($page_no - 1 > 0) { ?>
+									<a href="<?php printf("%25s?p=%d%s", $this_page, max(0, $page_no - 2), $query_string_page); ?>" class="page"><?php echo $page_no - 1; ?></a>
 								<?php } ?>
 							
-								<?php if($page_no - 1 > 0) { ?>
-									<a href="<?php printf("%25s?p=%d%s", $this_page, max(0, $page_no - 1), $query_string_page); ?>" class="page"><?php echo $page_no - 1; ?></a>
+								<?php if($page_no > 0) { ?>
+									<a href="<?php printf("%25s?p=%d%s", $this_page, max(0, $page_no - 1), $query_string_page); ?>" class="page"><?php echo $page_no; ?></a>
 								<?php } ?>
 							
 							<?php } ?>
 							
-							<span class="page current"><?php echo $page_no; ?></span>
+							<span class="page current"><?php echo $page_no + 1; ?></span>
 							
 							<?php if($page_no < $total_pages) { /* Show if not last page */ ?>
 							
-								<?php if($page_no + 1 < $total_pages) { ?>								
-									<a href="<?php printf("%25s?p=%d%s", $this_page, max(0, $page_no + 1), $query_string_page); ?>" class="page"><?php echo $page_no + 1; ?></a>
+								<?php if($page_no + 2 < $total_pages) { ?>								
+									<a href="<?php printf("%25s?p=%d%s", $this_page, max(0, $page_no + 1), $query_string_page); ?>" class="page"><?php echo $page_no + 2; ?></a>
 								<?php } ?>
 								
-								<?php if($page_no + 2 < $total_pages) { ?>
-									<a href="<?php printf("%25s?p=%d%s", $this_page, max(0, $page_no + 2), $query_string_page); ?>" class="page"><?php echo $page_no + 2; ?></a>
+								<?php if($page_no + 3 < $total_pages) { ?>
+									<a href="<?php printf("%25s?p=%d%s", $this_page, max(0, $page_no + 2), $query_string_page); ?>" class="page"><?php echo $page_no + 3; ?></a>
 								<?php }?>
 								
 								<a href="<?php printf("%25s?p=%d%s", $this_page, min($total_pages, $page_no + 1), $query_string_page); ?>" class="page" title="Go to the next page">Next &rsaquo;</a>

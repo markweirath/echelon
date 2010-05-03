@@ -26,7 +26,7 @@ class DbL {
 	 */
 	function getSettings($cat) {
         $query = "SELECT name, value FROM config WHERE category = ?";
-        $stmt = $this->mysql->prepare($query);
+        $stmt = $this->mysql->prepare($query) or die('DB Error');
 		$stmt->bind_param('s', $cat);
 		$stmt->execute();
 		
@@ -212,6 +212,26 @@ class DbL {
 			$stmt->bind_param('ssisisi', $name, $ip, $pb, $rcon_ip, $rcon_port, $rcon_pw, $server_id);
 		else // else info not needed in bind_param
 			$stmt->bind_param('ssisii', $name, $ip, $pb, $rcon_ip, $rcon_port, $server_id);
+		$stmt->execute();
+		
+		if($stmt->affected_rows > 0)
+			return true;
+		else
+			return false;	
+    }
+	
+	/**
+	 * Add a server
+	 *
+	 * @return bool
+	 */
+    function addServer($game_id, $name, $ip, $pb, $rcon_ip, $rcon_port, $rcon_pw) {
+		
+		// id, game, name, ip, pb_active, rcon_pass, rcon_ip, rcon_port
+		$query = "INSERT INTO servers VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)";
+			
+		$stmt = $this->mysql->prepare($query) or die('DB Error: '. $this->mysql->error);
+		$stmt->bind_param('ississi', $game_id, $name, $ip, $pb, $rcon_pw, $rcon_ip, $rcon_port);
 		$stmt->execute();
 		
 		if($stmt->affected_rows > 0)

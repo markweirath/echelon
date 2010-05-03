@@ -13,7 +13,7 @@ if($_GET['t'])
 
 if($page_type == 'add') : ## if add a server page ##
 
-
+	$token = genFormToken('addserver');
 
 elseif($page_type == 'srv') : ## if edit a server page ##
 	
@@ -24,7 +24,7 @@ elseif($page_type == 'srv') : ## if edit a server page ##
 		exit;
 	}
 	
-	$token = genFormToken('serversettings');
+	$token = genFormToken('editserversettings');
 	
 	## get server information
 	$server = $dbl->getServer($server_id);
@@ -67,11 +67,70 @@ require 'inc/header.php';
 
 if($page_type == 'add') : ?>
 
+	<a href="settings-server.php" title="Go back to the main server listing" class="float-left">&laquo; Server List</a><br />
+
 	<h3>Add Server</h3>
+	
+	<form action="actions/settings-server.php" method="post">
+
+	<fieldset>
+		<legend>Add a Server</legend>
+		
+		<fieldset class="none wide">
+			<legend>General Info</legend>
+		
+			<label for="name">Server Name:</label>
+				<input type="text" name="name" id="name"  />
+
+			<label for="ip">IP Address:</label>
+				<input type="text" name="ip" id="ip" />
+
+			<br /><label for="pb">Punkbuster&trade; Active?</label>
+				<input type="checkbox" name="pb" id="pb" />
+				
+			<label for="game-id">Game:</label>
+				<select name="game-id" id="game-id">
+					<?php
+					$i = 0;
+					$count = count($games_list);
+					$count--; // minus 1
+					while($i <= $count) :
+
+						echo '<option value="'.$games_list[$i]['id'].'">'.$games_list[$i]['name'].'</option>';
+						
+						$i++;
+					endwhile;
+					?>
+				</select>
+		</fieldset>
+			
+		<fieldset class="none">
+			<legend>Rcon Info</legend>
+				
+			<label for="rcon-ip">Rcon IP:</label>
+				<input type="text" name="rcon-ip" id="rcon-ip" />
+
+			<label for="rcon-port">Rcon Port:</label>
+				<input type="text" class="int" style="width: 50px !important" name="rcon-port" id="rcon-port" /><br />
+			
+			<label for="rcon-pass">Rcon Password:</label>
+				<input type="password" name="rcon-pass" id="-rcon-pass" />
+
+		</fieldset>
+
+	</fieldset><!-- end general game settings -->
+	
+		<input type="hidden" name="type" value="add" />
+		<input type="hidden" name="cng-pw" value="on" />
+		<input type="hidden" name="token" value="<?php echo $token; ?>" />
+		<input type="submit" name="server-settings-sub" value="Add Server" />
+
+	</form>
 
 <?php elseif($page_type == 'srv') : /* if edit server page */ ?>
 	
 	<a href="settings-server.php" title="Go back to the main server listing" class="float-left">&laquo; Server List</a>
+	<a href="settings-server.php?t=add" title="Add a server" class="float-right">Add Server &raquo;</a>
 	<br />
 	<form action="actions/settings-server.php" method="post">
 
@@ -92,7 +151,7 @@ if($page_type == 'add') : ?>
 		</fieldset>
 			
 		<fieldset class="none">
-			<legend>RCON Info</legend>
+			<legend>Rcon Info</legend>
 				
 			<label for="rcon-ip">Rcon IP:</label>
 				<input type="text" name="rcon-ip" id="rcon-ip" value="<?php echo $server['rcon_ip']; ?>" />
@@ -110,8 +169,9 @@ if($page_type == 'add') : ?>
 
 		</fieldset>
 
-	</fieldset><!-- end general game settings -->
+	</fieldset><!-- end general server settings -->
 
+		<input type="hidden" name="type" value="edit" />
 		<input type="hidden" name="token" value="<?php echo $token; ?>" />
 		<input type="hidden" name="server" value="<?php echo $server_id; ?>" />
 		<input type="submit" name="server-settings-sub" value="Save Settings" />
