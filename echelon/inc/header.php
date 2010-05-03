@@ -208,7 +208,7 @@ endif;
 		if($mem->reqLevel('see_update_msg')) :
 			if(isSA($page) || isSettings($page) || isHome($page)) {
 				$latest = getEchVer();
-				if(ECH_VER !== $latest) // if current version does not equal latest version show warning message
+				if(ECH_VER !== $latest && $latest != false) // if current version does not equal latest version show warning message
 					set_warning('You are not using the lastest version of Echelon, please check the <a href="http://www.bigbrotherbot.com/forums/" title="Check the B3 Forums">B3 Forums</a> for more information.');
 			}
 		endif;

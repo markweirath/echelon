@@ -27,11 +27,6 @@ $text = $admin_id.$email.uniqid(microtime(), true).$group; // take sent data and
 $rand_text = str_shuffle($text); // shuffle the string to make more random
 $user_key = genHash($rand_text); // hash the random string to get the user hash
 
-## run query to add key to the DB ##
-$add_user = $dbl->addEchKey($user_key, $email, $comment, $group, $admin_id);
-if(!$add_user)
-	sendBack('There was a problem adding the key into the database');
-
 ## email user about the key ##
 $body = '<html><body>';
 $body .= '<h2>Echelon User Key</h2>';
@@ -56,6 +51,11 @@ $subject = "Echelon User Registration";
 // send email
 if(!mail($email, $subject, $body, $headers))
 	sendback('There was a problem sending the email.');
+	
+## run query to add key to the DB ##
+$add_user = $dbl->addEchKey($user_key, $email, $comment, $group, $admin_id);
+if(!$add_user)
+	sendBack('There was a problem adding the key into the database');
 
 // all good send back good message
 sendGood('Key Setup and Email has been sent to user');

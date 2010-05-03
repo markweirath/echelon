@@ -81,6 +81,7 @@ endif;
 ## Update DB ##
 if($is_add)
 	$result = $dbl->addServer($game_id, $name, $ip, $pb, $rcon_ip, $rcon_port, $rcon_pw);
+	$dbl->addServerUpdateGames($game_id);
 else
 	$result = $dbl->setServerSettings($server_id, $name, $ip, $pb, $rcon_ip, $rcon_port, $rcon_pw, $change_rcon_pw); // update the settings in the DB
 

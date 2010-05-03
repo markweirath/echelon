@@ -40,7 +40,7 @@ if($_GET['t'] == 'user') :
 	$is_view_user = true;
 endif; // end 
 
-// if this is an dit user page
+// if this is an edit user page
 if($_GET['t'] == 'edituser') :
 	$uid = $_GET['id'];
 	if(!is_numeric($uid)) {

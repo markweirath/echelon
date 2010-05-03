@@ -230,7 +230,7 @@ class DbL {
 		// id, game, name, ip, pb_active, rcon_pass, rcon_ip, rcon_port
 		$query = "INSERT INTO servers VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)";
 			
-		$stmt = $this->mysql->prepare($query) or die('DB Error: '. $this->mysql->error);
+		$stmt = $this->mysql->prepare($query) or die('DB Error');
 		$stmt->bind_param('ississi', $game_id, $name, $ip, $pb, $rcon_pw, $rcon_ip, $rcon_port);
 		$stmt->execute();
 		
@@ -239,6 +239,16 @@ class DbL {
 		else
 			return false;	
     }
+	
+	/**
+	 * After adding a server we need to update the games table to add 1 to num_srvs
+	 */
+	function addServerUpdateGames($game_id) {
+		$query = "UPDATE games SET num_srvs = (num_srvs + 1) WHERE game_id = ? LIMIT 1";
+		$stmt = $this->mysql->prepare($query) or die('DB Error');;
+		$stmt->bind_param('i', $game_id);
+		$stmt->execute();
+	}
 	
 	function getPlugins($game) {
 	

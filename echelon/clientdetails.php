@@ -57,8 +57,6 @@ endif; // endif xlrstats is enabled
 ## Require Header ##
 $page_title .= ' '.$name;
 
-header_css('cd'); // include the CD styling
-
 require 'inc/header.php';
 ?>
 <table class="cd-table">

@@ -1,13 +1,8 @@
 <?php
-require '../inc/functions.php';
-require '../inc/config.php'; // load the config file
-require '../classes/session-class.php'; // class to deal with the management of sesssions
-require '../classes/dbl-class.php'; // DBL
-$dbl = new DBL(); // start up dbl class (connection to echelon DB class)
-require '../inc/setup.php';
-
-$ses = new Session(); // create Session Object
-$ses->sesStart(); // start session
+$auth_user_here = false;
+$pagination = false;
+$b3_conn = false;
+require '../inc.php';
 
 // set and clean vars of unwanted materials
 $username = cleanvar($_POST['username']);

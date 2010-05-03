@@ -28,6 +28,8 @@ $f_time_format  = cleanvar($_POST['time_format']);
 $f_time_zone = cleanvar($_POST['time_zone']);     
 $f_email_header = cleanvar($_POST['email_header']);
 $f_email_footer = cleanvar($_POST['email_footer']);
+$f_pw_req_level = cleanvar($_POST['pw_req_level']);
+$f_pw_req_level_group = cleanvar($_POST['pw_req_level_group']);
 
 // Verify Password
 $password = cleanvar($_POST['password']);
@@ -42,7 +44,12 @@ if($f_allow_ie == 'on')
 	$f_allow_ie = 1;
 else
 	$f_allow_ie = 0;
-
+	
+if($f_pw_req_level == 'on')
+	$f_pw_req_level = 1;
+else
+	$f_pw_req_level = 0;
+	
 ## Check for empty vars ##
 emptyInput($f_name, 'site name');
 emptyInput($f_limit_rows, 'no of rows per table page');
@@ -70,7 +77,6 @@ $mem->reAuthUser($password, $dbl);
 ## Create array of sent vars ##
 $sent_settings = array(
 	'name' => $f_name,
-	'num_games' => $f_num_games,
 	'limit_rows' => $f_limit_rows,
 	'min_pw_len' => $f_min_pw_len,
 	'user_key_expire' => $f_user_key_expire,
@@ -81,18 +87,29 @@ $sent_settings = array(
 	'time_format' => $f_time_format,
 	'time_zone' => $f_time_zone,    
 	'email_header' => $f_email_header,
-	'email_footer' => $f_email_footer
+	'email_footer' => $f_email_footer,
+	'pw_req_level' => $f_pw_req_level,
+	'pw_req_level_group' => $f_pw_req_level_group
 );
 
-
 ## What needs updating ##
+// Check the values sent by the form against what is stored in the database to find out what needs to be updated
+// rather than just updating every config settings in the DB
 $settings_table = $dbl->getSettings('cosmos'); // get the values of the settings from the config db table
 
-$updates = array_diff($sent_settings, $settings_table); // find the differences (thoses differs are the only things we need to update)
+//$updates = array_diff($sent_settings, $settings_table); // find the differences (thoses differs are the only things we need to update)
+foreach($sent_settings as $key => $value) :
+	if($sent_settings[$key] != $settings_table[$key])
+		$updates[$key] = $value;
+endforeach;
+
+
+//var_dump($updates);
+//exit;
 
 ## Update DB ##
 foreach($updates as $key => $value) :
-	if($key == 'limit_rows' || $key == 'min_pw_len' || $key == 'user_key_expire')
+	if($key == 'limit_rows' || $key == 'min_pw_len' || $key == 'user_key_expire' || $key == 'pw_req_level')
 		$value_type = 'i';
 	else
 		$value_type = 's';

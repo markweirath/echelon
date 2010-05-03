@@ -36,7 +36,7 @@ $start_row = $page_no * $limit_rows;
 
 ###########################
 ######### QUERIES #########
-$query = "SELECT c.name, p.id, p.type, p.time_add, p.time_expire, p.reason, p.duration FROM penalties p LEFT JOIN clients c ON p.client_id = c.id WHERE p.inactive = 0 AND p.type != 'Warning' AND p.type != 'Notice' AND (p.time_expire = -1 OR p.time_expire > UNIX_TIMESTAMP(NOW()))";
+$query = "SELECT c.id, c.name, p.id, p.type, p.time_add, p.time_expire, p.reason, p.duration FROM penalties p LEFT JOIN clients c ON p.client_id = c.id WHERE p.inactive = 0 AND p.type != 'Warning' AND p.type != 'Notice' AND (p.time_expire = -1 OR p.time_expire > UNIX_TIMESTAMP(NOW()))";
 
 $query .= sprintf(" ORDER BY %s ", $orderby);
 
@@ -55,10 +55,11 @@ $stmt->store_result();
 $num_rows = $stmt->num_rows;
 
 if($num_rows > 0) :
-	$stmt->bind_result($client_name, $ban_id, $type, $time_add, $time_expire, $reason, $duration);
+	$stmt->bind_result($client_id, $client_name, $ban_id, $type, $time_add, $time_expire, $reason, $duration);
 
 	while($stmt->fetch()) : // get results and put results in an array
 		$pens_data[] = array(
+			'client_id' => $client_id,
 			'client_name' => $client_name,
 			'ban_id' => $ban_id,
 			'type' => $type,
@@ -131,6 +132,7 @@ require 'inc/header.php';
 			$time_add = $pen['time_add'];
 			$time_expire = $pen['time_expire'];
 			$reason = tableClean($pen['reason']);
+			$client_id = $pen['client_id'];
 			$client_name = tableClean($pen['client_name']);
 			$duration = $pen['duration'];
 
@@ -143,6 +145,11 @@ require 'inc/header.php';
 			$time_expire_read = timeExpirePen($time_expire, $tformat);
 			$time_add_read = date($tformat, $time_add);
 			$reason_read = removeColorCode($reason);
+			
+			if($mem->loggedIn())
+				$client_name_read = clientLink($client_name, $client_id);
+			else
+				$client_name_read = $client_name;
 
 			## Row color
 			$rowcolor = 1 - $rowcolor;	
@@ -154,7 +161,7 @@ require 'inc/header.php';
 			// setup heredoc (table data)			
 			$data = <<<EOD
 			<tr class="$odd_even">
-				<td><strong>$client_name</strong></td>
+				<td><strong>$client_name_read</strong></td>
 				<td>$ban_id</td>
 				<td>$type</td>
 				<td>$time_add_read</td>

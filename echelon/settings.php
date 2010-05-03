@@ -2,6 +2,7 @@
 $page = "settings";
 $page_title = "Settings";
 $auth_name = 'manage_settings';
+$b3_conn = true;
 require 'inc.php';
 
 // get a list of main Echelon settings from the config table
@@ -21,13 +22,13 @@ require 'inc/header.php';
 			<legend>General Echelon Settings</legend>
 			
 			<label for="name">Site Name:</label>
-				<input type="text" name="name" value="<?php echo tableClean($settings['name']); ?>">
+				<input type="text" name="name" value="<?php echo $settings['name']; ?>">
 				
 			<label for="email">Echelon Admin Email:</label>
-				<input type="text" name="email" value="<?php echo tableClean($settings['email']); ?>">
+				<input type="text" name="email" value="<?php echo $settings['email']; ?>">
 				
 			<label for="admin_name">Name of Site Admin:</label>
-				<input type="text" name="admin_name" value="<?php echo tableClean($settings['admin_name']); ?>">
+				<input type="text" name="admin_name" value="<?php echo $settings['admin_name']; ?>">
 
 			<input type="text" name="limit_rows" value="<?php echo $settings['limit_rows']; ?>" class="int"><label for="limit_rows">Max rows in tables</label><br>
 				<p class="tip">Max number of rows displayed in a table on one page</p>
@@ -72,6 +73,26 @@ require 'inc/header.php';
 			
 			<input type="checkbox" name="allow_ie"<?php if($settings['allow_ie'] == 1) echo ' checked="checked"'; ?>><label for="allow_ie">Allow Internet Explorer</label>
 				<p class="tip">If checked, this bans users from using IE anywhere but the Pub. Ban List</p>
+				
+			<fieldset class="none">
+				<legend>Require password for client level edits</legend>
+				
+				<input type="checkbox" name="pw_req_level"<?php if($settings['pw_req_level'] == 1) echo ' checked="checked"'; ?>><label for="pw_req_level">Require password</label>
+				<select name="pw_req_level_group">
+					<?php
+						$b3_groups = $db->getB3Groups();
+						foreach($b3_groups as $group) :
+							$gid = $group['id'];
+							$gname = $group['name'];
+							if($settings['pw_req_level_group'] == $gid)
+								echo '<option value="'.$gid.'" selected="selected">'.$gname.'</option>';
+							else
+								echo '<option value="'.$gid.'">'.$gname.'</option>';
+						endforeach;
+					?>
+				</select>
+				
+			</fieldset>	
 		
 		</fieldset>
 

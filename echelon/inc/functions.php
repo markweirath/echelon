@@ -248,7 +248,7 @@ function set_warning($msg) {
 }
 
 function css_file($name) {
-	echo '<link href="css/'. $name. '.css" rel="stylesheet" media="screen" type="text/css" />';
+	echo '<link href="css/'. $name. '.css" rel="stylesheet" type="text/css" />';
 }
 
 /**
@@ -367,6 +367,13 @@ function tooltip($msg, $float = false) {
 		echo '<a class="tooltip" style="float: left; display: block;" title="'. $msg .'"></a>';
 	else
 		echo '<a class="tooltip" title="'. $msg .'"></a>';
+}
+
+/**
+ * Echo out simple clientdetails link
+ */
+function clientLink($name, $id) {
+	return '<a href="clientdetails.php?id='.$id.'" title="Check out '.$name.' client information profile">'.$name.'</a>';
 }
 
 /**
@@ -829,9 +836,13 @@ function time_duration($seconds, $use = null, $zeros = false) {
  */
  function getEchVer(){
 
-	$c = file_get_contents('http://b3-echelon.com/update/version.txt');
-	$string = cleanvar($c);
-	return $string;
+	$c = @file_get_contents('http://b3-echelon.com/update/version.txt');
+	if($c == false) {
+		return false;
+	} else {
+		$string = cleanvar($c);
+		return $string;
+	}
 	
 }
 

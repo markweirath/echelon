@@ -40,11 +40,6 @@ if($change_db_pw == true)
 emptyInput($db_name, 'DB name');
 emptyInput($password, 'your current password');
 
-// check that the db_host is valid
-$db_host = strtolower($db_host);
-if( (!filter_var($db_host, FILTER_VALIDATE_IP)) || ($db_host == 'localhost') )
-	sendBack('That IP Address/Hostname is not valid');
-	
 ## Check that authorisation passsword is correct ##
 $mem->reAuthUser($password, $dbl);
 	
