@@ -12,7 +12,7 @@ endif;
 
 
 ## Check Token ##
-if(verifyFormToken('settings', $tokens) == false) // verify token
+if(!verifyFormToken('settings', $tokens)) // verify token
 	ifTokenBad('Settings Edit');
 
 ## Get Vars ##
@@ -97,15 +97,10 @@ $sent_settings = array(
 // rather than just updating every config settings in the DB
 $settings_table = $dbl->getSettings('cosmos'); // get the values of the settings from the config db table
 
-//$updates = array_diff($sent_settings, $settings_table); // find the differences (thoses differs are the only things we need to update)
 foreach($sent_settings as $key => $value) :
 	if($sent_settings[$key] != $settings_table[$key])
 		$updates[$key] = $value;
 endforeach;
-
-
-//var_dump($updates);
-//exit;
 
 ## Update DB ##
 foreach($updates as $key => $value) :

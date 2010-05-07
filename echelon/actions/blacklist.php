@@ -26,6 +26,9 @@ if($_POST['deact']) { // if this is a deactivation request
 } elseif($_POST['ip']) { // if this is an add request
 	$admin_id = $_SESSION['user_id']; // find out what client this request is for
 	
+	if(!verifyFormToken('addbl', $tokens)) // verify token
+		ifTokenBad('BL Add'); // if bad log, add hack counter and throw error
+	
 	// set and clean vars
 	$reason = cleanvar($_POST['reason']);
 	$ip = cleanvar($_POST['ip']);
@@ -41,9 +44,6 @@ if($_POST['deact']) { // if this is a deactivation request
 	// check if it is a valid IP address
 	if(!filter_var($ip, FILTER_VALIDATE_IP))
 		sendBack('That IP address is not valid');
-	
-	if(!verifyFormToken('addbl', $tokens)) // verify token
-		ifTokenBad('BL Add'); // if bad log, add hack counter and throw error
 		
 	$whitelist = array('token','reason','ip'); // allow form fields to be sent
 

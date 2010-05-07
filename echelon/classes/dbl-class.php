@@ -2,9 +2,8 @@
 if (!empty($_SERVER['SCRIPT_FILENAME']) && 'dbl-class.php' == basename($_SERVER['SCRIPT_FILENAME']))
   		die ('Please do not load this page directly. Thanks!');
 
-
 /**
- * class DbL
+ * class DBL
  * desc: File to deal with all connections/queries to the Echelon Database 
  */ 
 
@@ -46,7 +45,7 @@ class DbL {
 	
 	function getGamesInfo() {
 	
-		$query = "SELECT id, game_id, game, name, name_short, num_srvs, db_host, db_user, db_pw, db_name FROM games ORDER BY game_id ASC";
+		$query = "SELECT id, game, name, name_short, num_srvs, db_host, db_user, db_pw, db_name FROM games ORDER BY id ASC";
 		$results = $this->mysql->query($query);
         
 		$games = array();
@@ -55,7 +54,6 @@ class DbL {
         while($row = $results->fetch_object()) : // get results		
 			$games[$i] = array(
 				'id' => $row->id,
-				'game_id' => $row->game_id,
 				'game' => $row->game,
 				'name' => $row->name,
 				'name_short' => $row->name_short,
@@ -121,6 +119,39 @@ class DbL {
 		
     }
 	
+	/**
+	 * Add a Game to the Echelon list
+	 *
+	 * @param string $name - name of the game
+	 * @param string $game - the game type (eg. cod4, cod2, bfbc2)
+	 * @param string $name_short - short name for the game
+	 * @param string $db_host - database host
+	 * @param string $db_user - database user
+	 * @param string $db_pw - database password
+	 * @param string $db_name - database name
+	 * @return bool
+	 */
+	function addGame($name, $game, $name_short, $db_host, $db_user, $db_pw, $db_name) {
+		// id, name, game, name_short, num_srvs, db_host, db_user, db_pw, db_name
+		$query = "INSERT INTO games VALUES(NULL, ?, ?, ?, 0, ?, ?, ?, ?)";
+		$stmt = $this->mysql->prepare($query) or die('DB Error');
+		$stmt->bind_param('sssssss', $name, $game, $name_short, $db_host, $db_user, $db_pw, $db_name);
+		$stmt->execute();
+		
+		if($stmt->affected_rows > 0)
+			return true;
+		else
+			return false;
+			
+	}
+	
+	function addGameCount() {
+		$query = "UPDATE config SET value = (value + 1) WHERE name = 'num_games' LIMIT 1";
+		$result = $this->mysql->query($query) or die('DB Error');
+		
+		return $result;
+	}
+	
 	function getServers($cur_game) {
 		$query = "SELECT id, name, ip, pb_active, rcon_pass, rcon_ip, rcon_port FROM servers WHERE game = ?";
 		$stmt = $this->mysql->prepare($query);
@@ -176,21 +207,28 @@ class DbL {
 	 */
 	function getServerList($orderby, $order) {
 			
-		$query = "SELECT s.id, s.name, s.ip, s.game, s.pb_active, g.name as g_name FROM servers s LEFT JOIN games g ON s.game = g.game_id ORDER BY ".$orderby." ".$order;
+		$query = "SELECT s.id, s.name, s.ip, s.game, s.pb_active, g.name as g_name FROM servers s LEFT JOIN games g ON s.game = g.id ORDER BY ".$orderby." ".$order;
 		$result = $this->mysql->query($query);
-
-        while($row = $result->fetch_object()) : // get results		
-			$servers[] = array(
-				'id' => $row->id,
-				'game' => $row->game,
-				'name' => $row->name,
-				'ip' => $row->ip,
-				'pb_active' => $row->pb_active,
-				'game_name' => $row->g_name
-			);
-		endwhile;
+		$num_rows = $result->num_rows();
 		
-		return $servers;
+		if($num_rows > 0) :
+			while($row = $result->fetch_object()) : // get results		
+				$servers[] = array(
+					'id' => $row->id,
+					'game' => $row->game,
+					'name' => $row->name,
+					'ip' => $row->ip,
+					'pb_active' => $row->pb_active,
+					'game_name' => $row->g_name
+				);
+			endwhile;
+			
+			return $servers; // return the information
+			
+		else :
+			return false;
+		
+		endif;
 	}
 	
 	/**
@@ -228,7 +266,7 @@ class DbL {
     function addServer($game_id, $name, $ip, $pb, $rcon_ip, $rcon_port, $rcon_pw) {
 		
 		// id, game, name, ip, pb_active, rcon_pass, rcon_ip, rcon_port
-		$query = "INSERT INTO servers VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)";
+		$query = "INSERT INTO servers VALUES(NULL, ?, ?, ?, ?, ?, ?, ?)";
 			
 		$stmt = $this->mysql->prepare($query) or die('DB Error');
 		$stmt->bind_param('ississi', $game_id, $name, $ip, $pb, $rcon_pw, $rcon_ip, $rcon_port);
@@ -274,12 +312,12 @@ class DbL {
 	}
 	
 	function getGamesList() {
-		$query = "SELECT game_id, name FROM games ORDER BY game_id ASC";
+		$query = "SELECT id, name FROM games ORDER BY id ASC";
 		$results = $this->mysql->query($query) or die('Database error');
 		
 		while($row = $results->fetch_object()) :	
 			$games[] = array(
-				'id' => $row->game_id,
+				'id' => $row->id,
 				'name' => $row->name
 			);
 		endwhile;

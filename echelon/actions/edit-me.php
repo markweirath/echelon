@@ -45,18 +45,7 @@ if($is_change_display_email == false && $is_change_pw == false)
 
 
 ## Query Section ##
-// Check to see if this person is real
-$salt = $dbl->getUserSaltById($user_id);
-
-if($salt == false) // only returns false if no salt returned
-	sendBack("There was an error, you don't seem to exist!");
-
-$hash_pw = genPW($cur_pw, $salt); // hash the inputted pw with the returned salt
-
-// Check to see that the supplied password is correct
-$validate = $dbl->validateUserRequest($user_id, $hash_pw);
-if($validate == false) // if false
-	sendBack('You have supplied an incorrect current password');
+$mem->reAuthUser($user_id, $dbl); // check user current password is correct
 
 if($is_change_display_email) : // if the display or email have been altered edit them if not skip this section
 	// update display name and email

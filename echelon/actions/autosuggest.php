@@ -8,7 +8,7 @@ if(!isset($_GET['s'])) {
 	exit;
 }
 
-$string = $_GET['s'];
+$string = cleanvar($_GET['s']);
 
 if(strlen($string) > 0) {
 

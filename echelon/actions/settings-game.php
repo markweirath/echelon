@@ -8,13 +8,27 @@ if(!$_POST['game-settings-sub']) :
 	send('../index.php');
 endif;
 
+if($_POST['type'] == 'add')
+	$is_add = true;
+elseif($_POST['type'] == 'edit')
+	$is_add = false;
+else
+	sendBack('Missing Data');
+
 ## Check Token ##
-if(verifyFormToken('gamesettings', $tokens) == false) // verify token
-	ifTokenBad('Settings Edit');
+if($is_add) {
+	//if(!verifyFormToken('addgame', $tokens)) // verify token
+		//ifTokenBad('Add Game');
+} else {
+	if(!verifyFormToken('gamesettings', $tokens)) // verify token
+		ifTokenBad('Game Settings Edit');
+}
 
 ## Get Vars ##
 $name = cleanvar($_POST['name']);
 $name_short = cleanvar($_POST['name-short']);
+if($is_add)
+	$game_type = cleanvar($_POST['game-type']);
 // DB Vars
 $db_host = cleanvar($_POST['db-host']);
 $db_user = cleanvar($_POST['db-user']);
@@ -35,19 +49,38 @@ emptyInput($name, 'game name');
 emptyInput($name_short, 'short version of game name');
 emptyInput($db_user, 'DB Username');
 emptyInput($db_host, 'DB Host');
-if($change_db_pw == true)
-	emptyInput($db_pw, 'DB password');
 emptyInput($db_name, 'DB name');
-emptyInput($password, 'your current password');
 
-## Check that authorisation passsword is correct ##
-$mem->reAuthUser($password, $dbl);
+if( ($change_db_pw == true) && (!$is_add) )
+	emptyInput($db_pw, 'DB password');
+
+if(!$is_add)
+	emptyInput($password, 'your current password');
 	
+if($is_add) :
+	if(!array_key_exists($game_type, $supported_games))
+		sendBack('That game type does not exist, please choose a game');
+endif;
+	
+
 ## Update DB ##
-$result = $dbl->setGameSettings($game, $name, $name_short, $db_user, $db_host, $db_name, $db_pw, $change_db_pw); // update the settings in the DB
+if($is_add) : // add game queries
+	$result = $dbl->addGame($name, $game_type, $name_short, $db_host, $db_user, $db_pw, $db_name);
+	if(!$result) // if everything is okay
+		sendBack('There is a problem, the game information was not saved.');
+	
+	$dbl->addGameCount(); // Add one to the game counter in config table	
+	
+else : // edit game queries
+	$mem->reAuthUser($password, $dbl);
+	$result = $dbl->setGameSettings($game, $name, $name_short, $db_user, $db_host, $db_name, $db_pw, $change_db_pw); // update the settings in the DB
+	if(!$result)
+		sendBack('Something did not update');
+endif;
 
-if($result == false)
-	sendBack('Something did not update');
-
-## Return ##
-sendGood('Your settings have been updated');
+## Return with result message
+if($is_add) {
+	set_good('Game Added');
+	send('../settings-games.php');
+} else 
+	sendGood('Your settings have been updated');

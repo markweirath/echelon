@@ -18,11 +18,11 @@ else
 
 ## Check Token ##
 if($is_add) { // if add server request
-	//if(verifyFormToken('addserver', $tokens) == false) // verify token
-	//	ifTokenBad('Add Server');
+	if(verifyFormToken('addserver', $tokens) == false) // verify token
+		ifTokenBad('Add Server');
 } else { // if edit server settings
-	//if(verifyFormToken('editserversettings', $tokens) == false) // verify token
-	//	ifTokenBad('Server Settings Edit');
+	if(verifyFormToken('editserversettings', $tokens) == false) // verify token
+		ifTokenBad('Server Settings Edit');
 }
 
 ## Get Vars ##

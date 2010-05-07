@@ -89,7 +89,12 @@ require 'inc/header.php';
 							$count--; // minus 1
 							while($i <= $count) :
 								
-								echo '<option value="'. $games_list[$i]['id'] .'">'. $games_list[$i]['name'] .'</option>';
+								if($game == $games_list[$i]['id'])
+									$selected = 'selected="selected"';
+								else
+									$selected = NULL;
+								
+								echo '<option value="'. $games_list[$i]['id'] .'" '. $selected .'>'. $games_list[$i]['name'] .'</option>';
 								
 								$i++;
 							endwhile;

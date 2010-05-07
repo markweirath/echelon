@@ -39,7 +39,18 @@ if($is_add) : ?>
 					<input type="text" name="name" id="name"  />
 				
 				<label for="name-short">Short Name:</label>
-					<input type="text" name="name-short" id="name-short"  />
+					<input type="text" name="name-short" id="name-short"  /><br />
+					
+				<label for="game-type">Game:</label>
+					<select name="game-type" id="game-type">
+						<?php
+							foreach($supported_games as $key => $value) :
+								
+								echo '<option value="'.$key.'">'.$value.'</option>';
+
+							endforeach;
+						?>
+					</select>
 			
 			</fieldset>
 			
@@ -64,6 +75,8 @@ if($is_add) : ?>
 
 	</fieldset><!-- end general game settings -->
 
+		<input type="hidden" name="cng-pw" value="on" />
+		<input type="hidden" name="type" value="add" />
 		<input type="hidden" name="token" value="<?php echo $add_game_token; ?>" />
 		<input type="submit" name="game-settings-sub" value="Add Game" />
 
@@ -122,7 +135,8 @@ if($is_add) : ?>
 			<br class="clear" />
 
 	</fieldset><!-- end general game settings -->
-
+	
+		<input type="hidden" name="type" value="edit" />
 		<input type="hidden" name="token" value="<?php echo $game_token; ?>" />
 		<input type="hidden" name="game" value="<?php echo $game; ?>" />
 		<input type="submit" name="game-settings-sub" value="Save Settings" />

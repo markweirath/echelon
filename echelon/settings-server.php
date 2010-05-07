@@ -53,10 +53,11 @@ else: ## if a normal list page ##
 		$order = 'ASC';
 	
 	## Get List ##
-	$servers = $dbl->getServerList($orderby, $order);	
+	if(!$no_servers) // if there are servers
+		$servers = $dbl->getServerList($orderby, $order);
 	
 	## Find num of servers found ##
-	if(!$servers) // if returned false
+	if(!$servers) // if false
 		$num_rows = 0;
 	else
 		$num_rows = count($servers);
