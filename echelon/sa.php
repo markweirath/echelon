@@ -71,7 +71,16 @@ if($_GET['t'] == 'edituser') :
 	// set referance var
 	$is_edit_user = true;
 
-endif;	
+endif;
+
+## Permissions Setup ##
+if($_GET['t'] == 'perms') :
+
+	$is_permissions = true; // helper var
+	$page = "perms";
+	$page_title = "User Permissions Management";
+
+endif;
 
 ## Require Header ##	
 require 'inc/header.php';
@@ -124,8 +133,16 @@ if($is_edit_user) : ?>
 			<p>Last Seen: <?php echo date($tformat, $last_seen); ?></p>
 			<p>Creator: <?php echo echUserLink($admin_id, $admin_name); ?></p>
 	</fieldset>
+	
+<?php elseif($is_permissions) : ?>
+	
+	<a href="sa.php" title="Go back to site admin page" class="float-left">&laquo; Site Admin</a><br />
+	
+	<h3>Group Permissions</h3>
 
 <?php else : ?>
+<a href="sa.php?t=perms" title="Manage Echelon User Permissions" class="float-right">User Permissions &raquo;</a><br />
+
 <table summary="A list of people who have access to login to Echelon">
 	<caption>Echelon Users<small>A list of all people who can login to Echelon.</small></caption>
 	<thead>
@@ -277,7 +294,7 @@ EOD;
 			
 			$token_keydel = genFormToken('keydel'.$reg_key);
 			
-			if($_SESSION['user_id'] == $admin_id) { // if the current user is the person who create the key allow the user to edit the key's comment
+			if($mem->id == $admin_id) { // if the current user is the person who create the key allow the user to edit the key's comment
 				$edit_comment = '<img src="" alt="[Edit]" title="Edit this comment" class="edit-key-comment" />';
 			} else {
 				$edit_comment = '';

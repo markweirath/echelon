@@ -24,7 +24,6 @@ if($_POST['deact']) { // if this is a deactivation request
 	exit; // no need to continue
 
 } elseif($_POST['ip']) { // if this is an add request
-	$admin_id = $_SESSION['user_id']; // find out what client this request is for
 	
 	if(!verifyFormToken('addbl', $tokens)) // verify token
 		ifTokenBad('BL Add'); // if bad log, add hack counter and throw error
@@ -58,7 +57,7 @@ if($_POST['deact']) { // if this is a deactivation request
 	} // end foreach
 	
 	## Query Section ##
-	$bl = $dbl->addBlBan($ip, $reason, $admin_id);
+	$bl = $dbl->addBlBan($ip, $reason, $mem->id);
 	if($bl == false) // if false
 		sendBack('That IP was not added to the blacklist was not added');
 	

@@ -79,12 +79,10 @@ if($type == 'Ban') :
 endif;
 
 // set common vars	
-$type = 'Edit Ban';
-$user_id = $_SESSION['user_id'];
 $comment = 'A ban for this user was edited';
 
 ## Query ##
-$result = $dbl->addEchLog($type, $comment, $cid, $user_id);
+$result = $dbl->addEchLog('Edit Ban', $comment, $cid, $mem->id);
 
 if($results)
 	sendGood('Ban edited');

@@ -9,8 +9,8 @@ if(!isset($_POST['xlrstats-sub'])) : // if the form is submitted
 endif;
 
 ## check that the sent form token is corret
-//if(verifyFormToken('xlrstats', $tokens) == false) // verify token
-//	ifTokenBad('XLRStats Edit');
+if(verifyFormToken('xlrstats', $tokens) == false) // verify token
+	ifTokenBad('XLRStats Edit');
 
 // Gets vars from form
 $cid = cleanvar($_POST['cid']);
@@ -29,13 +29,8 @@ else
 if(!is_numeric($cid))
 	sendBack('Invalid data sent, ban not added');
 
-// set common vars	
-$type = 'XLRStats';
-$user_id = $_SESSION['user_id'];
-$comment = 'XLRStats information changed';
-
 ## LOG Query ##
-$results = $dbl->addEchLog($type, $comment, $cid, $user_id);
+$results = $dbl->addEchLog('XLRStats', 'XLRStats information changed', $cid, $mem->id);
 
 ## Update XLRStats table ##
 $query = "UPDATE xlr_playerstats SET hide = ?, fixed_name = ? WHERE client_id = ? LIMIT 1";

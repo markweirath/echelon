@@ -18,7 +18,7 @@ require 'inc/header.php';
 		<li><a href="clients.php" title="Enter the repositorty and start exploring Echelon">Enter the Respository</a></li>
 		<li><a href="<?php echo $path; ?>actions/logout.php" class="logout" title="Sign out of Echelon">Log Out</a></li>
 	</ul>
-
+	
 	<div id="change-log">	   
 		<h3>Changelog <?php echo ECH_VER; ?></h3>
 		

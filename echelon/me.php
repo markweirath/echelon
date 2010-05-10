@@ -4,8 +4,6 @@ $page_title = "My Account";
 $auth_name = 'login';
 require 'inc.php';
 
-// do stuff
-
 require 'inc/header.php';
 ?>
 	<fieldset>
@@ -17,9 +15,9 @@ require 'inc/header.php';
 				<label class="uname">Username:</label>
 					<input type="text" name="uname" value="<?php echo $_SESSION['username']; ?>" disabled="disabled" />		
 				<label for="display">Display Name:</label>
-					<input type="text" name="name" value="<?php echo $_SESSION['name']; ?>" id="display" tabindex="1" />
+					<input type="text" name="name" value="<?php echo $mem->name; ?>" id="display" tabindex="1" />
 				<label for="email">Email:</label>
-					<input type="text" name="email" value="<?php echo $_SESSION['email']; ?>" id="email" tabindex="2" />
+					<input type="text" name="email" value="<?php echo $mem->email; ?>" id="email" tabindex="2" />
 			</fieldset>
 
 			<fieldset class="none">

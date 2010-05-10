@@ -9,12 +9,53 @@ if (!empty($_SERVER['SCRIPT_FILENAME']) && 'dbl-class.php' == basename($_SERVER[
 
 class DbL {
 
-	private $mysql;
+	private $mysql = NULL;
+	
+	/**
+     * Auto run on creation of instance: attempts to connect to the Echelon DB or dies with the mysql error
+     *
+     */
+	public function __construct() { 
+		try { 
+			$this->connectDB(); 
+		} catch (Exception $e) { 
+			die($e->getMessage()); 
+		} 
+	} 
 
-	function __construct() {
-		$this->mysql = new mysqli(DBL_HOSTNAME, DBL_USERNAME, DBL_PASSWORD, DBL_DB) or die("Error Connecting to the Echelon Database");
-		// connect to the database or die with an error
-	}
+	/**
+     * Makes the connection to the DB or throws erro
+     *
+     */
+    private function connectDB () {
+		if($this->mysql != NULL) // if it is set/created (defalt starts at NULL)
+			@$this->mysql->close();
+
+        $this->mysql = @new mysqli(DBL_HOSTNAME, DBL_USERNAME, DBL_PASSWORD, DBL_DB);
+		if(DB_CON_ERROR_SHOW) : // only is settings say show con error will we show it
+	
+		endif;
+		
+		if (mysqli_connect_errno()) :
+
+				if(DB_CON_ERROR_SHOW) // only if settings say show to con error, will we show it, else just say error
+					$error_msg = '<strong>Database Connection Error:</strong> '.mysqli_connect_error();
+				else
+					$error_msg = '<strong>Database Connection Error</strong>';
+
+				throw new Exception ($error_msg);
+
+		endif;
+    }
+	
+	/**
+     * __destruct : Destructor for class, closes the MySQL connection
+     *
+     */
+    function __destruct() {
+        if ($this->mysql != NULL) // if it is set/created (defalt starts at NULL)
+            @$this->mysql->close();
+    }
 	
 	
 	/**
@@ -25,7 +66,7 @@ class DbL {
 	 */
 	function getSettings($cat) {
         $query = "SELECT name, value FROM config WHERE category = ?";
-        $stmt = $this->mysql->prepare($query) or die('DB Error');
+        $stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('s', $cat);
 		$stmt->execute();
 		
@@ -46,7 +87,7 @@ class DbL {
 	function getGamesInfo() {
 	
 		$query = "SELECT id, game, name, name_short, num_srvs, db_host, db_user, db_pw, db_name FROM games ORDER BY id ASC";
-		$results = $this->mysql->query($query);
+		$results = $this->mysql->query($query) or die('Database Error');
         
 		$games = array();
 		
@@ -80,7 +121,7 @@ class DbL {
     function setSettings($value, $name, $value_type) {
         
 		$query = "UPDATE config SET value = ? WHERE name = ? LIMIT 1";
-		$stmt = $this->mysql->prepare($query);
+		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param($value_type.'s', $value, $name);
 		$stmt->execute();
 		
@@ -105,7 +146,7 @@ class DbL {
 
 		$query .= " WHERE id = ? LIMIT 1";
 			
-		$stmt = $this->mysql->prepare($query);
+		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		if($change_db_pw) // if chnage DB PW append var
 			$stmt->bind_param('ssssssi', $name, $name_short, $db_host, $db_user, $db_name, $db_pw, $game);
 		else // else var info not needed in bind_param
@@ -134,7 +175,7 @@ class DbL {
 	function addGame($name, $game, $name_short, $db_host, $db_user, $db_pw, $db_name) {
 		// id, name, game, name_short, num_srvs, db_host, db_user, db_pw, db_name
 		$query = "INSERT INTO games VALUES(NULL, ?, ?, ?, 0, ?, ?, ?, ?)";
-		$stmt = $this->mysql->prepare($query) or die('DB Error');
+		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('sssssss', $name, $game, $name_short, $db_host, $db_user, $db_pw, $db_name);
 		$stmt->execute();
 		
@@ -147,14 +188,14 @@ class DbL {
 	
 	function addGameCount() {
 		$query = "UPDATE config SET value = (value + 1) WHERE name = 'num_games' LIMIT 1";
-		$result = $this->mysql->query($query) or die('DB Error');
+		$result = $this->mysql->query($query) or die('Database Error');
 		
 		return $result;
 	}
 	
 	function getServers($cur_game) {
 		$query = "SELECT id, name, ip, pb_active, rcon_pass, rcon_ip, rcon_port FROM servers WHERE game = ?";
-		$stmt = $this->mysql->prepare($query);
+		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('i', $cur_game);
 		$stmt->execute();
 		$stmt->bind_result($id, $name, $ip, $pb_active, $rcon_pass, $rcon_ip, $rcon_port); // bind results into vars
@@ -177,7 +218,7 @@ class DbL {
 	
 	function getServer($id) {
 		$query = "SELECT game, name, ip, pb_active, rcon_pass, rcon_ip, rcon_port FROM servers WHERE id = ?";
-		$stmt = $this->mysql->prepare($query);
+		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('i', $id);
 		$stmt->execute();
 		$stmt->bind_result($game, $name, $ip, $pb_active, $rcon_pass, $rcon_ip, $rcon_port); // bind results into vars
@@ -245,7 +286,7 @@ class DbL {
 
 		$query .= " WHERE id = ? LIMIT 1";
 			
-		$stmt = $this->mysql->prepare($query);
+		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		if($change_rcon_pw) // if change RCON PW append
 			$stmt->bind_param('ssisisi', $name, $ip, $pb, $rcon_ip, $rcon_port, $rcon_pw, $server_id);
 		else // else info not needed in bind_param
@@ -268,7 +309,7 @@ class DbL {
 		// id, game, name, ip, pb_active, rcon_pass, rcon_ip, rcon_port
 		$query = "INSERT INTO servers VALUES(NULL, ?, ?, ?, ?, ?, ?, ?)";
 			
-		$stmt = $this->mysql->prepare($query) or die('DB Error');
+		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('ississi', $game_id, $name, $ip, $pb, $rcon_pw, $rcon_ip, $rcon_port);
 		$stmt->execute();
 		
@@ -283,7 +324,7 @@ class DbL {
 	 */
 	function addServerUpdateGames($game_id) {
 		$query = "UPDATE games SET num_srvs = (num_srvs + 1) WHERE game_id = ? LIMIT 1";
-		$stmt = $this->mysql->prepare($query) or die('DB Error');;
+		$stmt = $this->mysql->prepare($query) or die('Database Error');;
 		$stmt->bind_param('i', $game_id);
 		$stmt->execute();
 	}
@@ -291,7 +332,7 @@ class DbL {
 	function getPlugins($game) {
 	
 		$query = "SELECT id, name, title, info FROM plugins WHERE game_id = ? AND enabled = 1";
-		$stmt = $this->mysql->prepare($query) or die('DB Error');
+		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('i', $game);
 		$stmt->execute();
 		
@@ -437,9 +478,7 @@ class DbL {
 		
 			while($stmt->fetch()) :
 				if($ip == $bl_ip) // if ip mathces one on BL return true
-					return true; // IP on BL
-				else
-					return false; // IP NOT on BL
+					return true; // IP NOT on BL
 			endwhile; // end loop through list
 			
 		else: // if no ban list just return false
@@ -449,6 +488,7 @@ class DbL {
 		$stmt->free_result();
 		$stmt->close();
 		
+		return false;
 	}
 
 	/**
@@ -458,7 +498,7 @@ class DbL {
 	 * @param string $comment [optional] - Comment about reason for ban
 	 */
 	function blacklist($ip, $comment = 'Auto Added Ban') { // add an Ip to the blacklist
-		$comment = htmlentities(strip_tags($comment));
+		$comment = cleanvar($comment);
 		// id, ip, active, reason, time_add, admin_id
 		$query = "INSERT INTO blacklist VALUES(NULL, ?, 1, ?, UNIX_TIMESTAMP(), 0)";
 		$stmt = $this->mysql->prepare($query) or die('Database error');
@@ -528,12 +568,12 @@ class DbL {
 	 * @param int $id - id of the ban
 	 * @param bool $active - weather to activate or deactivate
 	 */
-	function BLactive($id, $active) {
+	function BLactive($id, $active = true) {
 
-		if($active == true) // true turns on
-			$active = 1;
-		else // if false turn off
+		if($active == false)
 			$active = 0;
+		else
+			$active = 1;
 
 		$query = "UPDATE blacklist SET active = ? WHERE id = ? LIMIT 1";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
@@ -586,7 +626,7 @@ class DbL {
 		$query = "SELECT k.reg_key, k.email, k.comment, k.time_add, k.admin_id, u.display 
 				  FROM user_keys k LEFT JOIN users u ON k.admin_id = u.id
 				  WHERE k.active = 1  AND k.time_add < ? AND comment != 'PW' ORDER BY time_add ASC";
-		$stmt = $this->mysql->prepare($query) or die('Database Error: '. $this->mysql->error);
+		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('i', $expires);
 		$stmt->execute();
 		
@@ -673,11 +713,10 @@ class DbL {
 		$stmt->execute();
 		$stmt->store_result(); // needed to allow num_rows to buffer
 		
-		if($stmt->num_rows == 1) {
+		if($stmt->num_rows == 1)
 			return true; // the person exists
-		} else {
+		else
 			return false; // person does not exist
-		}
 	
 	}
 	
@@ -740,7 +779,7 @@ class DbL {
 		$time = time();
 		// key, ech_group, admin_id, comment, time_add, email, active
 		$query = "INSERT INTO user_keys VALUES(?, ?, ?, ?, ?, ?, 1)";
-		$stmt = $this->mysql->prepare($query) or die('Database Error'. $this->mysql->error);
+		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('siisis', $user_key, $group, $admin_id, $comment, $time, $email);
 		$stmt->execute();
 		
@@ -836,7 +875,7 @@ class DbL {
 	function getGroupAndIdWithKey($key) {
 	
 		$query = "SELECT ech_group, admin_id FROM user_keys WHERE reg_key = ? LIMIT 1";
-		$stmt = $this->mysql->prepare($query) or die('Database Error: '. $this->mysql->error);
+		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('s', $key);
 		$stmt->execute();
 		$stmt->bind_result($group, $admin_id); // store results	
@@ -862,9 +901,8 @@ class DbL {
 			$stmt->free_result();
 			$stmt->close();
 			return $value;
-		} else {
+		} else
 			return false;
-		}
 	}
 	
 	/**
@@ -903,7 +941,7 @@ class DbL {
 		$time = time();
 		// id, username, display, email, password, salt, ip, group, admin_id, first_seen, last_seen
 		$query = "INSERT INTO users VALUES(NULL, ?, ?, ?, ?, ?, NULL, ?, ?, ?, NULL)";
-		$stmt = $this->mysql->prepare($query) or die('Database Error'. $this->mysql->error);
+		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('sssssiii', $username, $display, $email, $password, $salt, $group, $admin_id, $time);
 		$stmt->execute();
 		
@@ -959,7 +997,7 @@ class DbL {
 	function getUserDetails($id) {
 		$query = "SELECT u.username, u.display, u.email, u.ip, u.ech_group, u.admin_id, u.first_seen, u.last_seen, a.display 
 				  FROM users u LEFT JOIN users a ON u.admin_id = a.id WHERE u.id = ? LIMIT 1";
-		$stmt = $this->mysql->prepare($query) or die('Database Error '. $this->mysql->error);
+		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('i', $id);
 		$stmt->execute();
 	
@@ -981,7 +1019,7 @@ class DbL {
 	
 	function getUserDetailsEdit($id) {
 		$query = "SELECT username, display, email, ech_group FROM users WHERE id = ? LIMIT 1";
-		$stmt = $this->mysql->prepare($query) or die('Database Error '. $this->mysql->error);
+		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('i', $id);
 		$stmt->execute();
 	
@@ -1034,7 +1072,7 @@ class DbL {
 	 */
 	function getGroups() {
 		$query = "SELECT id, display FROM groups ORDER BY id ASC";
-		$stmt = $this->mysql->prepare($query);
+		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->execute();
 		$stmt->bind_result($id, $display);
 		
@@ -1051,8 +1089,8 @@ class DbL {
 	}
 	
 	function getEchLogs($client_id) {
-		$query = "SELECT l.id, l.type, l.msg, l.user_id, u.display, l.time_add FROM ech_logs l LEFT JOIN users u ON l.user_id = u.id WHERE client_id = ? ORDER BY time_add DESC";
-		$stmt = $this->mysql->prepare($query);
+		$query = "SELECT log.id, log.type, log.msg, log.user_id, u.display, log.time_add FROM ech_logs log LEFT JOIN users u ON log.user_id = u.id WHERE client_id = ? ORDER BY log.time_add DESC";
+		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('i', $client_id);
 		$stmt->execute();
 		
@@ -1066,7 +1104,7 @@ class DbL {
 				'msg' => $msg,
 				'user_id' => $user_id,
 				'user_name' => $user_name,
-				'time_add' => $time_add,
+				'time_add' => $time_add
 			); 	
 		endwhile;
 		
@@ -1078,7 +1116,7 @@ class DbL {
 	function addEchLog($type, $comment, $cid, $user_id) {
 		// id, type, msg, client_id, user_id, time_add
 		$query = "INSERT INTO ech_logs VALUES(NULL, ?, ?, ?, ?, UNIX_TIMESTAMP())";
-		$stmt = $this->mysql->prepare($query) or die('MySQL Error: '. $this->mysql->error);
+		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('ssii', $type, $comment, $cid, $user_id);
 		$stmt->execute();
 		

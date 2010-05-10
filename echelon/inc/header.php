@@ -19,7 +19,7 @@ endif;
 	<title><?php echo $site_name; ?> Echelon - <?php echo $page_title; ?></title>
 	
 	<!-- Load CSS Stylesheet -->
-	<link href="<?php echo $path; ?>css/style.css" rel="stylesheet" media="screen" type="text/css" />
+	<link href="<?php echo PATH; ?>css/style.css" rel="stylesheet" media="screen" type="text/css" />
 	
 	<?php 
 	## Include CSS For pages ##
@@ -50,7 +50,7 @@ endif;
 	
 <div id="header">
 	<a name="t"></a>
-	<h1 id="title"><a href="<?php echo $path; ?>" title="Go to the home page">Echelon</a></h1>
+	<h1 id="title"><a href="<?php echo PATH; ?>" title="Go to the home page">Echelon</a></h1>
 	<h2 id="subtitle">B3 repository and investigation tool</h2>		
 </div><!-- end #header -->
 		
@@ -62,7 +62,7 @@ endif;
 		<ul id="nav">
 			<?php if($mem->loggedIn()) { ?>
 			
-				<li class="home<?php if(isHome($page)) echo ' selected'; ?>"><a href="<?php echo $path; ?>" title="Home Page">Home</a></li>
+				<li class="home<?php if(isHome($page)) echo ' selected'; ?>"><a href="<?php echo PATH; ?>" title="Home Page">Home</a></li>
 				
 				
 				<li class="cdd">
@@ -80,7 +80,7 @@ endif;
 									echo '<li class="selected">';
 								else
 									echo '<li>';
-								echo '<a href="'.$path . $this_cur_page .'?game='.$games_list[$i]['id'].'" title="Switch to this game">'.$games_list[$i]['name'].'</a></li>';
+								echo '<a href="'.PATH . $this_cur_page .'?game='.$games_list[$i]['id'].'" title="Switch to this game">'.$games_list[$i]['name'].'</a></li>';
 								
 								$i++;
 							endwhile;
@@ -93,11 +93,11 @@ endif;
 				<li class="cdd">
 					<a href="#">Clients</a>
 					<ul class="dd">
-						<li class="n-clients<?php if(isClients($page)) echo ' selected'; ?>"><a href="<?php echo $path; ?>clients.php" title="Clients Listing">Clients</a></li>
-						<li class="n-active<?php if($page == 'active') echo ' selected'; ?>"><a href="<?php echo $path; ?>active.php" title="In-active admins">In-active Admins</a></li>
-						<li class="n-regular<?php if($page == 'regular') echo ' selected'; ?>"><a href="<?php echo $path; ?>regular.php" title="Regular non admin visitors to your servers">Regular Visitors</a></li>
-						<li class="n-admins<?php if($page == 'admins') echo ' selected'; ?>"><a href="<?php echo $path; ?>admins.php" title="A list of all admins">Admin Listing</a></li>
-						<li class="n-world<?php if(isMap($page)) echo ' selected'; ?>"><a href="<?php echo $path; ?>map.php" title="Player map">World Player Map</a></li>
+						<li class="n-clients<?php if(isClients($page)) echo ' selected'; ?>"><a href="<?php echo PATH; ?>clients.php" title="Clients Listing">Clients</a></li>
+						<li class="n-active<?php if($page == 'active') echo ' selected'; ?>"><a href="<?php echo PATH; ?>active.php" title="In-active admins">In-active Admins</a></li>
+						<li class="n-regular<?php if($page == 'regular') echo ' selected'; ?>"><a href="<?php echo PATH; ?>regular.php" title="Regular non admin visitors to your servers">Regular Visitors</a></li>
+						<li class="n-admins<?php if($page == 'admins') echo ' selected'; ?>"><a href="<?php echo PATH; ?>admins.php" title="A list of all admins">Admin Listing</a></li>
+						<li class="n-world<?php if(isMap($page)) echo ' selected'; ?>"><a href="<?php echo PATH; ?>map.php" title="Player map">World Player Map</a></li>
 					</ul>
 				</li>
 				<?php
@@ -109,10 +109,10 @@ endif;
 				<li class="cdd">
 					<a href="#">Penalties</a>
 					<ul class="dd">
-						<li class="n-adminkicks<?php if($page == 'adminkicks') echo ' selected'; ?>"><a href="<?php echo $path; ?>adminkicks.php">Admin Kicks</a></li>
-						<li class="n-adminbans<?php if($page == 'adminbans') echo ' selected'; ?>"><a href="<?php echo $path; ?>bans.php?t=a">Admin Bans</a></li>
-						<li class="n-b3pen<?php if($page == 'b3pen') echo ' selected'; ?>"><a href="<?php echo $path; ?>bans.php?t=b" title="All Kicks/Bans added automatically by B3">B3 Bans</a></li>
-						<li class="n-pubbans<?php if(isPubbans($page)) echo ' selected'; ?>"><a href="<?php echo $path; ?>pubbans.php" title="A public list of bans in the database">Public Ban List</a></li>
+						<li class="n-adminkicks<?php if($page == 'adminkicks') echo ' selected'; ?>"><a href="<?php echo PATH; ?>adminkicks.php">Admin Kicks</a></li>
+						<li class="n-adminbans<?php if($page == 'adminbans') echo ' selected'; ?>"><a href="<?php echo PATH; ?>bans.php?t=a">Admin Bans</a></li>
+						<li class="n-b3pen<?php if($page == 'b3pen') echo ' selected'; ?>"><a href="<?php echo PATH; ?>bans.php?t=b" title="All Kicks/Bans added automatically by B3">B3 Bans</a></li>
+						<li class="n-pubbans<?php if(isPubbans($page)) echo ' selected'; ?>"><a href="<?php echo PATH; ?>pubbans.php" title="A public list of bans in the database">Public Ban List</a></li>
 					</ul>
 				</li>
 				<?php
@@ -123,13 +123,13 @@ endif;
 				<li class="cdd">
 					<a href="#">Other</a>
 					<ul class="dd">
-						<li class="n-pbss<?php if($page == 'pbss') echo ' selected'; ?>"><a href="<?php echo $path; ?>clients.php" title="Punkbuster&trade; screenshots">PBSS</a></li>
-						<li class="n-chat<?php if($page == 'chat') echo ' selected'; ?>"><a href="<?php echo $path; ?>clients.php" title="Logs of chats from the servers">Chat Logs</a></li>
+						<li class="n-pbss<?php if($page == 'pbss') echo ' selected'; ?>"><a href="<?php echo PATH; ?>clients.php" title="Punkbuster&trade; screenshots">PBSS</a></li>
+						<li class="n-chat<?php if($page == 'chat') echo ' selected'; ?>"><a href="<?php echo PATH; ?>clients.php" title="Logs of chats from the servers">Chat Logs</a></li>
 						<?php if($config['games'][$game]['plugins']['ctime']['enabled'] == 1) : /* if the plugin is enabled show the link */ ?>
-							<li class="n-ctime<?php if($page == 'ctime') echo ' selected'; ?>"><a href="<?php echo $path; ?>ctime.php" title="Records of how long people are spending on the server">Current Activity</a></li>
+							<li class="n-ctime<?php if($page == 'ctime') echo ' selected'; ?>"><a href="<?php echo PATH; ?>ctime.php" title="Records of how long people are spending on the server">Current Activity</a></li>
 						<?php endif; ?>
 						<li class="n-notices<?php if($page == 'notices') echo ' selected'; ?>">
-							<a href="<?php echo $path; ?>notices.php" title="In-game Notices">Notices</a>
+							<a href="<?php echo PATH; ?>notices.php" title="In-game Notices">Notices</a>
 						</li>
 					</ul>
 				</li>
@@ -141,14 +141,14 @@ endif;
 					
 						<?php if($mem->reqLevel('manage_settings')) : ?>
 							<li class="cdd-2 n-settings <?php if(isSettings($page)) echo 'selected'; ?>">
-								<a href="<?php echo $path; ?>settings.php">Site Settings</a>
+								<a href="<?php echo PATH; ?>settings.php">Site Settings</a>
 								
 								<ul class="dd-2">
 									<li class="<?php if(isSettingsGame($page)) echo 'selected'; ?>">
-										<a href="<?php echo $path; ?>settings-games.php" title="Game Settings">Game Settings</a>
+										<a href="<?php echo PATH; ?>settings-games.php" title="Game Settings">Game Settings</a>
 									</li>
 									<li class="<?php if(isSettingsServer($page)) echo 'selected'; ?>">
-										<a href="<?php echo $path; ?>settings-server.php" title="Server Settings">Server Settings</a>
+										<a href="<?php echo PATH; ?>settings-server.php" title="Server Settings">Server Settings</a>
 									</li>
 								</ul>
 							</li>
@@ -156,20 +156,23 @@ endif;
 						
 						<?php if($mem->reqLevel('siteadmin')) : ?>
 							<li class="n-sa<?php if(isSA($page)) echo ' selected'; ?>">
-								<a href="<?php echo $path; ?>sa.php" title="Site Administration">Site Admin</a>
+								<a href="<?php echo PATH; ?>sa.php" title="Site Administration">Site Admin</a>
+							</li>
+							<li class="n-tools<?php if(isPerms($page)) echo ' selected'; ?>">
+								<a href="<?php echo PATH; ?>sa.php?t=perms" title="User Permissions Management">Permissions</a>
 							</li>
 						<?php endif; ?>
 						
 						<li class="n-me<?php if(isMe($page)) echo ' selected'; ?>">
-							<a href="<?php echo $path; ?>me.php" title="Edit your account">My Account</a>
+							<a href="<?php echo PATH; ?>me.php" title="Edit your account">My Account</a>
 						</li>
 					</ul>
 				</li>			
 				
 			<?php } else { ?>
 			
-				<li class="login<?php if(isLogin($page)) echo ' selected'; ?>"><a href="<?php echo $path; ?>login.php" title="Login to Echelon to see the good stuff!">Login</a></li>
-				<li class="pubbans<?php if(isPubbans($page)) echo ' selected'; ?>"><a href="<?php echo $path; ?>pubbans.php" title="Public Ban List">Public Ban List</a></li>
+				<li class="login<?php if(isLogin($page)) echo ' selected'; ?>"><a href="<?php echo PATH; ?>login.php" title="Login to Echelon to see the good stuff!">Login</a></li>
+				<li class="pubbans<?php if(isPubbans($page)) echo ' selected'; ?>"><a href="<?php echo PATH; ?>pubbans.php" title="Public Ban List">Public Ban List</a></li>
 				
 			<?php } ?>
 		</ul><!-- end #nav -->
@@ -177,13 +180,13 @@ endif;
 		<div id="user-info">
 			<?php if($mem->loggedIn()) { ?>
 				<div class="log-cor">
-					<a href="<?php echo $path; ?>actions/logout.php" class="logout" title="Sign out">Sign Out</a>
+					<a href="<?php echo PATH; ?>actions/logout.php" class="logout" title="Sign out">Sign Out</a>
 				</div>
 			<?php } ?>
 			
 			<div class="info">
 				<?php 
-					$grav = $mem->getGravatar($_SESSION['email']); 
+					$grav = $mem->getGravatar($mem->email); 
 					echo $grav;
 				?>
 				<span class="display-name"><?php $mem->displayName(); ?></span>

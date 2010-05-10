@@ -1,5 +1,5 @@
 <?php
-error_reporting(E_ALL ^ E_NOTICE);
+error_reporting(E_ALL ^ E_NOTICE); // show all errors but notices
 require_once 'inc/ctracker.php'; // anti worm injection protection
 require_once 'inc/config.php'; // load the config file
 require_once 'inc/functions.php'; // require all the basic functions used in this site
@@ -13,10 +13,10 @@ require 'classes/members-class.php'; // class to preform all B3 DB related actio
 
 ## fire up the Sessions ##
 $ses = new Session(); // create Session instance
-$ses->sesStart(); // start session
+$ses->sesStart('echelon', 0, PATH); // start session (name 'echelon', 0 => session cookie, path is echelon path so no access allowed oustide echelon path)
 
 ## create istance of the members class ##
-$mem = new member(); 
+$mem = new member($_SESSION['user_id'], $_SESSION['name'], $_SESSION['email']);
 
 ## Is B3 needed on this page ##
 if($b3_conn == true) { // This is to stop connecting to the B3 Db for non b3 Db connection pages eg. Home, Site Admin, My Account
@@ -32,7 +32,7 @@ if($auth_user_here != false) // some pages do not need auth but include this fil
 	$mem->auth($auth_name); // see if user has the right access level is not on the BL and has not got a hack counter above 3
 
 ## remove tokens from 2 pages ago to stop build up
-if($page != 'login') { // stop login page from using this and moving the vars
+if(!isLogin($page)) { // stop login page from using this and moving the vars
 	$tokens = array();
 	foreach($_SESSION['tokens'] as $key => $value) :
 		$tokens[$key] = $value;
@@ -44,7 +44,7 @@ if($page != 'login') { // stop login page from using this and moving the vars
 $https = detectSSL(); // find out if SSL is enabled for this site
 
 if($https_enabled) : // if https is FORCE enabled
-	if($https == FALSE && $page != 'error') { // Check if https is off // If off throw error, logout and end script
+	if($https == FALSE && !isError($page)) { // Check if https is off // If off throw error, logout and end script
 		if($mem->loggedIn())
 			$ses->logout();
 		exit;
@@ -58,7 +58,6 @@ if($no_time_zone == true)
 
 ## Block Internet Explorer ###
 if($allow_ie == 0) {
-	if (detectIE() && $page != 'error') { // alow IE on the pubbans page aswell as the error page
+	if (detectIE() && $page != 'error') // alow IE on the pubbans page aswell as the error page
 		sendError('ie');
-	}
 }

@@ -67,10 +67,8 @@ if(!$is_mask) {
 } else {
 	$comment = 'Mask level changed from '. $old_level_name .' to '. $level_name;
 }
-$user_id = $_SESSION['user_id'];
-$type = 'Level Change';
 
-$dbl->addEchLog($type, $comment, $client_id, $user_id);
+$dbl->addEchLog('Level Change', $comment, $client_id, $mem->id);
 
 ## Query Section ##
 if(!$is_mask)

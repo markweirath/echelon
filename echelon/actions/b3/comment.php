@@ -24,12 +24,8 @@ emptyInput($cid, 'client id not sent');
 if(!is_numeric($cid))
 	sendBack('Invalid data sent, ban not added');
 
-// set common vars	
-$type = 'Comment';
-$user_id = $_SESSION['user_id'];
-
 ## Query ##
-$result = $dbl->addEchLog($type, $comment, $cid, $user_id);
+$result = $dbl->addEchLog('Comment', $comment, $cid, $mem->id);
 if($result)
 	sendGood('Comment added');
 else

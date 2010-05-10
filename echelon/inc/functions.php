@@ -85,9 +85,8 @@ function editBanButton($type, $pen_id, $inactive) {
  * @return string
  */
 function genHash($unhashed_text) {
-	$salt = "D2pPnJhmxRC5"; // define salt
 	$md5 = md5($unhashed_text); // get md5
-	$hashed = sha1($salt.$md5); // get hash of text plus salt in sha1
+	$hashed = sha1(SALT.$md5); // get hash of text plus salt in sha1
 
 	return $hashed; // return the inputted text
 }
@@ -275,7 +274,7 @@ function getRealIp() {
  */
 function emptyInput($var_name, $field) {
 	$var = trim($var_name);
-	$ref = $_SERVER['HTTP_REFERER'];
+	$ref = cleanvar($_SERVER['HTTP_REFERER']);
 	if(empty($var)) {
 		set_error('You must put something in the '.$field.' field.');
 		send($ref); // send back to referering page
@@ -300,7 +299,7 @@ function cleanvar($var) {
  * @param string $error - the error message that will be sent to the user
  */
 function sendBack($error) {
-	$ref = $_SERVER['HTTP_REFERER'];
+	$ref = cleanvar($_SERVER['HTTP_REFERER']);
 	set_error($error);
 	send($ref); // send back to referering page
 	exit; // end script
@@ -312,7 +311,7 @@ function sendBack($error) {
  * @param string $good - sucess message to be sent to the user
  */
 function sendGood($good) {
-	$ref = $_SERVER['HTTP_REFERER'];
+	$ref = cleanvar($_SERVER['HTTP_REFERER']);
 	set_good($good);
 	send($ref); // send back to referering page
 	exit; // end script
@@ -331,21 +330,21 @@ function send($where) {
  * Send user to login page
  */
 function sendLogin() { 
-	header("Location: {$path}login.php");
+	header("Location: ".PATH."login.php");
 }
 
 /**
  * send to the locked page
  */
 function sendLocked() {
-	header("Location: {$path}error.php?t=locked");
+	header("Location: ".PATH."error.php?t=locked");
 }
 
 /**
  * Send to home page
  */
 function sendHome() {
-	header("Location: {$path}index.php");
+	header("Location: ".PATH."index.php");
 }
 
 /**
@@ -353,9 +352,9 @@ function sendHome() {
  */
 function sendError($add = NULL) {
 	if($add == NULL)
-		header("Location: {$path}error.php");
+		header("Location: ".PATH."error.php");
 	else
-		header("Location: {$path}error.php?t={$add}");
+		header("Location: ".PATH."error.php?t={$add}");
 }
 
 /**
@@ -454,27 +453,27 @@ function queryStringPage() {
 
 function linkSort($keyword, $title) {
 
-	$this_p = $_SERVER['PHP_SELF'];
+	$this_p = cleanvar($_SERVER['PHP_SELF']);
 	
-	echo '<a title="Sort information by '.$title.' ascending." href="'.$this_p.'?ob='.$keyword.'&amp;o=ASC"><img src="'. $path .'images/asc.png" alt="ASC" class="asc-img" /></a>
+	echo '<a title="Sort information by '.$title.' ascending." href="'.$this_p.'?ob='.$keyword.'&amp;o=ASC"><img src="images/asc.png" alt="ASC" class="asc-img" /></a>
 			&nbsp;
-			<a title="Sort information by '.$title.' descending." href="'.$this_p.'?ob='.$keyword.'&amp;o=DESC"><img src="'. $path .'images/desc.png" alt="DESC" class="desc-img" /></a>';
+			<a title="Sort information by '.$title.' descending." href="'.$this_p.'?ob='.$keyword.'&amp;o=DESC"><img src="images/desc.png" alt="DESC" class="desc-img" /></a>';
 
 }
 
 function linkSortClients($keyword, $title, $is_search, $search_type, $search_string) {
 
-	$this_p = $_SERVER['PHP_SELF'];
+	$this_p = cleanvar($_SERVER['PHP_SELF']);
 	
-	if($is_search == false) {
-		echo'<a title="Sort information by '.$title.' ascending." href="'.$this_p.'?ob='.$keyword.'&amp;o=ASC"><img src="'. $path .'images/asc.png" alt="ASC" class="asc-img" /></a>
+	if($is_search == false) :
+		echo'<a title="Sort information by '.$title.' ascending." href="'.$this_p.'?ob='.$keyword.'&amp;o=ASC"><img src="images/asc.png" alt="ASC" class="asc-img" /></a>
 			&nbsp;
-		<a title="Sort information by '.$title.' descending." href="'.$this_p.'?ob='.$keyword.'&amp;o=DESC"><img src="'. $path .'images/desc.png" alt="DESC" class="desc-img" /></a>';
-	} else {
-		echo'<a title="Sort information by '.$title.' ascending." href="'.$this_p.'?ob='.$keyword.'&amp;o=ASC&amp;s='.urlencode($search_string).'&amp;t='.$search_type.'"><img src="'. $path .'images/asc.png" alt="ASC" class="asc-img" /></a>
+		<a title="Sort information by '.$title.' descending." href="'.$this_p.'?ob='.$keyword.'&amp;o=DESC"><img src="images/desc.png" alt="DESC" class="desc-img" /></a>';
+	else:
+		echo'<a title="Sort information by '.$title.' ascending." href="'.$this_p.'?ob='.$keyword.'&amp;o=ASC&amp;s='.urlencode($search_string).'&amp;t='.$search_type.'"><img src="images/asc.png" alt="ASC" class="asc-img" /></a>
 			&nbsp;
-		<a title="Sort information by '.$title.' descending." href="'.$this_p.'?ob='.$keyword.'&amp;o=DESC&amp;s='.urlencode($search_string).'&amp;t='.$search_type.'"><img src="'. $path .'images/desc.png" alt="DESC" class="desc-img" /></a>';
-	}
+		<a title="Sort information by '.$title.' descending." href="'.$this_p.'?ob='.$keyword.'&amp;o=DESC&amp;s='.urlencode($search_string).'&amp;t='.$search_type.'"><img src="images/desc.png" alt="DESC" class="desc-img" /></a>';
+	endif;
 
 }
 
@@ -596,7 +595,7 @@ LOGMSGG;
 
 	$to = EMAIL;  
 	$subject = 'HACK ATTEMPT';
-	$header = 'From: echelon@b3-echelon.com';
+	$header = 'From: echelon@'.$_SERVER['HTTP_HOST'];
 	mail($to, $subject, $logging, $header);    
 } // end hackLog
 
@@ -704,74 +703,14 @@ function detectSSL(){
 	if($_SERVER["https"] == "on")
 		return true;
 		
-	elseif ($_SERVER["https"] == 1)
+	elseif($_SERVER["https"] == 1)
 		return true;
 		
-	elseif ($_SERVER['SERVER_PORT'] == 443)
+	elseif($_SERVER['SERVER_PORT'] == 443)
 		return true;
 		
 	else
 		return false;
-}
-
-/**
- * Encrypt a string
- *
- * @param string $algo - the encryption algorithm
- * @param string $mode - the mode of encryption
- * @param string $key_sent - the passcode to encrypt the text
- * @param string $data_sent - the data to encrypt
- * @param string $iv_sent - the iv used to encrypt
- * @return string $results - the base64 of the encryption (its return in base64 to make the text compatible with certain applications eg. MySQL)
- */
-function encrypt($algo = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC, $key_sent, $data, $iv_sent) {
-	
-	srand((double)microtime()*1000000 ); // seed iv by starting random number generator
-	$td = mcrypt_module_open($algo, '', $mode, ''); // select algo and mode
-	if($iv_sent == "") { // weather or not a new iv needs to be created
-		$iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
-	} else {
-		$iv = base64_decode($iv_sent);
-	}
-	$ks = mcrypt_enc_get_key_size($td); // find value of posible largest key size
-	$key = substr(sha1($key_sent), 0, $ks); // generate largest posible key from hash
-	
-	mcrypt_generic_init($td, $key, $iv);
-	$ciphertext = mcrypt_generic($td, $data); // run encryption
-	mcrypt_generic_deinit($td);
-	mcrypt_module_close($td);
-	
-	## encode data and return in an array
-	$iv = base64_encode($iv);
-	$enc = base64_encode(trim($ciphertext));
-	$results = array($iv, $enc);
-	return $results;
-}
-
-/**
- * Decrypt a string
- *
- * @param string $algo - the decryption algorithm
- * @param string $mode - the mode of decryption
- * @param string $key_sent - the passcode to decrypt the text
- * @param string $data_sent - the data to decrypt in base64
- * @param string $iv_sent - the iv used to encrypt
- * @return string $plaintext
- */
-function decrypt($algo = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC, $key_sent, $data_sent, $iv_sent) {
-	
-	$td = mcrypt_module_open($algo, '', $mode, ''); // select algo and mode
-	$iv = base64_decode($iv_sent); // decode
-	$ks = mcrypt_enc_get_key_size($td); // find value of posible largest key size
-	$key = substr(sha1($key_sent), 0, $ks); // generate largeest posible key from hash
-	$data = base64_decode($data_sent); // decode
-	
-	mcrypt_generic_init($td, $key, $iv);
-	$plaintext = mdecrypt_generic($td, $data);
-	mcrypt_generic_deinit($td);
-	mcrypt_module_close($td);
-	
-	return trim($plaintext);
 }
 
 /**
@@ -786,7 +725,7 @@ function decrypt($algo = MCRYPT_RIJNDAEL_256, $mode = MCRYPT_MODE_CBC, $key_sent
 function time_duration($seconds, $use = null, $zeros = false) {
 
 	if($seconds == '') {
-		return '';
+		return NULL;
 	}
 	
     // Define time periods
@@ -836,7 +775,7 @@ function time_duration($seconds, $use = null, $zeros = false) {
  */
  function getEchVer(){
 
-	$c = @file_get_contents('http://b3-echelon.com/update/version.txt');
+	$c = @file_get_contents(VER_CHECK_URL);
 	if($c == false) {
 		return false;
 	} else {
@@ -849,7 +788,6 @@ function time_duration($seconds, $use = null, $zeros = false) {
 /**
  * Simple isPage($page) functions
  */
-
 function isHome($page) {
 	if($page == 'home')
 		return true;
@@ -878,6 +816,14 @@ function isLogin($page) {
 		return false;
 }
 
+function isError($page) {
+	if($page == 'error')
+		return true;
+	else
+		return false;
+}
+
+
 function isSettings($page) {
 	if($page == 'settings')
 		return true;
@@ -901,6 +847,13 @@ function isSettingsServer($page) {
 
 function isSA($page) {
 	if($page == 'sa')
+		return true;
+	else
+		return false;
+}
+
+function isPerms($page) {
+	if($page == 'perms')
 		return true;
 	else
 		return false;

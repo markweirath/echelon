@@ -6,8 +6,28 @@ if (!empty($_SERVER['SCRIPT_FILENAME']) && 'members-class.php' == basename($_SER
 
 class member {
 
-function __construct() {
+var $user_id;
+var $name;
+var $email;
 
+function __construct($user_id, $name, $email) {
+	$this->id = $user_id;
+	$this->name = $name;
+	$this->email = $email;
+}
+
+/**
+ * Sets the class name var
+ */
+function setName($name) {
+	$this->name = $name;
+}
+
+/**
+ * Sets the class email var
+ */
+function setEmail($email) {
+	$this->email = $email;
 }
 
 /**
@@ -90,12 +110,11 @@ static function getFinger() {
  * Echo out the display name in a link, if the display name is not set echo guest.
  */
 function displayName() {
-	$name = $_SESSION['name'];
 
-	if($name == '')
+	if($this->name == '')
 		echo 'Guest';
 	else
-		echo '<a href="'.$path.'me.php" title="Go to your own account settings">'.$name.'</a>';
+		echo '<a href="'.PATH.'me.php" title="Go to your own account settings">'.$this->name.'</a>';
 		
 	return;
 }
@@ -148,7 +167,7 @@ function getGravatar($email) {
 function reAuthUser($password, $dbl) {
 
 	// Check to see if this person is real
-	$salt = $dbl->getUserSaltById($_SESSION['user_id']);
+	$salt = $dbl->getUserSaltById($this->id);
 
 	if($salt == false) // only returns false if no salt found, ie. user does not exist
 		sendBack('There is a problem, you do not seem to exist!');
@@ -156,7 +175,7 @@ function reAuthUser($password, $dbl) {
 	$hash_pw = genPW($password, $salt); // hash the inputted pw with the returned salt
 
 	// Check to see that the supplied password is correct
-	$validate = $dbl->validateUserRequest($_SESSION['user_id'], $hash_pw);
+	$validate = $dbl->validateUserRequest($this->id, $hash_pw);
 	if($validate == false) {
 		hack(1); // add one to hack counter to stop brute force
 		sendBack('You have supplied an incorrect current password');

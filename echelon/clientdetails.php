@@ -115,7 +115,7 @@ require 'inc/header.php';
 					$ip = tableClean($ip);
 					if($mem->reqLevel('view_ip')) :
 						if ($ip != "") { ?>
-						<a href="<?php echo $path; ?>clients.php?s=<?php echo $ip; ?>&amp;t=ip" title="Search for other users with this IP adreess"><?php echo $ip; ?></a>
+						<a href="clients.php?s=<?php echo $ip; ?>&amp;t=ip" title="Search for other users with this IP adreess"><?php echo $ip; ?></a>
 							&nbsp;&nbsp;
 						<a href="http://whois.domaintools.com/<?php echo $ip; ?>" title="Whois IP Search">W</a>
 							&nbsp;&nbsp;

@@ -54,7 +54,7 @@ if($is_pb_ban) { // if the ban is perma ban
 
 } // end if pb/tempban var setup
 
-$data = '(Echelon: '.$_SESSION['name']. ' ['. $_SESSION['user_id'] .'])'; // since this ban goes down as a B3 ban, tag on some user information (display name and echelon user id)
+$data = '(Echelon: '. $mem->name . ' ['. $mem->id .'])'; // since this ban goes down as a B3 ban, tag on some user information (display name and echelon user id)
 
 ## Add Ban to the penalty table ##
 $result = $db->penClient($type, $client_id, $duration, $reason, $data, $time_expire);

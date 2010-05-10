@@ -19,14 +19,12 @@ if($_POST['t'] == 'del') : // if this is a deletion request
 
 elseif($_POST['comment']) : // if this is an edit comment request
 
-	$admin_id = $_SESSION['user_id']; // find out what admin is making this request (admins can only edit their own comments)
-	
 	$key = cleanvar($_POST['key']);
 	$comment = cleanvar($_POST['comment']);
 	
 	emptyInput($comment, 'comment');
 	
-	$result = $dbl->editKeyComment($key, $comment, $admin_id);
+	$result = $dbl->editKeyComment($key, $comment, $mem->id);
 	// this is an ajax request, so we need to echo error/success messages
 	if($result)
 		echo 'yes';

@@ -9,18 +9,18 @@ $this_page = $_SERVER["PHP_SELF"];
 ## setup the game var ##
 if($_GET['game']) {
 	$game = $_GET['game'];
-	setcookie("game", $game, time()*60*60*24*31, $path); // set the cookie to game value
+	setcookie("game", $game, time()*60*60*24*31, PATH); // set the cookie to game value
 
 } elseif($_POST['game']) {
 	$game = addslashes($_POST['game']);
-	setcookie("game", $game, time()*60*60*24*31, $path); // set the cookie to game value
+	setcookie("game", $game, time()*60*60*24*31, PATH); // set the cookie to game value
 
 } elseif($_COOKIE['game']) {
 	$game = $_COOKIE['game'];
 	
 } else {
 	$game = 1;
-	setcookie("game", $game, time()*60*60*24*31, $path); // set the cookie to game value
+	setcookie("game", $game, time()*60*60*24*31, PATH); // set the cookie to game value
 }
 
 
@@ -43,6 +43,9 @@ $key_expire = $config['cosmos']['user_key_expire']; // This var says how long it
 global $tformat; // make global to allow the formatting to be used inside functions
 $tformat = $config['cosmos']['time_format'];
 $time_zone = $config['cosmos']['time_zone'];
+
+// define email constant
+define("EMAIL", $config['cosmos']['email']);
 
 ## Time Zone Setup ##
 if($time_zone == '') {
@@ -76,8 +79,8 @@ $config['games'][$game]['servers'] = array(); // create array
 
 if($config['games'][$game]['num_srvs'] > 1) : // if the current game has only ONE server then NO loop is needed
 	
-	$multi_server = true; // there is more than one server connected with this game
-	$no_servers = false;
+	define("MULTI_SERVER", true); // there is more than one server connected with this game
+	define("NO_SERVER", false);
 	
 	$i = 1; // restart i to 1
 	foreach($servers as $server) : // loop thro the list of servers
@@ -93,10 +96,10 @@ if($config['games'][$game]['num_srvs'] > 1) : // if the current game has only ON
 		$i++; // increment counter
 	endforeach;
 
-elseif($$config['games'][$game]['num_srvs'] == 1): // there is more than one server so a loop is needed
+elseif($config['games'][$game]['num_srvs'] == 1): // there is more than one server so a loop is needed
 
-	$multi_server = false; // there is only one server connected with this game
-	$no_servers = false;
+	define("MULTI_SERVER", false);
+	define("NO_SERVER", false);
 	
 	$config['games'][$game]['servers'][1] = array();
 	$config['games'][$game]['servers'][1]['name'] = $servers[0]['name'];
@@ -108,8 +111,8 @@ elseif($$config['games'][$game]['num_srvs'] == 1): // there is more than one ser
 
 else :	// equal to no servers
 	
-	$multi_server = false;
-	$no_servers = true;
+	define("MULTI_SERVER", false);
+	define("NO_SERVER", true);
 	
 	$config['games'][$game]['servers'] = array();
 	
