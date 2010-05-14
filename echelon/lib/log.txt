@@ -1,0 +1,21 @@
+[2010-05-15 00:07:10]MYSQL ERRORMessage: There was an error of some sort
+[2010-05-15 00:07:11]MYSQL ERRORMessage: There was an error of some sort
+[2010-05-15 00:11:34]MYSQL ERRORMessage: There was an error of some sort
+[2010-05-15 00:11:35]MYSQL ERROR - Code: 1054 - Message: Unknown column 'iddd' in 'where clause'
+[2010-05-15 00:11:36]MYSQL ERRORMessage: There was an error of some sort
+[2010-05-15 00:11:36]MYSQL ERROR - Code: 1054 - Message: Unknown column 'iddd' in 'where clause'
+[2010-05-15 00:11:58]MYSQL ERROR - Code: 1054 - Message: Unknown column 'iddd' in 'where clause'
+[2010-05-15 00:12:05]MYSQL ERROR - Code: 1054 - Message: Unknown column 'iddd' in 'where clause'
+[2010-05-15 00:13:30]MYSQL ERRORMessage: There was an error of some sort
+[2010-05-15 00:13:33]MYSQL ERRORMessage: There was an error of some sort
+[2010-05-15 00:14:23]MYSQL ERROR - Code: Unknown column 'iddd' in 'where clause' - Message: Unknown column 'iddd' in 'where clause'
+[2010-05-15 00:15:26]MYSQL ERROR - Code: Unknown column 'iddd' in 'where clause' - Message: Unknown column 'iddd' in 'where clause'
+[2010-05-15 00:17:19]MYSQL ERROR - Code: 1054 - Message: Unknown column 'iddd' in 'where clause'
+[2010-05-15 00:18:01]MYSQL ERROR - Code: 1054 - Message: Unknown column 'iddd' in 'where clause'
+[2010-05-15 00:18:26]MYSQL ERROR - Code: 1054 - Message: Unknown column 'iddd' in 'where clause'
+[2010-05-15 00:18:39]MYSQL ERROR - Code: 1054 - Message: Unknown column 'iddd' in 'where clause'
+[2010-05-15 00:18:40]MYSQL ERROR - Code: 1054 - Message: Unknown column 'iddd' in 'where clause'
+[2010-05-15 00:19:05]MYSQL ERROR - Code: 1054 - Message: Unknown column 'iddd' in 'where clause'
+[2010-05-15 00:20:22]MYSQL ERROR - Code: 1054 - Message: Unknown column 'iddd' in 'where clause'
+[2010-05-15 00:21:18]MYSQL ERROR - Code: 1054 - Message: Unknown column 'iddd' in 'where clause'
+[2010-05-15 00:22:36]MYSQL ERROR - Code: 1054 - Message: Unknown column 'iddd' in 'where clause'

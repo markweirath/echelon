@@ -14,13 +14,16 @@ define("DBL_PASSWORD", ""); // Password for that user
 define("DBL_DB", "echelon"); // name of the database to connect to
 
 define("DB_CON_ERROR_SHOW", TRUE); // show DB connection error if any (values: TRUE/FALSE)
+define("GRAVATAR", TRUE); // show gravatars image in header (values: TRUE/FALSE)
+define("DB_B3_ERROR_ON", TRUE); // show detailed error messages on B3 DB query failure (values TRUE/FALSE)
+define("ECH_LOG", "lib/log.txt"); // location of the Echelon Log file
 
 #############################
 ///// IGNORE BELOW HERE /////
 ## Echelon Version ##
 define("ECH_VER", 'v.2.0a');
 
-define("SALT", "D2pPnJhmxRC5"); // do not change this, for this is salt for hashes
+define("SALT", "D2pPnJhmxRC5"); // do not change ever, this is salt for hashes
 
 $supported_games = array( // supported games
 	'q3a' => 'Quake 3 Arena', 

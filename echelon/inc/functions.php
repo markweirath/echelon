@@ -573,6 +573,52 @@ function penDuration($time, $duration) {
 }
 
 /**
+ * Echelon logging function 
+ */
+function echLog($type, $message, $code = NULL) {
+
+	if(empty($message))
+		$message = 'There was an error of some sort';
+
+	// open the log file for appending
+	if($f = @fopen(ECH_LOG,'a')) : // returns false on error
+		
+		switch($type) {
+			case 'mysql':
+				$type_msg = 'MYSQL ERROR';
+				break;
+				
+			case 'hack':
+				$type_msg = 'HACK ATTEMPT';
+				break;
+				
+			default:
+				$type_msg = 'ERROR';
+		}
+		
+		// construct the log message
+		$log_msg = date("[Y-m-d H:i:s]") . $type_msg;
+		
+		if(isset($code) && !empty($code))
+			$log_msg .=	" - Code: $code -" ;
+			
+		$log_msg .=	" Message: $message\n";
+	
+		// write the log message
+		fwrite($f, $log_msg);
+		
+		// close the file connection
+		fclose($f);
+		
+		return true;
+	else:
+		return false;
+		
+	endif;
+
+}
+
+/**
  * Send an email about a possible hack to the admin
  *
  * @param string $where - where the event happened
@@ -581,23 +627,20 @@ function writeLog($where) {
     
 	$ip = getRealIp(); // Get the IP from superglobal
 	$host = gethostbyaddr($ip);    // Try to locate the host of the attack
-	$date = date("d M Y (H:i)");
 	
 	// create a logging message with php heredoc syntax
 	$logging = <<<LOGMSGG
-	There was a hacking attempt on E32Ds. \n 
-	Date of Attack: {$date}
-	IP-Adress: {$ip} \n
+	There was a hacking attempt,.
+	IP-Adress: {$ip}
 	Host of Attacker: {$host}
 	Point of Attack: {$where}
 LOGMSGG;
 // Awkward but LOG must be flush left
-
-	$to = EMAIL;  
-	$subject = 'HACK ATTEMPT';
-	$header = 'From: echelon@'.$_SERVER['HTTP_HOST'];
-	mail($to, $subject, $logging, $header);    
-} // end hackLog
+	
+	// log the message
+	echLog('hack', $logging); 
+	
+}
 
 /**
  * Check if the suppled token is valid

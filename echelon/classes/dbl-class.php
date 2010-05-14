@@ -13,7 +13,6 @@ class DbL {
 	
 	/**
      * Auto run on creation of instance: attempts to connect to the Echelon DB or dies with the mysql error
-     *
      */
 	public function __construct() { 
 		try { 
@@ -24,33 +23,27 @@ class DbL {
 	} 
 
 	/**
-     * Makes the connection to the DB or throws erro
-     *
+     * Makes the connection to the DB or throws error
      */
     private function connectDB () {
 		if($this->mysql != NULL) // if it is set/created (defalt starts at NULL)
 			@$this->mysql->close();
 
         $this->mysql = @new mysqli(DBL_HOSTNAME, DBL_USERNAME, DBL_PASSWORD, DBL_DB);
-		if(DB_CON_ERROR_SHOW) : // only is settings say show con error will we show it
-	
-		endif;
 		
 		if (mysqli_connect_errno()) :
 
-				if(DB_CON_ERROR_SHOW) // only if settings say show to con error, will we show it, else just say error
-					$error_msg = '<strong>Database Connection Error:</strong> '.mysqli_connect_error();
-				else
-					$error_msg = '<strong>Database Connection Error</strong>';
+			if(DB_CON_ERROR_SHOW) // only if settings say show to con error, will we show it, else just say error
+				$error_msg = '<strong>Database Connection Error:</strong> '.mysqli_connect_error();
+			else
+				$error_msg = '<strong>Database Connection Problem</strong>';
 
-				throw new Exception ($error_msg);
-
+			throw new Exception ($error_msg);
 		endif;
     }
 	
 	/**
      * __destruct : Destructor for class, closes the MySQL connection
-     *
      */
     function __destruct() {
         if ($this->mysql != NULL) // if it is set/created (defalt starts at NULL)

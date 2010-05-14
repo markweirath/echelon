@@ -1,4 +1,5 @@
 <?php
+## Die if the user has come to this page directly ##
 if (!empty($_SERVER['SCRIPT_FILENAME']) && 'mysql-class.php' == basename($_SERVER['SCRIPT_FILENAME']))
   		die ('Please do not load this page directly. Thanks!');
 		
@@ -12,23 +13,135 @@ if (!empty($_SERVER['SCRIPT_FILENAME']) && 'mysql-class.php' == basename($_SERVE
 */  
 
 class DB_B3 {
-
-	public $mysql; // create public var
 	
-	var $host; // B3 DB MySQL Host
-	var $user; // B3 DB MySQL User
-	var $pass; // B3 DB MySQL Password
-	var $name; // B3 DB MySQL Database Name
+	## Settings
+	public $mysql = NULL; // object var (if connection exists this will not be NULL)
+	public $query_error = FALSE; // was there a DB query error
+	public $query_error_pub = NULL;
+	private $error_sec = 'We are having some database problems, please check back later.'; // message to show the public if the DB query/connect fails
+	private $error_on = false; // are detailed error reports on (default, can be overidden)
 	
-	// start connection to db on load
-	function __construct($host, $user, $pass, $name) {
+	## Connection Vars
+	private $host; // B3 DB MySQL Host
+	private $user; // B3 DB MySQL User
+	private $pass; // B3 DB MySQL Password
+	private $name; // B3 DB MySQL Database Name
+	
+	/**
+	 * Auto Load in sent vars and make connection to the B3 DB
+	 */
+	public function __construct($host, $user, $pass, $name, $error_on) {
 		$this->host = $host;
 		$this->user = $user;
 		$this->pass = $pass;
 		$this->name = $name;
+		$this->error_on = $error_on;
 		
-		$this->mysql = new mysqli($this->host, $this->user, $this->pass, $this->name);
+		try { // try to connect to the DB or die with an error
+			$this->connectDB(); 
+		} catch (Exception $e) { 
+			die($e->getMessage()); 
+		}
 	}
+	
+	public function __call($name, $arg) {
+        // Note: value of $name is case sensitive.
+		echo "<strong>" . $name . "</strong> is a private function that cannot be accessed outside the B3 MySQL class";
+    }
+	
+	/**
+     * Makes the connection to the DB or throws error
+     */
+    private function connectDB() {
+	
+		if($this->mysql != NULL) // if it is set/created (defalt starts at NULL)
+			@$this->mysql->close();
+		
+		// Create new connection
+        $this->mysql = @new mysqli($this->host, $this->user, $this->pass, $this->name);
+		
+		// if there was a connection error 
+		if (mysqli_connect_errno()) : // NOTE: we are using the procedural method here because of a problem with the OOP method before PHP 5.2.9
+
+			if(DB_CON_ERROR_SHOW) // only if settings say show to con error, will we show it, else just say error
+				$error_msg = '<strong>B3 Database Connection Error:</strong> '.mysqli_connect_error();
+			else
+				$error_msg = '<strong>'. $this->error_sec .'</strong>';
+
+			throw new Exception($error_msg);
+		endif;
+    }
+	
+	/**
+	 * Handy Query function
+	 *
+	 * @param string $sql - the SQL query to execute
+	 * @param bool $fetch - fetch the data rows or not
+	 * @param string $type - typpe of query this is 
+	 */
+	public function query($sql, $fetch = true, $type = 'select') {
+		
+		try {
+		
+			if($stmt = $this->mysql->prepare($sql))
+				$stmt->execute();
+			else
+				throw new MysqlException($this->mysql->error, $this->mysql->errno);
+
+		} catch (MysqlException $e) {
+		
+			$this->query_error = true;
+			if($this->error_on)
+				$this->query_error_pub = "MySQL Query Error (#". $this->mysql->errno ."): ". $this->mysql->error;
+			else
+				$this->query_error_pub = $this->error_sec;
+
+			return;
+		}
+		
+		## setup results array
+		$results = array();
+		$results['data'] = array();
+		
+		## do certain things depending on type of query
+		switch($type) { 
+			case 'select': // if type is a select query
+				$stmt->store_result();
+				$results['num_rows'] = $stmt->num_rows(); // find the number of rows retrieved
+			break;
+			
+			case 'update':
+			case 'insert': // if insert or update find the number of rows affected by the query
+				$results['affected_rows'] = $stmt->affected_rows(); 
+			break;
+		}
+		
+		## fetch the results
+		if($fetch) : // only fetch data if we need it
+		
+			$meta = $stmt->result_metadata();
+
+			while ($field = $meta->fetch_field()) :
+				$parameters[] = &$row[$field->name];
+			endwhile;
+
+			call_user_func_array(array($stmt, 'bind_result'), $parameters);
+
+			while ($stmt->fetch()) :
+				foreach($row as $key => $val) {
+					$x[$key] = $val;
+				}
+				$results['data'][] = $x;
+			endwhile;
+
+		endif;
+		
+		## return and close off connections
+		return $results;
+		$results->close();
+		$stmt->close();
+		
+	} // end query()
 	
 	function getB3Groups() {
 		$query = "SELECT id, name FROM groups ORDER BY id ASC";

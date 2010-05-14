@@ -15,11 +15,10 @@ function implode_r($glue, $array, $array_name = NULL) {
 		if(is_array($value)) {
 			$return[] = implode_r($glue, $value, (string) $key);
 		} else {
-			if($array_name != NULL) {
+			if($array_name != NULL)
 				$return[] = $array_name."[".(string) $key."]=".$value."\n";
-			} else {
+			else
 				$return[] = $key."=".$value."\n";
-			}
 		}
 	}
 	return(implode($glue, $return));
@@ -84,7 +83,7 @@ Server: ".$_SERVER['SERVER_NAME']."
 Translated: ".$_SERVER['PATH_TRANSLATED']."
 Referrer: ".$_SERVER['HTTP_REFERRER']."
 ";
-	mail("eire32kevin@gmail.com", "CTracker: Attack detected!", $mail, "From: ctracker@b3-echelon.com");
+	mail(EMAIL, "CTracker: Attack detected!", $mail, "From: ctracker@".htmlentities($_SERVER['HTTP_HOST']));
 	die('Hack Attempt Foiled!!!!!');
 }
 
@@ -105,7 +104,7 @@ Filtered string: ".$checkworm."
 Server: ".$_SERVER['SERVER_NAME']."
 Translated: ".$_SERVER['PATH_TRANSLATED']."
 ";
-	//mail("eire32kevin@gmail.com", "CTracker: POST-Attack detected!", $mail, "From: ctracker@b3-echelon.com");
+	mail(EMAIL, "CTracker: Attack detected!", $mail, "From: ctracker@".htmlentities($_SERVER['HTTP_HOST']));
 	$checkPOST = str_replace($postBlacklist, '*', $postTrack);
 	if ($checkPOST != $postTrack) {
 		// Block attempt

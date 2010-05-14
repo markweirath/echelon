@@ -3,7 +3,7 @@ $page = "home";
 $page_title = "Home";
 $auth_name = 'login';
 $auth_user_here = true;
-$b3_conn = false;
+$b3_conn = true;
 $pagination = false;
 require 'inc.php';
 

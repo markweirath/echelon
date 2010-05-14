@@ -31,7 +31,7 @@ $stmt->close(); // closes the prepared statement
 
 require_once("inc/geoip.php");
 
-$gi = geoip_open("inc/GeoIP.dat", GEOIP_STANDARD);
+$gi = geoip_open("lib/GeoIP.dat", GEOIP_STANDARD);
 
 $countries = array();
 

@@ -147,7 +147,7 @@ if($is_edit_user) : ?>
 	<caption>Echelon Users<small>A list of all people who can login to Echelon.</small></caption>
 	<thead>
 		<tr>
-			<th></th>
+			<?php if(GRAVATAR) echo '<th></th>'; ?>
 			<th>id</th>
 			<th>Name</th>
 			<th>Group</th>
@@ -160,7 +160,12 @@ if($is_edit_user) : ?>
 	</thead>
 	<tfoot>
 		<tr>
-			<th colspan="9"></th>
+			<?php 
+				if(GRAVATAR)
+					echo '<th colspan="9"></th>';
+				else
+					echo '<th colspan="8"></th>';
+			?>
 		</tr>
 	</tfoot>
 	<tbody>
@@ -182,7 +187,8 @@ if($is_edit_user) : ?>
 			$ip = ipLink($ip);
 			$email_link = emailLink($email, $name);
 			
-			$grav = $mem->getGravatar($email);
+			if(GRAVATAR) // if use gravatar
+				$grav = '<td>'.$mem->getGravatar($email).'</td>';
 			
 			$rowcolor = 1 - $rowcolor;
 			
@@ -196,7 +202,7 @@ if($is_edit_user) : ?>
 			// setup heredoc (table data)			
 			$data = <<<EOD
 			<tr class="$odd_even">
-				<td>$grav</td>
+				$grav
 				<td>$id</td>
 				<td><strong><a href="sa.php?t=user&amp;id=$id" title="View $name in more detail">$name</a></strong></td>
 				<td>$group</td>

@@ -2,25 +2,26 @@
 if (!empty($_SERVER['SCRIPT_FILENAME']) && 'setup.php' == basename($_SERVER['SCRIPT_FILENAME']))
   		die ('Please do not load this page directly. Thanks!');
 
-require_once 'config.php';
+require_once 'config.php'; // if config is not loaded load it in
 
-$this_page = $_SERVER["PHP_SELF"];
+$this_page = cleanvar($_SERVER["PHP_SELF"]);
 
+$cookie_time = time()*60*60*24*31; // 31 days from now
 ## setup the game var ##
 if($_GET['game']) {
 	$game = $_GET['game'];
-	setcookie("game", $game, time()*60*60*24*31, PATH); // set the cookie to game value
+	setcookie("game", $game, $cookie_time, PATH); // set the cookie to game value
 
 } elseif($_POST['game']) {
 	$game = addslashes($_POST['game']);
-	setcookie("game", $game, time()*60*60*24*31, PATH); // set the cookie to game value
+	setcookie("game", $game, $cookie_time, PATH); // set the cookie to game value
 
 } elseif($_COOKIE['game']) {
 	$game = $_COOKIE['game'];
 	
 } else {
 	$game = 1;
-	setcookie("game", $game, time()*60*60*24*31, PATH); // set the cookie to game value
+	setcookie("game", $game, $cookie_time, PATH); // set the cookie to game value
 }
 
 
@@ -50,9 +51,9 @@ define("EMAIL", $config['cosmos']['email']);
 ## Time Zone Setup ##
 if($time_zone == '') {
 	$time_zone == 'Europe/London';
-	$no_time_zone = true;
+	define("NO_TIME_ZONE", TRUE);
 } else {
-	$no_time_zone = false;
+	define("NO_TIME_ZONE", FALSE);
 }
 date_default_timezone_set($time_zone);
 

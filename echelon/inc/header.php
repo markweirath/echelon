@@ -186,8 +186,8 @@ endif;
 			
 			<div class="info">
 				<?php 
-					$grav = $mem->getGravatar($mem->email); 
-					echo $grav;
+					if(GRAVATAR)
+						echo $mem->getGravatar($mem->email); 
 				?>
 				<span class="display-name"><?php $mem->displayName(); ?></span>
 				<?php if($mem->loggedIn()) {
