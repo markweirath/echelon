@@ -4,6 +4,7 @@ $page_title = "Clients Listing";
 $auth_name = 'clients';
 $b3_conn = true; // this page needs to connect to the B3 database
 $pagination = true; // this page requires the pagination part of the footer
+$query_normal = true;
 require 'inc.php';
 
 ##########################
@@ -88,31 +89,10 @@ if($order == "desc") {
 
 $query_limit = sprintf("%s LIMIT %s, %s", $query, $start_row, $limit_rows); // add limit section
 
-## Prepare and run Query ##
-$stmt = $db->mysql->prepare($query_limit) or die('Database Error: '.$db->mysql->error);
-$stmt->execute(); // run query
-$stmt->store_result(); // store results (needed to count num_rows)
-$num_rows = $stmt->num_rows; // finds the number fo rows retrieved from the database
-$stmt->bind_result($id, $name, $connections, $time_edit, $time_add, $level); // store results
-
-while($stmt->fetch()) : // get results and put results in an array
-	$clients_data[] = array(
-		'id' => $id,
-		'name' => $name,
-		'connect' => $connections,
-		'time_edit' => $time_edit,
-		'time_add' => $time_add,
-		'level' => $level,
-	);
-endwhile;
-
-$stmt->free_result(); // free the data in memory from store_result
-$stmt->close(); // closes the prepared statement
-
-## Some pagination setup is in the header.php with a if pagination required statement
-
 ## Require Header ##	
 require 'inc/header.php';
+
+if(!$db->error) :
 ?>
 
 <fieldset class="search">
@@ -192,13 +172,13 @@ require 'inc/header.php';
 
 	 if($num_rows > 0) { // query contains stuff
 	 
-		foreach($clients_data as $clients): // get data from query and loop
-			$cid = $clients['id'];
-			$name = $clients['name'];
-			$level = $clients['level'];
-			$connections = $clients['connect'];
-			$time_edit = $clients['time_edit'];
-			$time_add = $clients['time_add'];
+		foreach($data_set as $client): // get data from query and loop
+			$cid = $client['id'];
+			$name = $client['name'];
+			$level = $client['level'];
+			$connections = $client['connections'];
+			$time_edit = $client['time_edit'];
+			$time_add = $client['time_add'];
 			
 			$time_add = date($tformat, $time_add);
 			$time_edit = date($tformat, $time_edit);
@@ -208,12 +188,14 @@ require 'inc/header.php';
 				$odd_even = "odd";
 			else 
 				$odd_even = "even";
+				
+			$client = clientLink($name, $cid);
 			
 			
 			// setup heredoc (table data)			
 			$data = <<<EOD
 			<tr class="$odd_even">
-				<td><strong><a href="clientdetails.php?id=$cid">$name</a></strong></td>
+				<td><strong>$client</strong></td>
 				<td>@$cid</td>
 				<td>$level</td>
 				<td>$connections</td>
@@ -238,4 +220,8 @@ EOD;
 	</tbody>
 </table>
 
-<?php require 'inc/footer.php'; ?>
+<?php 
+	endif; // db error
+
+	require 'inc/footer.php'; 
+?>

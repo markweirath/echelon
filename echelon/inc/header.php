@@ -1,10 +1,17 @@
 <?php
-## Pagination for pages with tables ##
+## if the page has the normal query process
+if($query_normal) :
+	$results = $db->query($query_limit);
+
+	$num_rows = $results['num_rows']; // the the num_rows
+	$data_set = $results['data']; // seperate out the return data set
+endif;
+
+## Pagination for pages with tables ## 
 if($pagination == true) : // if pagination is needed on the page
 	## Find total rows ##
-	$result_rows = $db->mysql->query($query);
-	$total_rows = $result_rows->num_rows;
-	$result_rows->close();
+	$total_num_rows = $db->query($query, false); // do not fetch the data
+	$total_rows = $total_num_rows['num_rows'];
 	
 	// create query_string
 	$query_string_page = queryStringPage();
@@ -217,4 +224,10 @@ endif;
 		endif;
 		
 		errors(); // echo out all errors/success/warnings
-	?>
+
+	if($query_normal) : // if this is a normal query page and there is a db error show message
+	
+		if($db->error)
+			dbErrorShow($db->error_msg); // show db error
+			
+	endif;

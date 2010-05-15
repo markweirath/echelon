@@ -8,6 +8,7 @@ $page_title = "Client Activity";
 $auth_name = 'ctime';
 $b3_conn = true; // this page needs to connect to the B3 database
 $pagination = true; // this page requires the pagination part of the footer
+$query_normal = true;
 require 'inc.php';
 
 ##########################
@@ -59,30 +60,10 @@ $query .= " GROUP BY ct.guid ORDER BY czas DESC";
 
 $query_limit = sprintf("%s LIMIT %s, %s", $query, $start_row, $limit_rows); // add limit section
 
-## Prepare and run Query ##
-$stmt = $db->mysql->prepare($query_limit) or die('Database Error: '.$db->mysql->error);
-$stmt->execute(); // run query
-$stmt->store_result(); // store results (needed to count num_rows)
-$num_rows = $stmt->num_rows; // finds the number fo rows retrieved from the database
-$stmt->bind_result($name, $level, $connections, $id, $czas);
-
-if($num_rows > 0) :
-	while($stmt->fetch()) : // get results and put results in an array
-		$players_data[] = array(
-			'name' => $name,
-			'level' => $level,
-			'connections' => $connections,
-			'id' => $id,
-			'czas' => $czas
-		);
-	endwhile;
-endif;
-
-$stmt->free_result(); // free the data in memory from store_result
-$stmt->close(); // closes the prepared statement
-
 ## Require Header ##	
 require 'inc/header.php';
+
+if(!$db->error) :
 ?>
 
 <table summary="A list of <?php echo limit_rows; ?> players who spent the most time on the servers">
@@ -125,7 +106,7 @@ require 'inc/header.php';
 	
 		$i = $start_row+1; // counter is the start row
 	 
-		foreach($players_data as $clients): // get data from query and loop
+		foreach($data_set as $clients): // get data from query and loop
 			$cid = $clients['id'];
 			$name = $clients['name'];
 			$level = $clients['level'];
@@ -141,13 +122,15 @@ require 'inc/header.php';
 				$odd_even = "odd";
 			else 
 				$odd_even = "even";
+				
+			$client = clientLink($name, $cid);
 	
 			// setup heredoc (table data)			
 			$data = <<<EOD
 			<tr class="$odd_even">
 				<td>$i</td>
 				<td>$czas</td>
-				<td><strong><a href="clientdetails.php?id=$cid">$name</a></strong></td>
+				<td><strong>$client</strong></td>
 				<td>$level</td>
 				<td>$connections</td>
 			</tr>
@@ -171,4 +154,8 @@ EOD;
 	</tbody>
 </table>
 
-<?php require 'inc/footer.php'; ?>
+<?php 
+	endif; // db error
+
+	require 'inc/footer.php'; 
+?>

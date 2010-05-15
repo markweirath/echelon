@@ -4,6 +4,7 @@ $page_title = "Admin Kicks";
 $auth_name = 'penalties';
 $b3_conn = true; // this page needs to connect to the B3 database
 $pagination = true; // this page requires the pagination part of the footer
+$query_normal = true; // this is a normal query page, so evoke query function in header.php
 require 'inc.php';
 
 ##########################
@@ -49,35 +50,11 @@ else
 
 $query_limit = sprintf("%s LIMIT %s, %s", $query, $start_row, $limit_rows); // add limit section
 
-## Prepare and run Query ##
-$stmt = $db->mysql->prepare($query_limit) or die('Database Error: '.$db->mysql->error);
-$stmt->execute();
-$stmt->store_result();
-$num_rows = $stmt->num_rows;
-$stmt->bind_result($time_add, $reason, $client_id, $client_name, $admin_id, $admin_name);
-
-if($num_rows > 0) : // no need to start loop if there is no data
-	while($stmt->fetch()) : // get results and put results in an array
-		$kicks_data[] = array(
-			'time_add' => $time_add,
-			'reason' => $reason,
-			'client_id' => $client_id,
-			'client_name' => $client_name,
-			'admin_id' => $admin_id,
-			'admin_name' => $admin_name
-		);
-	endwhile;
-endif;
-
-$stmt->free_result(); // free the data in memory from store_result
-$stmt->close(); // closes the prepared statement
-
-## Some pagination setup is in the header.php with a if pagination required statement
-
 ## Require Header ##	
-require 'inc/header.php';
-?>
+require 'inc/header.php'; 
 
+if(!$db->error) :
+?>
 <table summary="A list of <?php echo limit_rows; ?> kicks made by admins in a servers">
 	<caption>Admin Kicks<small>There are <strong><?php echo $total_rows; ?></strong> kicks that have been added by admins</caption>
 	<thead>
@@ -106,13 +83,13 @@ require 'inc/header.php';
 
 	 if($num_rows > 0) { // query contains stuff
 
-		foreach($kicks_data as $kick): // get data from query and loop
-			$time_add = $kick['time_add'];
-			$reason = tableClean($kick['reason']);
-			$client_id = $kick['client_id'];
-			$client_name = tableClean($kick['client_name']);
-			$admin_id = $kick['admin_id'];
-			$admin_name = tableClean($kick['admin_name']);
+		foreach($data_set as $data): // get data from query and loop
+			$time_add = $data['time_add'];
+			$reason = tableClean($data['reason']);
+			$client_id = $data['target_id'];
+			$client_name = tableClean($data['target_name']);
+			$admin_id = $data['admin_id'];
+			$admin_name = tableClean($data['admin_name']);
 
 			## Tidt data to make more human friendly
 			if($time_expire != '-1')
@@ -150,4 +127,8 @@ EOD;
 	</tbody>
 </table>
 
-<?php require 'inc/footer.php'; ?>
+<?php 
+endif;
+
+require 'inc/footer.php'; 
+?>

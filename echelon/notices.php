@@ -4,6 +4,7 @@ $page_title = "Notices";
 $auth_name = 'penalties';
 $b3_conn = true; // this page needs to connect to the B3 database
 $pagination = true; // this page requires the pagination part of the footer
+$query_normal = true;
 require 'inc.php';
 
 ##########################
@@ -38,7 +39,7 @@ $start_row = $page_no * $limit_rows;
 ######### QUERIES #########
 
 $query = "SELECT p.id, p.type, p.client_id, p.time_add, p.reason,
-		COALESCE(c1.id, '1') as admin_id, COALESCE(c1.name, 'B3') as admin_name, c2.name
+		COALESCE(c1.id, '1') as admin_id, COALESCE(c1.name, 'B3') as admin_name, c2.name as client_name
 		FROM penalties p LEFT JOIN clients c1 ON c1.id = p.admin_id LEFT JOIN clients c2 ON c2.id = p.client_id
 		WHERE p.type = 'Notice'";
 
@@ -52,33 +53,10 @@ else
 
 $query_limit = sprintf("%s LIMIT %s, %s", $query, $start_row, $limit_rows); // add limit section
 
-## Prepare and run Query ##
-$stmt = $db->mysql->prepare($query_limit) or die('Database Error: '.$db->mysql->error);
-$stmt->execute(); // run query
-$stmt->store_result(); // store results (needed to count num_rows)
-$num_rows = $stmt->num_rows; // finds the number fo rows retrieved from the database
-$stmt->bind_result($id, $type, $client_id, $time_add, $reason, $admin_id, $admin_name, $client_name); // store results
-
-if($num_rows > 0) :
-	while($stmt->fetch()) : // get results and put results in an array
-		$notices_data[] = array(
-			'id' => $id,
-			'type' => $type,
-			'client_id' => $client_id,
-			'time_add' => $time_add,
-			'reason' => $reason,
-			'admin_id' => $admin_id,
-			'admin_name' => $admin_name,
-			'client_name' => $client_name
-		);
-	endwhile;
-endif;
-
-$stmt->free_result(); // free the data in memory from store_result
-$stmt->close(); // closes the prepared statement
-
 ## Require Header ##	
 require 'inc/header.php';
+
+if(!$db->error) :
 ?>
 
 <table summary="A list of <?php echo limit_rows; ?> notices made by admins in the server regarding a certain player">
@@ -105,7 +83,7 @@ require 'inc/header.php';
 
 	if($num_rows > 0) { // query contains stuff
 	 
-		foreach($notices_data as $notice): // get data from query and loop
+		foreach($data_set as $notice): // get data from query and loop
 			$cname = tableClean($notice['client_name']);
 			$cid = $notice['client_id'];
 			$aname = tableClean($notice['admin_name']);
@@ -113,7 +91,7 @@ require 'inc/header.php';
 			$reason = tableClean($notice['reason']);
 			$time_add = $notice['time_add'];
 			
-			## Change to human readable			
+			## Change to human readable	time
 			$time_add = date($tformat, $time_add);
 			
 			## Row color
@@ -122,15 +100,18 @@ require 'inc/header.php';
 				$odd_even = "odd";
 			else 
 				$odd_even = "even";
+				
+			$client = clientLink($cname, $cid);
+			$admin = clientLink($aname, $aid);
 	
 			// setup heredoc (table data)			
 			$data = <<<EOD
 			<tr class="$odd_even">
-				<td><strong><a href="clientdetails.php?id=$cid">$cname</a></strong></td>
+				<td><strong>$client</strong></td>
 				<td>@$cid</td>
 				<td><em>$time_add</em></td>
 				<td>$reason</td>
-				<td><strong><a href="clientdetails.php?id=$aid">$aname</a></strong></td>
+				<td><strong>$admin</strong></td>
 			</tr>
 EOD;
 
@@ -146,4 +127,8 @@ EOD;
 	</tbody>
 </table>
 
-<?php require 'inc/footer.php'; ?>
+<?php 
+	endif; // db error
+
+	require 'inc/footer.php'; 
+?>

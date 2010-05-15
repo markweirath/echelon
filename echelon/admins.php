@@ -4,6 +4,7 @@ $page_title = "Admin Listing";
 $auth_name = 'clients';
 $b3_conn = true; // this page needs to connect to the B3 database
 $pagination = true; // this page requires the pagination part of the footer
+$query_normal = true;
 require 'inc.php';
 
 ##########################
@@ -52,30 +53,10 @@ else
 
 $query_limit = sprintf("%s LIMIT %s, %s", $query, $start_row, $limit_rows); // add limit section
 
-## Prepare and run Query ##
-$stmt = $db->mysql->prepare($query_limit) or die('Database Error: '.$db->mysql->error);
-$stmt->execute(); // run query
-$stmt->store_result(); // store results (needed to count num_rows)
-$num_rows = $stmt->num_rows; // finds the number fo rows retrieved from the database
-$stmt->bind_result($id, $name, $connections, $time_edit, $level); // store results
-
-if($num_rows > 0) :
-	while($stmt->fetch()) : // get results and put results in an array
-		$clients_data[] = array(
-			'id' => $id,
-			'name' => $name,
-			'connect' => $connections,
-			'time_edit' => $time_edit,
-			'level' => $level,
-		);
-	endwhile;
-endif;
-
-$stmt->free_result(); // free the data in memory from store_result
-$stmt->close(); // closes the prepared statement
-
 ## Require Header ##	
 require 'inc/header.php';
+
+if(!$db->error) :
 ?>
 
 <table summary="A list of all registered admins">
@@ -110,12 +91,12 @@ require 'inc/header.php';
 
 	 if($num_rows > 0) { // query contains stuff
 	 
-		foreach($clients_data as $clients): // get data from query and loop
-			$cid = $clients['id'];
-			$name = $clients['name'];
-			$level = $clients['level'];
-			$connections = $clients['connect'];
-			$time_edit = $clients['time_edit'];
+		foreach($data_set as $data): // get data from query and loop
+			$cid = $data['id'];
+			$name = $data['name'];
+			$level = $data['level'];
+			$connections = $data['connections'];
+			$time_edit = $data['time_edit'];
 			
 			## Change to human readable		
 			$time_edit_read = date($tformat, $time_edit); // this must be after the time_diff
@@ -150,4 +131,8 @@ EOD;
 	</tbody>
 </table>
 
-<?php require 'inc/footer.php'; ?>
+<?php 
+	endif; // db error
+
+	require 'inc/footer.php'; 
+?>

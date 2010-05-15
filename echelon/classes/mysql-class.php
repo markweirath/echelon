@@ -14,14 +14,15 @@ if (!empty($_SERVER['SCRIPT_FILENAME']) && 'mysql-class.php' == basename($_SERVE
 
 class DB_B3 {
 	
-	## Settings
+	## Settings ##
 	public $mysql = NULL; // object var (if connection exists this will not be NULL)
-	public $query_error = FALSE; // was there a DB query error
+	public $error = FALSE; // was there a DB query error
 	public $query_error_pub = NULL;
+	
 	private $error_sec = 'We are having some database problems, please check back later.'; // message to show the public if the DB query/connect fails
 	private $error_on = false; // are detailed error reports on (default, can be overidden)
 	
-	## Connection Vars
+	## Connection Vars ##
 	private $host; // B3 DB MySQL Host
 	private $user; // B3 DB MySQL User
 	private $pass; // B3 DB MySQL Password
@@ -39,14 +40,19 @@ class DB_B3 {
 		
 		try { // try to connect to the DB or die with an error
 			$this->connectDB(); 
-		} catch (Exception $e) { 
+		} catch (Exception $e) {
+			$db->error = true;
 			die($e->getMessage()); 
 		}
 	}
 	
+	/**
+	 * If access to a protected or private function is called
+	 */
 	public function __call($name, $arg) {
         // Note: value of $name is case sensitive.
-		echo "<strong>" . $name . "</strong> is a private function that cannot be accessed outside the B3 MySQL class";
+		echLog('error', 'mysql-class.php', '49', 'System tried to access function '. $name .', a private or protected function in class '. get_class($this)); // log error
+		echo "<strong>" . $name . "</strong> is a private function that cannot be accessed outside the B3 MySQL class"; // error out error
     }
 	
 	/**
@@ -66,7 +72,7 @@ class DB_B3 {
 			if(DB_CON_ERROR_SHOW) // only if settings say show to con error, will we show it, else just say error
 				$error_msg = '<strong>B3 Database Connection Error:</strong> '.mysqli_connect_error();
 			else
-				$error_msg = '<strong>'. $this->error_sec .'</strong>';
+				$error_msg = $this->error_sec;
 
 			throw new Exception($error_msg);
 		endif;
@@ -90,11 +96,11 @@ class DB_B3 {
 
 		} catch (MysqlException $e) {
 		
-			$this->query_error = true;
-			if($this->error_on)
-				$this->query_error_pub = "MySQL Query Error (#". $this->mysql->errno ."): ". $this->mysql->error;
+			$this->error = true; // there is an error
+			if($this->error_on) // if detailed errors work
+				$this->error_msg = "MySQL Query Error (#". $this->mysql->errno ."): ". $this->mysql->error;
 			else
-				$this->query_error_pub = $this->error_sec;
+				$this->error_msg = $this->error_sec;
 
 			return;
 		}

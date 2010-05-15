@@ -4,6 +4,7 @@ $page = 'pubbans';
 $page_title = 'Public Ban List';
 $b3_conn = true; // this page needs to connect to the B3 database
 $pagination = true; // this page requires the pagination part of the footer
+$query_normal = true;
 require 'inc.php';
 
 ##########################
@@ -36,7 +37,7 @@ $start_row = $page_no * $limit_rows;
 
 ###########################
 ######### QUERIES #########
-$query = "SELECT c.id, c.name, p.id, p.type, p.time_add, p.time_expire, p.reason, p.duration FROM penalties p LEFT JOIN clients c ON p.client_id = c.id WHERE p.inactive = 0 AND p.type != 'Warning' AND p.type != 'Notice' AND (p.time_expire = -1 OR p.time_expire > UNIX_TIMESTAMP(NOW()))";
+$query = "SELECT c.id as client_id, c.name, p.id as ban_id, p.type, p.time_add, p.time_expire, p.reason, p.duration FROM penalties p LEFT JOIN clients c ON p.client_id = c.id WHERE p.inactive = 0 AND p.type != 'Warning' AND p.type != 'Notice' AND (p.time_expire = -1 OR p.time_expire > UNIX_TIMESTAMP(NOW()))";
 
 $query .= sprintf(" ORDER BY %s ", $orderby);
 
@@ -48,34 +49,10 @@ else
 
 $query_limit = sprintf("%s LIMIT %s, %s", $query, $start_row, $limit_rows); // add limit section
 
-## Prepare and run Query ##
-$stmt = $db->mysql->prepare($query_limit) or die('Database Error: '.$db->mysql->error);
-$stmt->execute();
-$stmt->store_result();
-$num_rows = $stmt->num_rows;
-
-if($num_rows > 0) :
-	$stmt->bind_result($client_id, $client_name, $ban_id, $type, $time_add, $time_expire, $reason, $duration);
-
-	while($stmt->fetch()) : // get results and put results in an array
-		$pens_data[] = array(
-			'client_id' => $client_id,
-			'client_name' => $client_name,
-			'ban_id' => $ban_id,
-			'type' => $type,
-			'time_add' => $time_add,
-			'time_expire' => $time_expire,
-			'reason' => $reason,
-			'duration' => $duration
-		);
-	endwhile;
-endif;
-
-$stmt->free_result(); // free the data in memory from store_result()
-$stmt->close(); // closes the prepared statement
-
 ## Require Header ##	
 require 'inc/header.php';
+
+if(!$db->error) :
 ?>
 
 	<table summary="A list of <?php echo $limit_rows; ?> active tempbans/bans">
@@ -131,14 +108,14 @@ require 'inc/header.php';
 
 	 if($num_rows > 0) { // query contains stuff
 
-		foreach($pens_data as $pen): // get data from query and loop
+		foreach($data_set as $pen): // get data from query and loop
 			$ban_id = $pen['ban_id'];
 			$type = $pen['type'];
 			$time_add = $pen['time_add'];
 			$time_expire = $pen['time_expire'];
 			$reason = tableClean($pen['reason']);
 			$client_id = $pen['client_id'];
-			$client_name = tableClean($pen['client_name']);
+			$client_name = tableClean($pen['name']);
 			$duration = $pen['duration'];
 
 			## Tidt data to make more human friendly
@@ -155,7 +132,7 @@ require 'inc/header.php';
 				$client_name_read = clientLink($client_name, $client_id);
 			else
 				$client_name_read = $client_name;
-
+				
 			## Row color
 			$rowcolor = 1 - $rowcolor;	
 			if($rowcolor == 0)
@@ -188,4 +165,8 @@ EOD;
 	</tbody>
 </table>
 
-<?php require 'inc/footer.php'; ?>
+<?php 
+	endif; // db error
+
+	require 'inc/footer.php'; 
+?>

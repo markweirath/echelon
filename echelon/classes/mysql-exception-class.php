@@ -12,13 +12,17 @@ class MysqlException extends Exception {
 	
 		$this->error = $error;
 		$this->errno = $errno;
-
+		
+		$file = parent::getFile();  
+		$line = parent::getLine();  
+		$traces = parent::getTraceAsString();
+		
 		// find error message and code
 		$code = $this->errno;
 		$message = $this->error;
-
+		
 		// log error message
-		$log_success = echLog('mysql', $message, $code);
+		$log_success = echLog('mysql', $file, $line, $message, $code, $traces);
 
 		// call parent constructor
 		parent::__construct($message, $code);

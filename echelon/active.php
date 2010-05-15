@@ -4,6 +4,7 @@ $page_title = "Inactive Admins";
 $auth_name = 'clients';
 $b3_conn = true; // this page needs to connect to the B3 database
 $pagination = true; // this page requires the pagination part of the footer
+$query_normal = true;
 require 'inc.php';
 
 ##########################
@@ -13,11 +14,8 @@ require 'inc.php';
 $orderby = "time_edit";
 $order = "asc";
 
-//$limit_rows = 75; // limit_rows can be set by the DB settings // uncomment this line to manually overide the number of table rows per page
-
 $time = time();
 $length = 7; // default length in days that the admin must be in active to show on this list
-
 
 ## Sorts requests vars ##
 if($_GET['ob'])
@@ -47,7 +45,7 @@ $start_row = $page_no * $limit_rows;
 
 
 ###########################
-######### QUERIES #########
+####### Query Setup #######
 
 $query = sprintf("SELECT c.id, c.name, c.connections, c.time_edit, g.name as level
 	FROM clients c LEFT JOIN groups g ON c.group_bits = g.id
@@ -64,30 +62,10 @@ else
 
 $query_limit = sprintf("%s LIMIT %s, %s", $query, $start_row, $limit_rows); // add limit section
 
-## Prepare and run Query ##
-$stmt = $db->mysql->prepare($query_limit) or die('Database Error: '.$db->mysql->error);
-$stmt->execute(); // run query
-$stmt->store_result(); // store results (needed to count num_rows)
-$num_rows = $stmt->num_rows; // finds the number fo rows retrieved from the database
-$stmt->bind_result($id, $name, $connections, $time_edit, $level); // store results
+## Require Header ##
+require 'inc/header.php'; 
 
-if($num_rows > 0) :
-	while($stmt->fetch()) : // get results and put results in an array
-		$clients_data[] = array(
-			'id' => $id,
-			'name' => $name,
-			'connect' => $connections,
-			'time_edit' => $time_edit,
-			'level' => $level
-		);
-	endwhile;
-endif;
-
-$stmt->free_result(); // free the data in memory from store_result
-$stmt->close(); // closes the prepared statement
-
-## Require Header ##	
-require 'inc/header.php';
+if(!$db->error) :
 ?>
 
 <table summary="A list of <?php echo limit_rows; ?> admins who could be deemed as inactive">
@@ -139,12 +117,12 @@ require 'inc/header.php';
 
 	if($num_rows > 0) { // query contains stuff
 	 
-		foreach($clients_data as $clients): // get data from query and loop
-			$cid = $clients['id'];
-			$name = $clients['name'];
-			$level = $clients['level'];
-			$connections = $clients['connect'];
-			$time_edit = $clients['time_edit'];
+		foreach($data_set as $info): // get data from query and loop
+			$cid = $info['id'];
+			$name = $info['name'];
+			$level = $info['level'];
+			$connections = $info['connections'];
+			$time_edit = $info['time_edit'];
 			
 			## Change to human readable		
 			$time_diff = time_duration($time - $time_edit, 'yMwd');		
@@ -181,4 +159,8 @@ EOD;
 	</tbody>
 </table>
 
-<?php require 'inc/footer.php'; ?>
+<?php 
+	endif; // db error
+
+	require 'inc/footer.php'; 
+?>

@@ -573,9 +573,16 @@ function penDuration($time, $duration) {
 }
 
 /**
+ * Show a formatted version of a DB error
+ */
+function dbErrorShow($error) {
+	echo '<h3>Database Error!</h3><p>'. $error .'</p>';
+}
+
+/**
  * Echelon logging function 
  */
-function echLog($type, $message, $code = NULL) {
+function echLog($type, $message, $code = NULL, $traces = NULL) {
 
 	if(empty($message))
 		$message = 'There was an error of some sort';
@@ -592,17 +599,21 @@ function echLog($type, $message, $code = NULL) {
 				$type_msg = 'HACK ATTEMPT';
 				break;
 				
+			case 'error':
 			default:
 				$type_msg = 'ERROR';
+				break;
 		}
 		
 		// construct the log message
 		$log_msg = date("[Y-m-d H:i:s]") . $type_msg;
 		
 		if(isset($code) && !empty($code))
-			$log_msg .=	" - Code: $code -" ;
+			$log_msg .=	" - Error Code: $code -" ;
 			
 		$log_msg .=	" Message: $message\n";
+		if(!empty($traces))
+			$log_msg .= "#Trace: \n" . $traces. "\n";
 	
 		// write the log message
 		fwrite($f, $log_msg);

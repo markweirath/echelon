@@ -1,21 +1,49 @@
-[2010-05-15 00:07:10]MYSQL ERRORMessage: There was an error of some sort
-[2010-05-15 00:07:11]MYSQL ERRORMessage: There was an error of some sort
-[2010-05-15 00:11:34]MYSQL ERRORMessage: There was an error of some sort
-[2010-05-15 00:11:35]MYSQL ERROR - Code: 1054 - Message: Unknown column 'iddd' in 'where clause'
-[2010-05-15 00:11:36]MYSQL ERRORMessage: There was an error of some sort
-[2010-05-15 00:11:36]MYSQL ERROR - Code: 1054 - Message: Unknown column 'iddd' in 'where clause'
-[2010-05-15 00:11:58]MYSQL ERROR - Code: 1054 - Message: Unknown column 'iddd' in 'where clause'
-[2010-05-15 00:12:05]MYSQL ERROR - Code: 1054 - Message: Unknown column 'iddd' in 'where clause'
-[2010-05-15 00:13:30]MYSQL ERRORMessage: There was an error of some sort
-[2010-05-15 00:13:33]MYSQL ERRORMessage: There was an error of some sort
-[2010-05-15 00:14:23]MYSQL ERROR - Code: Unknown column 'iddd' in 'where clause' - Message: Unknown column 'iddd' in 'where clause'
-[2010-05-15 00:15:26]MYSQL ERROR - Code: Unknown column 'iddd' in 'where clause' - Message: Unknown column 'iddd' in 'where clause'
-[2010-05-15 00:17:19]MYSQL ERROR - Code: 1054 - Message: Unknown column 'iddd' in 'where clause'
-[2010-05-15 00:18:01]MYSQL ERROR - Code: 1054 - Message: Unknown column 'iddd' in 'where clause'
-[2010-05-15 00:18:26]MYSQL ERROR - Code: 1054 - Message: Unknown column 'iddd' in 'where clause'
-[2010-05-15 00:18:39]MYSQL ERROR - Code: 1054 - Message: Unknown column 'iddd' in 'where clause'
-[2010-05-15 00:18:40]MYSQL ERROR - Code: 1054 - Message: Unknown column 'iddd' in 'where clause'
-[2010-05-15 00:19:05]MYSQL ERROR - Code: 1054 - Message: Unknown column 'iddd' in 'where clause'
-[2010-05-15 00:20:22]MYSQL ERROR - Code: 1054 - Message: Unknown column 'iddd' in 'where clause'
-[2010-05-15 00:21:18]MYSQL ERROR - Code: 1054 - Message: Unknown column 'iddd' in 'where clause'
-[2010-05-15 00:22:36]MYSQL ERROR - Code: 1054 - Message: Unknown column 'iddd' in 'where clause'
+[2010-05-15 21:20:56]ERROR File: mysql-class.php Line: #49 Message: System tried to access function connectDB, a private or protected function in class DB_B3
+[2010-05-15 21:24:35]MYSQL ERROR File: F:\wamp\www\echelon\classes\mysql-class.php Line: #90 - Code: 1054 - Message: Unknown column 'idddd' in 'where clause'
+[2010-05-15 21:24:55]MYSQL ERROR File: F:\wamp\www\echelon\classes\mysql-class.php Line: #90 - Code: 1054 - Message: Unknown column 'idddd' in 'where clause'
+[2010-05-15 21:25:39]MYSQL ERROR File: F:\wamp\www\echelon\classes\mysql-class.php Line: #90 - Code: 1054 - Message: Unknown column 'idddd' in 'where clause'
+[2010-05-15 21:26:41]MYSQL ERROR File: F:\wamp\www\echelon\classes\mysql-class.php Line: #90 - Code: 1054 - Message: Unknown column 'idddd' in 'where clause'
+[2010-05-15 21:49:55]MYSQL ERROR File: F:\wamp\www\echelon\classes\mysql-class.php Line: #90 - Code: 1054 - Message: Unknown column 'c.group_bisssts' in 'where clause'
+[2010-05-15 21:49:55]MYSQL ERROR File: F:\wamp\www\echelon\classes\mysql-class.php Line: #90 - Code: 1054 - Message: Unknown column 'c.group_bisssts' in 'where clause'
+[2010-05-15 21:50:38]MYSQL ERROR File: F:\wamp\www\echelon\classes\mysql-class.php Line: #90 - Code: 1054 - Message: Unknown column 'c.group_bisssts' in 'where clause'
+[2010-05-15 21:50:39]MYSQL ERROR File: F:\wamp\www\echelon\classes\mysql-class.php Line: #90 - Code: 1054 - Message: Unknown column 'c.group_bisssts' in 'where clause'
+[2010-05-15 21:50:40]MYSQL ERROR File: F:\wamp\www\echelon\classes\mysql-class.php Line: #90 - Code: 1054 - Message: Unknown column 'c.group_bisssts' in 'where clause'
+[2010-05-15 21:50:41]MYSQL ERROR File: F:\wamp\www\echelon\classes\mysql-class.php Line: #90 - Code: 1054 - Message: Unknown column 'c.group_bisssts' in 'where clause'
+[2010-05-15 21:51:04]MYSQL ERROR File: F:\wamp\www\echelon\classes\mysql-class.php Line: #90 - Code: 1054 - Message: Unknown column 'c.group_bisssts' in 'where clause'
+[2010-05-15 21:51:04]MYSQL ERROR File: F:\wamp\www\echelon\classes\mysql-class.php Line: #90 - Code: 1054 - Message: Unknown column 'c.group_bisssts' in 'where clause'
+[2010-05-15 22:00:51]MYSQL ERROR File: F:\wamp\www\echelon\classes\mysql-class.php Line: #94 - Code: 1054 - Message: Unknown column 'c.grousssp_bits' in 'where clause'
+[2010-05-15 22:00:52]MYSQL ERROR File: F:\wamp\www\echelon\classes\mysql-class.php Line: #94 - Code: 1054 - Message: Unknown column 'c.grousssp_bits' in 'where clause'
+[2010-05-15 22:01:39]MYSQL ERROR File: F:\wamp\www\echelon\classes\mysql-class.php Line: #94 - Code: 1054 - Message: Unknown column 'c.grousssp_bits' in 'where clause'
+[2010-05-15 22:01:40]MYSQL ERROR File: F:\wamp\www\echelon\classes\mysql-class.php Line: #94 - Code: 1054 - Message: Unknown column 'c.grousssp_bits' in 'where clause'
+[2010-05-15 22:04:40]MYSQL ERROR File: F:\wamp\www\echelon\classes\mysql-class.php Line: #94 - Code: 1054 - Message: Unknown column 'p.reasson' in 'field list'
+[2010-05-15 22:04:40]MYSQL ERROR File: F:\wamp\www\echelon\classes\mysql-class.php Line: #94 - Code: 1054 - Message: Unknown column 'p.reasson' in 'field list'
+[2010-05-15 22:04:42]MYSQL ERROR File: F:\wamp\www\echelon\classes\mysql-class.php Line: #94 - Code: 1054 - Message: Unknown column 'p.reasson' in 'field list'
+[2010-05-15 22:04:42]MYSQL ERROR File: F:\wamp\www\echelon\classes\mysql-class.php Line: #94 - Code: 1054 - Message: Unknown column 'p.reasson' in 'field list'
+[2010-05-15 22:05:28]MYSQL ERROR File: F:\wamp\www\echelon\classes\mysql-class.php Line: #94 - Code: 1054 - Message: Unknown column 'p.reasson' in 'field list'
+[2010-05-15 22:05:29]MYSQL ERROR File: F:\wamp\www\echelon\classes\mysql-class.php Line: #94 - Code: 1054 - Message: Unknown column 'p.reasson' in 'field list'
+[2010-05-15 22:17:56]MYSQL ERROR File: F:\wamp\www\echelon\classes\mysql-class.php Line: #94 - Code: 1054 - Message: Unknown column 'p.reasaaaon' in 'field list'
+Trace: 
+#0 F:\wamp\www\echelon\inc\header.php(4): DB_B3->query('SELECT p.time_a...')
+#1 F:\wamp\www\echelon\adminkicks.php(54): require('F:\wamp\www\ech...')
+#2 {main}
+[2010-05-15 22:17:56]MYSQL ERROR File: F:\wamp\www\echelon\classes\mysql-class.php Line: #94 - Code: 1054 - Message: Unknown column 'p.reasaaaon' in 'field list'
+Trace: 
+#0 F:\wamp\www\echelon\inc\header.php(13): DB_B3->query('SELECT p.time_a...', false)
+#1 F:\wamp\www\echelon\adminkicks.php(54): require('F:\wamp\www\ech...')
+#2 {main}
+[2010-05-15 22:18:41]MYSQL ERROR File: F:\wamp\www\echelon\classes\mysql-class.php Line: #94 - Code: 1054 - Message: Unknown column 'p.reasaaaon' in 'field list'
+#Trace: 
+#0 F:\wamp\www\echelon\inc\header.php(4): DB_B3->query('SELECT p.time_a...')
+#1 F:\wamp\www\echelon\adminkicks.php(54): require('F:\wamp\www\ech...')
+#2 {main}
+[2010-05-15 22:18:41]MYSQL ERROR File: F:\wamp\www\echelon\classes\mysql-class.php Line: #94 - Code: 1054 - Message: Unknown column 'p.reasaaaon' in 'field list'
+#Trace: 
+#0 F:\wamp\www\echelon\inc\header.php(13): DB_B3->query('SELECT p.time_a...', false)
+#1 F:\wamp\www\echelon\adminkicks.php(54): require('F:\wamp\www\ech...')
+#2 {main}
+[2010-05-15 22:23:03]MYSQL ERROR - Code: 95 - Message: F:\wamp\www\echelon\classes\mysql-class.php
+#Trace: 
+Table 'b3.groupss' doesn't exist
+[2010-05-15 22:23:03]MYSQL ERROR - Code: 95 - Message: F:\wamp\www\echelon\classes\mysql-class.php
+#Trace: 
+Table 'b3.groupss' doesn't exist

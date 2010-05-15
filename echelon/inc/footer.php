@@ -1,4 +1,5 @@
-		<?php if($pagination == true) : // check to see if pagination is required on this page
+	<?php 	
+		if($pagination && !$db->error) : // check to see if pagination is required on this page
 			if(!$no_data) : // if there no recorded records ?>
 				<div class="under-table">
 					<p class="num-rows">
