@@ -10,9 +10,4 @@ $(document).ready(function() {
 		}
 	});
 	
-	// pass strenght monitor
-	$("#pass1").passStrength({
-		userid: "#display"
-	});
-
 });

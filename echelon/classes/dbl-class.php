@@ -11,6 +11,8 @@ class DbL {
 
 	private $mysql = NULL;
 	
+	public $dbl_error = false;
+	
 	/**
      * Auto run on creation of instance: attempts to connect to the Echelon DB or dies with the mysql error
      */
@@ -29,17 +31,29 @@ class DbL {
 		if($this->mysql != NULL) // if it is set/created (defalt starts at NULL)
 			@$this->mysql->close();
 
-        $this->mysql = @new mysqli(DBL_HOSTNAME, DBL_USERNAME, DBL_PASSWORD, DBL_DB);
+        $this->mysql = @new mysqli(DBL_HOSTNAME, DBL_USERNAME, DBL_PASSWORD, DBL_DB); // block any error on connect, it will be cuahgt in the next line and handled properly
 		
-		if (mysqli_connect_errno()) :
+		if (mysqli_connect_errno()) : // if the connection error is on then throw exception
 
 			if(DB_CON_ERROR_SHOW) // only if settings say show to con error, will we show it, else just say error
-				$error_msg = '<strong>Database Connection Error:</strong> '.mysqli_connect_error();
+				$error_msg = '<h3>Database Connection Error</h3> 
+								<p>'.mysqli_connect_error().'<br />
+								Since we have encountered a database error, Echelon is shutting down.</p>';
 			else
-				$error_msg = '<strong>Database Connection Problem</strong>';
+				$error_msg = '<h3>Database Problem</h3>
+								<p>Since we have encountered a database error, Echelon is shutting down.</p>';
 
 			throw new Exception ($error_msg);
 		endif;
+    }
+	
+	/**
+	 * If access to a protected or private function is called
+	 */
+	public function __call($name, $arg) {
+        // Note: value of $name is case sensitive.
+		echLog('error', 'System tried to access function '. $name .', a private or protected function in class '. get_class($this)); // log error
+		echo "<strong>" . $name . "</strong> is a private function that cannot be accessed outside the Echelon Database class"; // error out error
     }
 	
 	/**
@@ -47,7 +61,7 @@ class DbL {
      */
     function __destruct() {
         if ($this->mysql != NULL) // if it is set/created (defalt starts at NULL)
-            @$this->mysql->close();
+            @$this->mysql->close(); // close the connection
     }
 	
 	
@@ -243,7 +257,7 @@ class DbL {
 			
 		$query = "SELECT s.id, s.name, s.ip, s.game, s.pb_active, g.name as g_name FROM servers s LEFT JOIN games g ON s.game = g.id ORDER BY ".$orderby." ".$order;
 		$result = $this->mysql->query($query);
-		$num_rows = $result->num_rows();
+		$num_rows = $result->num_rows;
 		
 		if($num_rows > 0) :
 			while($row = $result->fetch_object()) : // get results		
@@ -346,13 +360,14 @@ class DbL {
 	}
 	
 	function getGamesList() {
-		$query = "SELECT id, name FROM games ORDER BY id ASC";
+		$query = "SELECT id, name, name_short FROM games ORDER BY id ASC";
 		$results = $this->mysql->query($query) or die('Database error');
 		
 		while($row = $results->fetch_object()) :	
 			$games[] = array(
 				'id' => $row->id,
-				'name' => $row->name
+				'name' => $row->name,
+				'name_short' => $row->name_short
 			);
 		endwhile;
 		return $games;
@@ -1117,6 +1132,21 @@ class DbL {
 			return true;
 		else
 			return false;
+	
+	}
+	
+	function getLinks() {
+		$query = "SELECT url, name, title FROM links";
+		$result = $this->mysql->query($query);
+		
+		while($row = $result->fetch_object()) :	
+			$links[] = array(
+				'url' => $row->url,
+				'name' => $row->name,
+				'title' => $row->title
+			);
+		endwhile;
+		return $links;
 	
 	}
 

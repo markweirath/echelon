@@ -1,9 +1,12 @@
 /* Home Page CSS Styling */
 
-#change-log { width: 45%; margin: 10px; float: left; }
-#change-log h3 { text-align: center; padding-bottom: 4px; margin-bottom: 6px; border-bottom: 1px solid #efefef; }
-#change-log ul { list-style-position: outside; margin-left: 20px; }
-#change-log ul li { margin: 2px 0; }
+.index-block { width: 45%; margin: 10px; float: left; }
+.index-block h3 { text-align: center; padding-bottom: 4px; margin-bottom: 6px; border-bottom: 1px solid #efefef; }
+.index-block ul { list-style-position: outside; margin-left: 20px; }
+.index-block ul li { margin: 2px 0; }
+
+.links-list { list-style-type: circle; }
+.links-list li { display: iblock; margin: 3px 0; padding: 1px; border-bottom: 1px solid #efefef; }
 
 .padd { padding: 10px 0 10px 20px; font-size: 14px; }
 

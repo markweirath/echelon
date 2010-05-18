@@ -83,9 +83,39 @@ if($is_add) : ?>
 	</form>
 
 <?php else: ?>
+	
+	<span class="float-left">
+		<?php
+		$this_cur_page = basename($_SERVER['SCRIPT_NAME']);
+		$games_list = $dbl->getGamesList();
+		$i = 0;
+		$count = count($games_list);
+		$count--; // minus 1
+		while($i <= $count) :
+			
+			if($game == $games_list[$i]['id']) {
+				$selected = 'game-cur';
+				$warning_game = NULL;
+			} else {
+				$selected = NULL;
+				$warning_game = '&amp;w=game';
+			}
+			
+			echo '<a href="'.PATH . $this_cur_page .'?game='. $games_list[$i]['id'] . $warning_game .'" title="Switch to this game" class="'. $selected .'">'. $games_list[$i]['name_short'] .'</a>';
+			
+			if($count != $i)
+				echo ' - ';
+			
+			$i++;
+		endwhile;
+		?>
+	</span>
 
+	
 	<a href="settings-games.php?t=add" class="float-right" title="Add a Game (DB) to Echelon">Add Game &raquo;</a>
 
+	<br />
+	
 	<form action="actions/settings-game.php" method="post">
 
 	<fieldset>

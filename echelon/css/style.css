@@ -148,10 +148,11 @@ fieldset.wide input { display: inline; margin-right: 10px; }
 	.red { font-weight: bold; padding: 2px 3px; -moz-border-radius: 2px; -webkit-border-radius: 2px; color: white; background: #e19d9d; }		
 		.red:hover { cursor: help; }
 
-.tooltip { margin: 1px; padding: 3px; height: 16px; width: 16px; display: inline-block; vertical-align: middle; background: url(../images/info.png) no-repeat; }
+.tooltip { margin: 1px; padding: 3px; height: 16px; width: 16px; display: inline-block; vertical-align: middle; background: url(../images/tip.png) no-repeat; }
 
-#tooltip{ position:absolute; border: 2px solid #3fa244; background: #a5e9a8; padding:2px 5px; color: rgb(255, 255, 255); display:none; 
-		  -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; opacity: 0.95; color: rgba(255, 255, 255, 1); }
+#tooltip { position:absolute; display:none;  padding:5px; width:200px; border-top:4px solid #F9E98E;
+		  -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; opacity: 0.95; color: #694c15; font-size: 13px;
+		  background:#FBF7AA; border-left:4px solid #F9E98E; border-right:4px solid #F9E98E; border-bottom:4px solid #F9E98E; }
 				
 /* Page Stlying */
 body { color: black; font: 17px; background: url(../images/body-bg.jpg) repeat; }

@@ -60,7 +60,7 @@ $page_title .= ' '.$name;
 require 'inc/header.php';
 ?>
 <table class="cd-table">
-	<caption><?php echo $name; ?><small>Everything B3 knows about <?php echo $name; ?></small></caption>
+	<caption><img src="images/cd-page-icon.png" width="32" height="32" alt="" /><?php echo $name; ?><small>Everything B3 knows about <?php echo $name; ?></small></caption>
 	<tbody>
 		<tr>
 			<th>Name</th>
@@ -71,7 +71,7 @@ require 'inc/header.php';
 		<tr>
 			<th>Level</th>
 				<td><?php 
-					if($user_group == '')
+					if($user_group == NULL)
 						echo 'Un-registered';
 					else
 						echo $user_group; 
@@ -92,7 +92,7 @@ require 'inc/header.php';
 						if($guid_len == 32) 
 							guidCheckLink($guid);
 						else 
-							echo $guid.' <span class="red" title="This guid is only 31 characters long! It should be 32 characters long!">['. $guid_len .']</span>';
+							echo $guid.' <span class="red" title="This guid is only 31 characters long, it should be 32 characters!">['. $guid_len .']</span>';
 				
 					} elseif($mem->reqLevel('view_half_guid')) { // if allowed to see the last 8 chars of guid
 						
@@ -100,7 +100,7 @@ require 'inc/header.php';
 							$half_guid = substr($guid, -8); // get the last 8 characters of the guid
 							guidCheckLink($half_guid);
 						} else {
-							echo $guid.' <span class="red" title="This guid is only 31 characters long! It should be 32 characters long!">['. $guid_len .']</span>';
+							echo $guid.' <span class="red" title="This guid is only 31 characters long, it should be 32 characters!">['. $guid_len .']</span>';
 						}
 					
 					} else { // if not allowed to see any part of the guid
@@ -117,9 +117,9 @@ require 'inc/header.php';
 						if ($ip != "") { ?>
 						<a href="clients.php?s=<?php echo $ip; ?>&amp;t=ip" title="Search for other users with this IP adreess"><?php echo $ip; ?></a>
 							&nbsp;&nbsp;
-						<a href="http://whois.domaintools.com/<?php echo $ip; ?>" title="Whois IP Search">W</a>
+						<a href="http://whois.domaintools.com/<?php echo $ip; ?>" title="Whois IP Search"><img src="images/id_card.png" width="16" height="16" alt="W" /></a>
 							&nbsp;&nbsp;
-						<a href="http://geotool.servehttp.com/?ip=<?php echo $ip; ?>" title="Show Location of IP origin on map">L</a>
+						<a href="http://geotool.servehttp.com/?ip=<?php echo $ip; ?>" title="Show Location of IP origin on map"><img src="images/globe.png" width="16" height="16" alt="L" /></a>
 					<?php
 						} else {
 							echo "(No IP address available)";
@@ -158,7 +158,7 @@ if($is_xlrstats_user && $plugin_xlrstats_enabled) : // if the user has xlrstats 
 	</tr>
 	<tr>
 		<th>Rank</th>
-			<td>#49</td>
+			<td>(Not Working)</td>
 		<th>XLRStats id</th>
 			<td><?php echo $xlr_id; ?></td>
 	</tr>
@@ -193,7 +193,9 @@ if($is_xlrstats_user && $plugin_xlrstats_enabled) : // if the user has xlrstats 
 			
 			<form action="actions/b3/comment.php" method="post">
 				<label for="comment">Comment:</label><br />
-					<textarea type="text" name="comment" id="comment"></textarea><br />
+					<textarea type="text" name="comment" id="comment"></textarea>
+					<?php tooltip('Add a comment to this users Echelon profile'); ?>
+					<br />
 					
 				<input type="hidden" name="token" value="<?php echo $comment_token; ?>" />
 				<input type="hidden" name="cid" value="<?php echo $cid; ?>" />
@@ -228,11 +230,11 @@ if($is_xlrstats_user && $plugin_xlrstats_enabled) : // if the user has xlrstats 
 					<legend>Type</legend>
 					
 					<label for="pb">Permanent Ban?</label>
-						<input type="checkbox" name="pb" id="pb" /><br />
+						<input type="checkbox" name="pb" id="pb" /><?php tooltip('Is this ban to last forever?'); ?><br />
 					
 					<div id="ban-duration">
 						<label for="duration">Duration:</label>
-							<input type="text" name="duration" id="duration" class="int dur" />
+							<input type="text" name="duration" id="duration" class="int dur" /><?php tooltip('This is the number (eg. 3) of minutes/hours ect.'); ?>
 							
 							<select name="time">
 								<option value="m">Minutes</option>
@@ -242,6 +244,7 @@ if($is_xlrstats_user && $plugin_xlrstats_enabled) : // if the user has xlrstats 
 								<option value="mn">Months</option>
 								<option value="y">Years</option>
 							</select>
+							<?php tooltip('How long should this ban last'); ?>
 					</div>
 				</fieldset>
 				<br class="clear" />
@@ -284,7 +287,7 @@ if($is_xlrstats_user && $plugin_xlrstats_enabled) : // if the user has xlrstats 
 					<label for="password">Your Current Password:</label>
 						<input type="password" name="password" id="password" />
 						
-						<?php tooltip('We need you password to make sure it is really you'); ?>
+						<?php tooltip('We need your password to make sure it is really you'); ?>
 						
 					<br />
 				</div>
@@ -315,6 +318,7 @@ if($is_xlrstats_user && $plugin_xlrstats_enabled) : // if the user has xlrstats 
 							endforeach;
 						?>
 					</select>
+					<?php tooltip('Masking a user masks their user level from everyone in the game server, as whatever value is here'); ?>
 				
 				<input type="hidden" name="old-level" value="<?php echo $group_bits; ?>" />
 				<input type="hidden" name="cid" value="<?php echo $cid; ?>" />

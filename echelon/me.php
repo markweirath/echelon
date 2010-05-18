@@ -14,9 +14,9 @@ require 'inc/header.php';
 				
 				<label class="uname">Username:</label>
 					<input type="text" name="uname" value="<?php echo $_SESSION['username']; ?>" disabled="disabled" />		
-				<label for="display">Display Name:</label>
+				<label for="display">Display Name:</label><?php tooltip('A name shown to all users, a name used to identify you'); ?>
 					<input type="text" name="name" value="<?php echo $mem->name; ?>" id="display" tabindex="1" />
-				<label for="email">Email:</label>
+				<label for="email">Email:</label><?php tooltip('A valid email address where Echelon can contact you'); ?>
 					<input type="text" name="email" value="<?php echo $mem->email; ?>" id="email" tabindex="2" />
 			</fieldset>
 
@@ -24,7 +24,7 @@ require 'inc/header.php';
 				<legend>Change your password</legend>
 				
 				<label for="change-pw">Change your password:</label>
-					<input type="checkbox" name="change-pw" id="change-pw" tabindex="3" /><br />
+					<input type="checkbox" name="change-pw" id="change-pw" tabindex="3" /><?php tooltip('Do you want to change your Echelon password'); ?><br />
 					
 				<label for="pass1" class="block">New Password:</label>
 					<input type="password" name="pass1" id="pass1" value="" class="disable" disabled="disabled" tabindex="4" />

@@ -47,3 +47,379 @@ Table 'b3.groupss' doesn't exist
 [2010-05-15 22:23:03]MYSQL ERROR - Code: 95 - Message: F:\wamp\www\echelon\classes\mysql-class.php
 #Trace: 
 Table 'b3.groupss' doesn't exist
+[2010-05-16 20:57:14]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root33'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(43): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root33', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+[2010-05-16 20:57:14]MYSQL ERROR Message: There was an error of some sort
+#Trace: 
+#0 F:\wamp\www\echelon\inc\header.php(13): DB_B3->query('SELECT c.id, c....', false)
+#1 F:\wamp\www\echelon\active.php(66): require('F:\wamp\www\ech...')
+#2 {main}
+[2010-05-16 20:59:09]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root33'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(43): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root33', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+[2010-05-16 20:59:10]MYSQL ERROR Message: There was an error of some sort
+#Trace: 
+#0 F:\wamp\www\echelon\inc\header.php(13): DB_B3->query('SELECT c.id, c....', false)
+#1 F:\wamp\www\echelon\active.php(66): require('F:\wamp\www\ech...')
+#2 {main}
+[2010-05-16 21:00:16]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root33'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(43): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root33', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+[2010-05-16 21:00:17]MYSQL ERROR Message: There was an error of some sort
+#Trace: 
+#0 F:\wamp\www\echelon\inc\header.php(13): DB_B3->query('SELECT c.id, c....', false)
+#1 F:\wamp\www\echelon\active.php(66): require('F:\wamp\www\ech...')
+#2 {main}
+[2010-05-16 23:03:20]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(43): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+[2010-05-16 23:03:20]MYSQL ERROR Message: There was an error of some sort
+#Trace: 
+#0 F:\wamp\www\echelon\inc\header.php(13): DB_B3->query('SELECT c.id, c....', false)
+#1 F:\wamp\www\echelon\active.php(66): require('F:\wamp\www\ech...')
+#2 {main}
+[2010-05-16 23:06:35]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(43): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+[2010-05-16 23:06:36]MYSQL ERROR Message: There was an error of some sort
+#Trace: 
+#0 F:\wamp\www\echelon\inc\header.php(13): DB_B3->query('SELECT c.id, c....', false)
+#1 F:\wamp\www\echelon\active.php(66): require('F:\wamp\www\ech...')
+#2 {main}
+[2010-05-16 23:07:28]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(43): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+[2010-05-16 23:07:29]MYSQL ERROR Message: There was an error of some sort
+#Trace: 
+#0 F:\wamp\www\echelon\inc\header.php(13): DB_B3->query('SELECT c.id, c....', false)
+#1 F:\wamp\www\echelon\active.php(66): require('F:\wamp\www\ech...')
+#2 {main}
+[2010-05-16 23:07:45]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(43): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+[2010-05-16 23:07:45]MYSQL ERROR Message: There was an error of some sort
+#Trace: 
+#0 F:\wamp\www\echelon\inc\header.php(13): DB_B3->query('SELECT c.id, c....', false)
+#1 F:\wamp\www\echelon\active.php(66): require('F:\wamp\www\ech...')
+#2 {main}
+[2010-05-16 23:10:12]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+[2010-05-16 23:10:12]MYSQL ERROR Message: There was an error of some sort
+#Trace: 
+#0 F:\wamp\www\echelon\inc\header.php(13): DB_B3->query('SELECT c.id, c....', false)
+#1 F:\wamp\www\echelon\active.php(66): require('F:\wamp\www\ech...')
+#2 {main}
+[2010-05-16 23:10:14]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+[2010-05-16 23:10:14]MYSQL ERROR Message: There was an error of some sort
+#Trace: 
+#0 F:\wamp\www\echelon\inc\header.php(13): DB_B3->query('SELECT c.id, c....', false)
+#1 F:\wamp\www\echelon\active.php(66): require('F:\wamp\www\ech...')
+#2 {main}
+[2010-05-16 23:10:31]MYSQL ERROR - Error Code: 1054 - Message: Unknown column 'c.namesss' in 'field list'
+#Trace: 
+#0 F:\wamp\www\echelon\inc\header.php(4): DB_B3->query('SELECT c.id, c....')
+#1 F:\wamp\www\echelon\active.php(66): require('F:\wamp\www\ech...')
+#2 {main}
+[2010-05-16 23:10:31]MYSQL ERROR - Error Code: 1054 - Message: Unknown column 'c.namesss' in 'field list'
+#Trace: 
+#0 F:\wamp\www\echelon\inc\header.php(13): DB_B3->query('SELECT c.id, c....', false)
+#1 F:\wamp\www\echelon\active.php(66): require('F:\wamp\www\ech...')
+#2 {main}
+[2010-05-16 23:13:51]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+[2010-05-16 23:13:52]MYSQL ERROR Message: There was an error of some sort
+#Trace: 
+#0 F:\wamp\www\echelon\inc\header.php(13): DB_B3->query('SELECT c.id, c....', false)
+#1 F:\wamp\www\echelon\active.php(66): require('F:\wamp\www\ech...')
+#2 {main}
+-------
+[2010-05-16 23:15:59]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:15:59]MYSQL ERROR Message: There was an error of some sort
+#Trace: 
+#0 F:\wamp\www\echelon\inc\header.php(13): DB_B3->query('SELECT c.id, c....', false)
+#1 F:\wamp\www\echelon\active.php(66): require('F:\wamp\www\ech...')
+#2 {main}
+-------
+[2010-05-16 23:19:54]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:19:54]MYSQL ERROR Message: There was an error of some sort
+#Trace: 
+#0 F:\wamp\www\echelon\inc\header.php(13): DB_B3->query('SELECT c.id, c....', false)
+#1 F:\wamp\www\echelon\active.php(66): require('F:\wamp\www\ech...')
+#2 {main}
+-------
+[2010-05-16 23:21:12]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:21:55]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:22:35]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:23:32]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:23:45]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:24:47]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:25:36]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:25:47]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:27:13]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:27:40]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:27:48]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:28:47]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:29:03]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:29:07]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:29:16]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:30:12]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:31:11]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:31:14]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:31:24]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\clients.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:32:34]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:32:48]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:33:44]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:34:29]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(44): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:35:00]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(43): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:38:42]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(43): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-16 23:39:30]MYSQL ERROR - Error Code: 1045 - Message: <strong>B3 Database Connection Error:</strong> Access denied for user 'root2'@'localhost' (using password: NO)
+#Trace: 
+#0 F:\wamp\www\echelon\classes\mysql-class.php(43): DB_B3->connectDB()
+#1 F:\wamp\www\echelon\inc.php(25): DB_B3->__construct('localhost', 'root2', NULL, 'b3', true)
+#2 F:\wamp\www\echelon\active.php(8): require('F:\wamp\www\ech...')
+#3 {main}
+-------
+[2010-05-18 21:37:32]MYSQL ERROR Message: There was an error of some sort
+#Trace: 
+#0 F:\wamp\www\echelon\inc\header.php(4): DB_B3->query('SELECT c.id, c....')
+#1 F:\wamp\www\echelon\clients.php(93): require('F:\wamp\www\ech...')
+#2 {main}
+-------
+[2010-05-18 21:37:33]MYSQL ERROR Message: There was an error of some sort
+#Trace: 
+#0 F:\wamp\www\echelon\inc\header.php(13): DB_B3->query('SELECT c.id, c....', false)
+#1 F:\wamp\www\echelon\clients.php(93): require('F:\wamp\www\ech...')
+#2 {main}
+-------
+[2010-05-18 21:38:12]MYSQL ERROR Message: There was an error of some sort
+#Trace: 
+#0 F:\wamp\www\echelon\inc\header.php(4): DB_B3->query('SELECT c.id, c....')
+#1 F:\wamp\www\echelon\clients.php(93): require('F:\wamp\www\ech...')
+#2 {main}
+-------
+[2010-05-18 21:38:12]MYSQL ERROR Message: There was an error of some sort
+#Trace: 
+#0 F:\wamp\www\echelon\inc\header.php(13): DB_B3->query('SELECT c.id, c....', false)
+#1 F:\wamp\www\echelon\clients.php(93): require('F:\wamp\www\ech...')
+#2 {main}
+-------
+[2010-05-18 21:39:13]MYSQL ERROR Message: There was an error of some sort
+#Trace: 
+#0 F:\wamp\www\echelon\inc\header.php(4): DB_B3->query('SELECT c.id, c....')
+#1 F:\wamp\www\echelon\clients.php(93): require('F:\wamp\www\ech...')
+#2 {main}
+-------
+[2010-05-18 21:39:14]MYSQL ERROR Message: There was an error of some sort
+#Trace: 
+#0 F:\wamp\www\echelon\inc\header.php(13): DB_B3->query('SELECT c.id, c....', false)
+#1 F:\wamp\www\echelon\clients.php(93): require('F:\wamp\www\ech...')
+#2 {main}
+-------
+[2010-05-18 21:42:31]MYSQL CONNECTION ERROR Message: <strong>B3 Database Connection Error:</strong> (#1045) Access denied for user 'root2'@'localhost' (using password: NO)
+-------
+[2010-05-18 21:42:59]MYSQL CONNECTION ERROR Message: B3 Database Connection Error: (#1045) Access denied for user 'root2'@'localhost' (using password: NO)
+-------
+[2010-05-18 21:43:28]MYSQL CONNECTION ERROR Message: B3 Database Connection Error: (#1045) Access denied for user 'root2'@'localhost' (using password: NO)
+-------
+[2010-05-18 21:43:31]MYSQL CONNECTION ERROR Message: B3 Database Connection Error: (#1045) Access denied for user 'root2'@'localhost' (using password: NO)
+-------
+[2010-05-18 21:44:47]MYSQL CONNECTION ERROR Message: B3 Database Connection Error: (#1045) Access denied for user 'root2'@'localhost' (using password: NO)
+-------
+[2010-05-18 21:48:51]MYSQL CONNECTION ERROR - Error Code: 1045 - Message: B3 Database Connection Error: (#1045) Access denied for user 'root2'@'localhost' (using password: NO)

@@ -19,7 +19,7 @@ require 'inc/header.php';
 		<li><a href="<?php echo $path; ?>actions/logout.php" class="logout" title="Sign out of Echelon">Log Out</a></li>
 	</ul>
 	
-	<div id="change-log">	   
+	<div id="change-log" class="index-block">	   
 		<h3>Changelog <?php echo ECH_VER; ?></h3>
 		
 		<ul>
@@ -32,7 +32,28 @@ require 'inc/header.php';
 			<li>Ability to change a client's mask, greeting, login details, edit a ban deatils</li>
 			<li>Security: Anti-session hijacking and fixation, tokens to stop CSRF attacks, prepared statments to prevent SQL injection. Making your Echelon expirence more secure allowing you to protect both you and your clients</li>
 		</ul>
-	</div
+	</div>
+	
+	<?php
+	
+		$links = $dbl->getLinks();
+		
+		if(!empty($links)) :
+			
+			echo '<div id="links-table" class="index-block">
+					<h3>External Links</h3>
+					<ul class="links-list">';
+		
+				foreach($links as $link) :
+				
+					echo '<li><a href="'. $link['url'] .'" class="external" title="'. $link['title'] .'">' . $link['name'] . '</a></li>';
+				
+				endforeach;
+			
+			echo '</ul></div>';
+			
+		endif;
+	?>
 	
 	<br class="clear" />
 

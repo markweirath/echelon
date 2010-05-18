@@ -1,6 +1,6 @@
 <?php
-## if the page has the normal query process
-if($query_normal) :
+## if the page has the normal query process & there is a connectionn to the B3 DB
+if($query_normal && (!$db_error)) :
 	$results = $db->query($query_limit);
 
 	$num_rows = $results['num_rows']; // the the num_rows
@@ -8,7 +8,7 @@ if($query_normal) :
 endif;
 
 ## Pagination for pages with tables ## 
-if($pagination == true) : // if pagination is needed on the page
+if($pagination == true && (!$db_error)) : // if pagination is needed on the page
 	## Find total rows ##
 	$total_num_rows = $db->query($query, false); // do not fetch the data
 	$total_rows = $total_num_rows['num_rows'];

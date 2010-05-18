@@ -72,7 +72,12 @@
 				else
 					echo '<li>';
 				
-				echo '<a rel="chat-tab-'. $i .'"  title="View the chat logs from '. $config['games'][$game]['servers'][$i]['name'] .'" class="chat-tab">'. $config['games'][$game]['servers'][$i]['name'] .'</a></li>';
+				if($config['games'][$game]['servers'][$i]['name'] == NULL)
+					$server_name = 'No Name';
+				else
+					$server_name = $config['games'][$game]['servers'][$i]['name'];
+				
+				echo '<a rel="chat-tab-'. $i .'"  title="View the chat logs from '. $server_name .'" class="chat-tab">'. $server_name .'</a></li>';
 				
 				$i++; // increment counter
 								
@@ -164,7 +169,7 @@ EOD;
 		
 		echo '</div>'; // close #chats-box
 	
-	endif; // end if no records return in total
-	
 	echo '</div>'; // close #chat-logs 
+	
+	endif; // end if no records return in total
 ?>

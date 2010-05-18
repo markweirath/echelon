@@ -80,13 +80,10 @@
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
 	
 	<!-- Load in some jquery plugins -->
-	<script src="<?php echo $path; ?>js/jquery.numeric.pack.js" type="text/javascript" charset="utf-8"></script>
-	<script src="<?php echo $path; ?>js/jquery.timers.js" type="text/javascript" charset="utf-8"></script>
-	<script src="<?php echo $path; ?>js/jquery.tooltip.js" type="text/javascript" charset="utf-8"></script>
+	<script src="<?php echo PATH; ?>js/jquery.plugins.js" type="text/javascript" charset="utf-8"></script>
 
 	<?php if($page == 'me') { ?>
 		<script src="js/me.js" type="text/javascript" charset="utf-8"></script>
-		<script src="js/password_strength_plugin.js" type="text/javascript" charset="utf-8"></script>
 	<?php } ?>
 	
 	<?php if($page == 'clientdetails') { ?>

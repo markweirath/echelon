@@ -455,9 +455,9 @@ function linkSort($keyword, $title) {
 
 	$this_p = cleanvar($_SERVER['PHP_SELF']);
 	
-	echo '<a title="Sort information by '.$title.' ascending." href="'.$this_p.'?ob='.$keyword.'&amp;o=ASC"><img src="images/asc.png" alt="ASC" class="asc-img" /></a>
+	echo '<a title="Sort information by '.$title.' ascending." href="'.$this_p.'?ob='.$keyword.'&amp;o=ASC"><img src="images/asc.png" width="10" height="6" alt="ASC" class="asc-img" /></a>
 			&nbsp;
-			<a title="Sort information by '.$title.' descending." href="'.$this_p.'?ob='.$keyword.'&amp;o=DESC"><img src="images/desc.png" alt="DESC" class="desc-img" /></a>';
+			<a title="Sort information by '.$title.' descending." href="'.$this_p.'?ob='.$keyword.'&amp;o=DESC"><img src="images/desc.png" width="10" height="6" alt="DESC" class="desc-img" /></a>';
 
 }
 
@@ -466,13 +466,13 @@ function linkSortClients($keyword, $title, $is_search, $search_type, $search_str
 	$this_p = cleanvar($_SERVER['PHP_SELF']);
 	
 	if($is_search == false) :
-		echo'<a title="Sort information by '.$title.' ascending." href="'.$this_p.'?ob='.$keyword.'&amp;o=ASC"><img src="images/asc.png" alt="ASC" class="asc-img" /></a>
+		echo'<a title="Sort information by '.$title.' ascending." href="'.$this_p.'?ob='.$keyword.'&amp;o=ASC"><img src="images/asc.png" width="10" height="6" alt="ASC" class="asc-img" /></a>
 			&nbsp;
-		<a title="Sort information by '.$title.' descending." href="'.$this_p.'?ob='.$keyword.'&amp;o=DESC"><img src="images/desc.png" alt="DESC" class="desc-img" /></a>';
+		<a title="Sort information by '.$title.' descending." href="'.$this_p.'?ob='.$keyword.'&amp;o=DESC"><img src="images/desc.png" width="10" height="6" alt="DESC" class="desc-img" /></a>';
 	else:
-		echo'<a title="Sort information by '.$title.' ascending." href="'.$this_p.'?ob='.$keyword.'&amp;o=ASC&amp;s='.urlencode($search_string).'&amp;t='.$search_type.'"><img src="images/asc.png" alt="ASC" class="asc-img" /></a>
+		echo'<a title="Sort information by '.$title.' ascending." href="'.$this_p.'?ob='.$keyword.'&amp;o=ASC&amp;s='.urlencode($search_string).'&amp;t='.$search_type.'"><img src="images/asc.png" width="10" height="6" alt="ASC" class="asc-img" /></a>
 			&nbsp;
-		<a title="Sort information by '.$title.' descending." href="'.$this_p.'?ob='.$keyword.'&amp;o=DESC&amp;s='.urlencode($search_string).'&amp;t='.$search_type.'"><img src="images/desc.png" alt="DESC" class="desc-img" /></a>';
+		<a title="Sort information by '.$title.' descending." href="'.$this_p.'?ob='.$keyword.'&amp;o=DESC&amp;s='.urlencode($search_string).'&amp;t='.$search_type.'"><img src="images/desc.png" width="10" height="6" alt="DESC" class="desc-img" /></a>';
 	endif;
 
 }
@@ -594,6 +594,10 @@ function echLog($type, $message, $code = NULL, $traces = NULL) {
 			case 'mysql':
 				$type_msg = 'MYSQL ERROR';
 				break;
+			
+			case 'mysqlconnect':
+				$type_msg = 'MYSQL CONNECTION ERROR';
+				break;
 				
 			case 'hack':
 				$type_msg = 'HACK ATTEMPT';
@@ -606,10 +610,10 @@ function echLog($type, $message, $code = NULL, $traces = NULL) {
 		}
 		
 		// construct the log message
-		$log_msg = date("[Y-m-d H:i:s]") . $type_msg;
+		$log_msg = "-------\n".date("[Y-m-d H:i:s]") . $type_msg;
 		
 		if(isset($code) && !empty($code))
-			$log_msg .=	" - Error Code: $code -" ;
+			$log_msg .=	" - Code: $code -" ;
 			
 		$log_msg .=	" Message: $message\n";
 		if(!empty($traces))

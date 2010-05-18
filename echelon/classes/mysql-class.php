@@ -18,6 +18,7 @@ class DB_B3 {
 	public $mysql = NULL; // object var (if connection exists this will not be NULL)
 	public $error = FALSE; // was there a DB query error
 	public $query_error_pub = NULL;
+	public $error_msg;
 	
 	private $error_sec = 'We are having some database problems, please check back later.'; // message to show the public if the DB query/connect fails
 	private $error_on = false; // are detailed error reports on (default, can be overidden)
@@ -39,19 +40,29 @@ class DB_B3 {
 		$this->error_on = $error_on;
 		
 		try { // try to connect to the DB or die with an error
-			$this->connectDB(); 
+			$this->connectDB();
+				
 		} catch (Exception $e) {
-			$db->error = true;
-			die($e->getMessage()); 
-		}
-	}
+			// get exception information
+			$error_msg = strip_tags($e->getMessage());
+			$code = $e->getCode();
+			
+			// log info
+			echLog('mysqlconnect', $error_msg, $code);
+			
+			// set vars for outside class
+			$this->error = true;
+			$this->error_msg = $error_msg;
+			
+		} // end catch
+		
+	} // end constructor function
 	
 	/**
 	 * If access to a protected or private function is called
 	 */
 	public function __call($name, $arg) {
-        // Note: value of $name is case sensitive.
-		echLog('error', 'mysql-class.php', '49', 'System tried to access function '. $name .', a private or protected function in class '. get_class($this)); // log error
+		echLog('error', 'System tried to access function '. $name .', a private or protected function in class '. get_class($this)); // log error
 		echo "<strong>" . $name . "</strong> is a private function that cannot be accessed outside the B3 MySQL class"; // error out error
     }
 	
@@ -69,12 +80,15 @@ class DB_B3 {
 		// if there was a connection error 
 		if (mysqli_connect_errno()) : // NOTE: we are using the procedural method here because of a problem with the OOP method before PHP 5.2.9
 
+			$code = $this->mysql->connect_errno;
+		
 			if(DB_CON_ERROR_SHOW) // only if settings say show to con error, will we show it, else just say error
-				$error_msg = '<strong>B3 Database Connection Error:</strong> '.mysqli_connect_error();
+				$error_msg = '<strong>B3 Database Connection Error:</strong> (#'. $code .') '.mysqli_connect_error();
 			else
 				$error_msg = $this->error_sec;
-
-			throw new Exception($error_msg);
+			
+			throw new Exception($error_msg, $code); // throw new mysql typed exception
+			
 		endif;
     }
 	
@@ -86,6 +100,9 @@ class DB_B3 {
 	 * @param string $type - typpe of query this is 
 	 */
 	public function query($sql, $fetch = true, $type = 'select') {
+
+		if($mysql = NULL || $this->error)
+			return false;
 		
 		try {
 		

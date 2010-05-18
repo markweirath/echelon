@@ -211,7 +211,7 @@ EOD;
 	
 		echo '<tr class="odd"><td colspan="6">';
 		if($is_search == false)
-			echo 'There is no clients in the database.';
+			echo 'There are no clients in the database.';
 		else
 			echo 'Your search for <strong>'.$search_string.'</strong> has returned no results.';
 		echo '</td></tr>';

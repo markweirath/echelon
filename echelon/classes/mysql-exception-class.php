@@ -9,12 +9,12 @@ class MysqlException extends Exception {
 	private $errno;
 
 	public function __construct($error, $errno) {
-	
+		
+		// get sent vars
 		$this->error = $error;
 		$this->errno = $errno;
 		
-		$file = parent::getFile();  
-		$line = parent::getLine();  
+		// get exception information from parent class
 		$traces = parent::getTraceAsString();
 		
 		// find error message and code
@@ -22,7 +22,7 @@ class MysqlException extends Exception {
 		$message = $this->error;
 		
 		// log error message
-		$log_success = echLog('mysql', $file, $line, $message, $code, $traces);
+		$log_success = echLog('mysql', $message, $code, $traces);
 
 		// call parent constructor
 		parent::__construct($message, $code);

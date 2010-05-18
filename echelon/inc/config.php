@@ -36,4 +36,4 @@ $supported_games = array( // supported games
 );
 
 // URL to check for updates with
-define("VER_CHECK_URL", "http://b3-echelon.com/update/version.txt");
+define("VER_CHECK_URL", "http://echelon.bigbrotherbot.net/version.txt");
