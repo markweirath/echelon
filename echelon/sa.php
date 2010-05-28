@@ -280,54 +280,64 @@ EOD;
 		$rowcolor = 0;
 		$counter = 1;
 		$keys_data = $dbl->getKeys($time_expire);
-		foreach($keys_data as $reg_keys): // get data from query and loop
-			$reg_key = $reg_keys['reg_key']; // the reg key
-			$email = $reg_keys['email']; // email assoc with key
-			$comment = $reg_keys['comment']; // comment about key
-			$time_add = $reg_keys['time_add']; // time key was added
-			$admin_id = $reg_keys['admin_id']; // id of admin who added key
-			$admin = $reg_keys['admin']; // display name of admin who added key
-			
-			$time_add = date($tformat, $time_add);
-			$email = emailLink($email, '');
-			$admin_link = echUserLink($admin_id, $admin);
-			$rowcolor = 1 - $rowcolor;
-			
-			if($rowcolor == 0)
-				$odd_even = "odd";
-			else 
-				$odd_even = "even";
-			
-			$token_keydel = genFormToken('keydel'.$reg_key);
-			
-			if($mem->id == $admin_id) { // if the current user is the person who create the key allow the user to edit the key's comment
-				$edit_comment = '<img src="" alt="[Edit]" title="Edit this comment" class="edit-key-comment" />';
-			} else {
-				$edit_comment = '';
-			}
-			
-			// setup heredoc (table data)			
-			$data = <<<EOD
-			<tr class="$odd_even">
-				<td class="key">$reg_key</td>
-				<td>$email</td>
-				<td>$admin_link</td>
-				<td><span class="comment">$comment</span> $edit_comment</td>
-				<td><em>$time_add</em></td>
-				<td class="actions">
-					<form action="actions/key-edit.php" method="post" id="regkey-del-$counter">
-						<input type="hidden" value="$token_keydel" name="token" />
-						<input type="hidden" value="$reg_key" name="key" />
-						<input type="hidden" value="del" name="t" />
-						<input type="submit" name="keydel" value="Delete" class="action del harddel" title="Delete this registraion key" />
-					</form>
-				</td>
-			</tr>
+		
+		$num_rows = count($keys_data);
+		
+		if($num_rows > 0) :
+		
+			foreach($keys_data as $reg_keys): // get data from query and loop
+				$reg_key = $reg_keys['reg_key']; // the reg key
+				$email = $reg_keys['email']; // email assoc with key
+				$comment = $reg_keys['comment']; // comment about key
+				$time_add = $reg_keys['time_add']; // time key was added
+				$admin_id = $reg_keys['admin_id']; // id of admin who added key
+				$admin = $reg_keys['admin']; // display name of admin who added key
+				
+				$time_add = date($tformat, $time_add);
+				$email = emailLink($email, '');
+				$admin_link = echUserLink($admin_id, $admin);
+				$rowcolor = 1 - $rowcolor;
+				
+				if($rowcolor == 0)
+					$odd_even = "odd";
+				else 
+					$odd_even = "even";
+				
+				$token_keydel = genFormToken('keydel'.$reg_key);
+				
+				if($mem->id == $admin_id) // if the current user is the person who create the key allow the user to edit the key's comment
+					$edit_comment = '<img src="" alt="[Edit]" title="Edit this comment" class="edit-key-comment" />';
+				else
+					$edit_comment = '';
+				
+				// setup heredoc (table data)			
+				$data = <<<EOD
+				<tr class="$odd_even">
+					<td class="key">$reg_key</td>
+					<td>$email</td>
+					<td>$admin_link</td>
+					<td><span class="comment">$comment</span> $edit_comment</td>
+					<td><em>$time_add</em></td>
+					<td class="actions">
+						<form action="actions/key-edit.php" method="post" id="regkey-del-$counter">
+							<input type="hidden" value="$token_keydel" name="token" />
+							<input type="hidden" value="$reg_key" name="key" />
+							<input type="hidden" value="del" name="t" />
+							<input type="submit" name="keydel" value="Delete" class="action del harddel" title="Delete this registraion key" />
+						</form>
+					</td>
+				</tr>
 EOD;
 
-		echo $data;
-		$counter++;
-		endforeach;
+			echo $data;
+			$counter++;
+			endforeach;
+		
+		else:
+		
+			echo '<tr><td colspan="6">There are no registration keys active on file</td></tr></tr>';
+		
+		endif;	
 	?>
 	</tbody>
 </table>
@@ -357,64 +367,73 @@ EOD;
 	<tbody>
 	<?php
 		$bl_data = $dbl->getBL();
-		foreach($bl_data as $bl): // get data from query and loop
-			$id = $bl['id'];			
-			$ip = $bl['ip'];
-			$active = $bl['active'];
-			$reason = $bl['reason'];	
-			$time_add = $bl['time_add'];
-			$admin = $bl['admin'];
-			
-			$time_add = date($tformat, $time_add);
-			$ip = ipLink($ip);		
+		$num_rows = count($bl_data);
+		if($num_rows > 1) :
+		
+			foreach($bl_data as $bl): // get data from query and loop
+				$id = $bl['id'];			
+				$ip = $bl['ip'];
+				$active = $bl['active'];
+				$reason = $bl['reason'];	
+				$time_add = $bl['time_add'];
+				$admin = $bl['admin'];
 				
-			$rowcolor = 1 - $rowcolor;
-			if($rowcolor == 0)
-				$odd_even = "odd";
-			else 
-				$odd_even = "even";
-				
-			$token = genFormToken('act'.$id);
+				$time_add = date($tformat, $time_add);
+				$ip = ipLink($ip);		
+					
+				$rowcolor = 1 - $rowcolor;
+				if($rowcolor == 0)
+					$odd_even = "odd";
+				else 
+					$odd_even = "even";
+					
+				$token = genFormToken('act'.$id);
 
-			if($active == 1) {
-				$active = 'Yes';
-				$actions = '<form action="actions/blacklist.php" method="post">
-					<input type="hidden" name="id" value="'.$id.'" />
-					<input type="hidden" name="token" value="'.$token.'" />
-					<input type="submit" name="deact" value="De-active" class="action del" title="De-active this ban" />
-					</form>';
-			} else {
-				$active = 'No';
-				$odd_even .= " inact";
-				$actions = '<form action="actions/blacklist.php" method="post">
-					<input type="hidden" name="id" value="'.$id.'" />
-					<input type="hidden" name="token" value="'.$token.'" />
-					<input type="submit" name="react" value="Re-active" class="action plus" title="Re-active this ban" />
-					</form>';
-			}
+				if($active == 1) {
+					$active = 'Yes';
+					$actions = '<form action="actions/blacklist.php" method="post">
+						<input type="hidden" name="id" value="'.$id.'" />
+						<input type="hidden" name="token" value="'.$token.'" />
+						<input type="submit" name="deact" value="De-active" class="action del" title="De-active this ban" />
+						</form>';
+				} else {
+					$active = 'No';
+					$odd_even .= " inact";
+					$actions = '<form action="actions/blacklist.php" method="post">
+						<input type="hidden" name="id" value="'.$id.'" />
+						<input type="hidden" name="token" value="'.$token.'" />
+						<input type="submit" name="react" value="Re-active" class="action plus" title="Re-active this ban" />
+						</form>';
+				}
+				
+				unset($token);
 			
-			unset($token);
-			
-			if($admin == '')
-				$admin = 'Auto Added';
-			
-			// setup heredoc (table data)			
-			$data = <<<EOD
-			<tr class="$odd_even">
-				<td>$id</td>
-				<td><strong>$ip</strong></td>
-				<td>$active</td>
-				<td>$reason</td>
-				<td>$admin</td>
-				<td><em>$time_add</em></td>
-				<td>
-					$actions
-				</td>
-			</tr>
+				if($admin == '')
+					$admin = 'Auto Added';
+				
+				// setup heredoc (table data)			
+				$data = <<<EOD
+				<tr class="$odd_even">
+					<td>$id</td>
+					<td><strong>$ip</strong></td>
+					<td>$active</td>
+					<td>$reason</td>
+					<td>$admin</td>
+					<td><em>$time_add</em></td>
+					<td>
+						$actions
+					</td>
+				</tr>
 EOD;
 
-		echo $data;
-		endforeach;
+			echo $data;
+			endforeach;
+			
+		else:
+		
+			echo '<tr><td colspan="7">There are no IPs on the blacklist</td></tr>';
+		
+		endif;
 	?>
 	</tbody>
 </table>

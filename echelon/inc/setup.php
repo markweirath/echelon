@@ -41,7 +41,6 @@ $allow_ie = $config['cosmos']['allow_ie'];
 $min_pw_len = $config['cosmmos']['min_pw_len'];
 $https_enabled = $config['cosmos']['https'];
 $key_expire = $config['cosmos']['user_key_expire']; // This var says how long it takes for a user creation key to expire
-global $tformat; // make global to allow the formatting to be used inside functions
 $tformat = $config['cosmos']['time_format'];
 $time_zone = $config['cosmos']['time_zone'];
 
@@ -59,11 +58,14 @@ date_default_timezone_set($time_zone);
 
 
 // if $game is greater than num_games then game doesn't exist so send to error page with error and reset game to 1
-if($game > $num_games) {
+if($num_games == 0) {
+	$no_games = true;
+
+} elseif($game > $num_games) {
 	setcookie("game", 1, time()*60*60*24*31, $path); // set the cookie to game value
 	set_error('That game doesn\'t exist');
-	sendError();
-	exit;
+	if($page != 'error')
+		sendError();
 	//die('Massive Error');
 }
 
@@ -80,7 +82,7 @@ $config['games'][$game]['servers'] = array(); // create array
 
 if($config['games'][$game]['num_srvs'] > 1) : // if the current game has only ONE server then NO loop is needed
 	
-	define("MULTI_SERVER", true); // there is more than one server connected with this game
+	define("MULTI_SERVER", true); // there is more than one server so a loop is needed
 	define("NO_SERVER", false);
 	
 	$i = 1; // restart i to 1
@@ -97,7 +99,7 @@ if($config['games'][$game]['num_srvs'] > 1) : // if the current game has only ON
 		$i++; // increment counter
 	endforeach;
 
-elseif($config['games'][$game]['num_srvs'] == 1): // there is more than one server so a loop is needed
+elseif($config['games'][$game]['num_srvs'] == 1): // there is more than one server connected with this game
 
 	define("MULTI_SERVER", false);
 	define("NO_SERVER", false);

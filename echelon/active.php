@@ -55,7 +55,7 @@ $query = sprintf("SELECT c.id, c.name, c.connections, c.time_edit, g.name as lev
 $query .= sprintf("ORDER BY %s ", $orderby);
 
 ## Append this section to all queries since it is the same for all ##
-if($order == "desc")
+if($order == "DESC")
 	$query .= " DESC"; // set to desc 
 else
 	$query .= " ASC"; // default to ASC if nothing adds up

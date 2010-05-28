@@ -139,7 +139,7 @@ fieldset.wide { width: 93% !important; }
 fieldset.wide input { display: inline; margin-right: 10px; }
 	
 /* Error Messages Styling */
-#msg { border: 2px solid; font-size: 15px; padding: 4px; margin: 3px 0 12px; text-align: center; position: relative; }
+#msg, .msg { border: 2px solid; font-size: 15px; padding: 4px; margin: 3px 0 12px; text-align: center; position: relative; }
 	.error { border-color: #a44545 !important; background: #e19d9d; color: white; }
 	.success { border-color: #3fa244 !important; background: #a5e9a8; }
 	.warning { border-color: #ec9f36 !important; background: #FFD294; }

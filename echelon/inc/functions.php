@@ -269,12 +269,12 @@ function getRealIp() {
 /**
  * Check is a form var is empty if so set error and send back to reffering page
  *
- * @param string $var_name - the varible to check
+ * @param string $var - the varible to check
  * @param string $field - the name of the varible (used in the error message) eg. 'your new password'
  */
-function emptyInput($var_name, $field) {
-	$var = trim($var_name);
-	$ref = cleanvar($_SERVER['HTTP_REFERER']);
+function emptyInput($var, $field) {
+	$var = trim($var);
+	$ref = $_SERVER['HTTP_REFERER'];
 	if(empty($var)) {
 		set_error('You must put something in the '.$field.' field.');
 		send($ref); // send back to referering page
@@ -501,8 +501,9 @@ function tableClean($text) {
 	return $text;
 }
 
-function timeExpire($time_expire, $type, $inactive, $tformat) {
+function timeExpire($time_expire, $type, $inactive) {
 
+	global $tformat;
 	$time = time();
 
 	if (($time_expire <= $time) && ($time_expire != -1)) {
@@ -532,7 +533,9 @@ function timeExpire($time_expire, $type, $inactive, $tformat) {
 	return $msg;
 }
 
-function timeExpirePen($time_expire, $tformat) {
+function timeExpirePen($time_expire) {
+	global $tformat;
+
 	if (($time_expire <= time()) && ($time_expire != -1))
 		$msg = "<span class=\"p-expired\">".date($tformat, $time_expire)."</span>"; 
 	
@@ -737,15 +740,17 @@ function ifTokenBad($place) {
 function errors() {
     $message = '';
     if($_SESSION['good'] != '') {
-        $message .= '<div id="msg" class="success"><strong>Success:</strong> '.$_SESSION['good'].'<a class="err-close">Dismiss</a></div>';
+        $message .= '<div class="msg success"><strong>Success:</strong> '.$_SESSION['good'].'<a class="err-close">Dismiss</a></div>';
         $_SESSION['good'] = '';
     }
+	
     if($_SESSION['error'] != '') {
-        $message .= '<div id="msg" class="error"><strong>Error:</strong> '.$_SESSION['error'].'<a class="err-close">Dismiss</a></div>';
+        $message .= '<div class="msg error"><strong>Error:</strong> '.$_SESSION['error'].'<a class="err-close">Dismiss</a></div>';
         $_SESSION['error'] = '';
     }
+	
 	if($_SESSION['warning'] != '') {
-        $message .= '<div id="msg" class="warning"><strong>Warning:</strong> '.$_SESSION['warning'].'<a class="err-close">Dismiss</a></div>';
+        $message .= '<div class="msg warning"><strong>Warning:</strong> '.$_SESSION['warning'].'<a class="err-close">Dismiss</a></div>';
         $_SESSION['warning'] = '';
     }
     

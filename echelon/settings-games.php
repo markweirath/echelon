@@ -4,6 +4,9 @@ $page_title = "Games Settings";
 $auth_name = 'manage_settings';
 require 'inc.php';
 
+if($no_games && $_GET['t'] != 'add')
+	send('settings-games.php?t=add');
+
 if($_GET['t'] == 'add') : // if add game type page
 
 	$is_add = true;

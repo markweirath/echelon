@@ -29,7 +29,7 @@ if($num_rows > 0) {
 			$reason_read = cleanvar(removeColorCode($reason));
 			$name = cleanvar($name);
 			$time_add_read = date($tformat, $time_add);
-			$time_expire_read = timeExpirePen($time_expire, $tformat);
+			$time_expire_read = timeExpirePen($time_expire);
 			
 			if($duration != 0)
 				$duration_read = time_duration($duration*60, 'yMwdhm');

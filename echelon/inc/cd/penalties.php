@@ -36,7 +36,7 @@ if($stmt->num_rows) : // if results exist
 		// Change into readable times
 		$time_add = date($tformat, $time_add);
 		
-		$time_expire_read = timeExpire($time_expire, $type, $inactive, $tformat);
+		$time_expire_read = timeExpire($time_expire, $type, $inactive);
 		$reason = tableClean(removeColorCode($reason));
 		$data = tableClean($data);
 		$admin_name = tableClean($admin_name);

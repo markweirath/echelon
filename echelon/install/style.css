@@ -1,0 +1,29 @@
+/* My Styling */
+html, body { height: 100%; }
+body { background: #f3f3f3; color: #222; font-size: 17px; }
+
+#wrap { min-height: 100%; height: auto !important; height: 100%; margin: 0 auto -41px; /* the bottom margin is the negative value of the footer's height */ }
+
+#header { background: #e8e8e8; border-bottom: 1px solid #ccc; margin-bottom: 20px; padding: 10px; height: 25px; }
+	#header h1 { font-size: 21px; }
+	#header h1 small { font-size: 13px; font-style: italic; }
+	
+#install-content { margin: 20px auto 45px; width: 96%; }
+	
+#footer { background: #e8e8e8; border-top: 1px solid #ccc; padding: 10px; margin: 0; }
+#footer, .push { height: 20px; }
+
+.links { font-size: 15px; }
+	.links a { color: #999; padding: 2px 3px; margin-right: 4px; }
+	
+input { display: block; }
+.install-left { margin-left: 40px; border-left: 1px solid #ddd; padding-left: 40px; }
+
+#ilists { width: 98%; margin: 20px auto; }
+.ilist { width: 42%; float: left; }
+.ilist h3 { margin: 0 0 5px 3px;  }
+.ilist ul { list-style: outside; margin-left: 10px; }
+.ilist ul li { margin: 3px 0; }
+
+.imp { font-style: bold; color: #ae2525; }
+	

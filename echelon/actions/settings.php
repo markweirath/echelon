@@ -88,14 +88,20 @@ $sent_settings = array(
 	'time_zone' => $f_time_zone,    
 	'email_header' => $f_email_header,
 	'email_footer' => $f_email_footer,
-	'pw_req_level' => $f_pw_req_level,
-	'pw_req_level_group' => $f_pw_req_level_group
 );
 
 ## What needs updating ##
 // Check the values sent by the form against what is stored in the database to find out what needs to be updated
 // rather than just updating every config settings in the DB
 $settings_table = $dbl->getSettings('cosmos'); // get the values of the settings from the config db table
+
+if(!$no_games) :
+	$sent_settings['pw_req_level'] = $f_pw_req_level;
+	$sent_settings['pw_req_level_group'] = $f_pw_req_level_group;
+else:	
+	$sent_settings['pw_req_level'] = $settings_table['pw_req_level'];
+	$sent_settings['pw_req_level_group'] = $settings_table['pw_req_level_group'];
+endif;
 
 foreach($sent_settings as $key => $value) :
 	if($sent_settings[$key] != $settings_table[$key])

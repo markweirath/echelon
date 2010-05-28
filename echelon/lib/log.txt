@@ -423,3 +423,58 @@ Table 'b3.groupss' doesn't exist
 [2010-05-18 21:44:47]MYSQL CONNECTION ERROR Message: B3 Database Connection Error: (#1045) Access denied for user 'root2'@'localhost' (using password: NO)
 -------
 [2010-05-18 21:48:51]MYSQL CONNECTION ERROR - Error Code: 1045 - Message: B3 Database Connection Error: (#1045) Access denied for user 'root2'@'localhost' (using password: NO)
+-------
+[2010-05-21 23:43:27]MYSQL ERROR - Code: 1054 - Message: Unknown column 'c.c.id' in 'field list'
+#Trace: 
+#0 F:\wamp\www\echelon\banlist.php(28): DB_B3->query('SELECT p.id, p....')
+#1 {main}
+-------
+[2010-05-21 23:44:11]MYSQL ERROR - Code: 1054 - Message: Unknown column 'c.c.id' in 'field list'
+#Trace: 
+#0 F:\wamp\www\echelon\banlist.php(28): DB_B3->query('SELECT p.id, p....')
+#1 {main}
+-------
+[2010-05-21 23:44:32]MYSQL ERROR - Code: 1054 - Message: Unknown column 'c.c.id' in 'field list'
+#Trace: 
+#0 F:\wamp\www\echelon\banlist.php(28): DB_B3->query('SELECT p.id, p....')
+#1 {main}
+-------
+[2010-05-21 23:46:05]MYSQL ERROR - Code: 1054 - Message: Unknown column 'c.c.id' in 'field list'
+#Trace: 
+#0 F:\wamp\www\echelon\banlist.php(29): DB_B3->query('SELECT p.id, p....')
+#1 {main}
+-------
+[2010-05-28 23:33:58]MYSQL CONNECTION ERROR - Code: 1045 - Message: B3 Database Connection Error: (#1045) Access denied for user 'SYSTEM'@'localhost' (using password: NO)
+-------
+[2010-05-28 23:38:18]MYSQL CONNECTION ERROR - Code: 1045 - Message: B3 Database Connection Error: (#1045) Access denied for user 'SYSTEM'@'localhost' (using password: NO)
+-------
+[2010-05-28 23:38:21]MYSQL CONNECTION ERROR - Code: 1045 - Message: B3 Database Connection Error: (#1045) Access denied for user 'SYSTEM'@'localhost' (using password: NO)
+-------
+[2010-05-28 23:40:18]HACK ATTEMPT Message: 	There was a hacking attempt,.
+	IP-Adress: 127.0.0.1
+	Host of Attacker: localhost
+	Point of Attack: Login - Bad game number
+-------
+[2010-05-28 23:42:17]MYSQL CONNECTION ERROR - Code: 1045 - Message: B3 Database Connection Error: (#1045) Access denied for user 'SYSTEM'@'localhost' (using password: NO)
+-------
+[2010-05-28 23:42:20]MYSQL CONNECTION ERROR - Code: 1045 - Message: B3 Database Connection Error: (#1045) Access denied for user 'SYSTEM'@'localhost' (using password: NO)
+-------
+[2010-05-28 23:42:25]MYSQL CONNECTION ERROR - Code: 1045 - Message: B3 Database Connection Error: (#1045) Access denied for user 'SYSTEM'@'localhost' (using password: NO)
+-------
+[2010-05-28 23:42:34]MYSQL CONNECTION ERROR - Code: 1045 - Message: B3 Database Connection Error: (#1045) Access denied for user 'SYSTEM'@'localhost' (using password: NO)
+-------
+[2010-05-28 23:43:21]MYSQL CONNECTION ERROR - Code: 1045 - Message: B3 Database Connection Error: (#1045) Access denied for user 'SYSTEM'@'localhost' (using password: NO)
+-------
+[2010-05-28 23:47:54]MYSQL CONNECTION ERROR - Code: 1045 - Message: B3 Database Connection Error: (#1045) Access denied for user 'SYSTEM'@'localhost' (using password: NO)
+-------
+[2010-05-28 23:48:32]MYSQL CONNECTION ERROR - Code: 1045 - Message: B3 Database Connection Error: (#1045) Access denied for user 'SYSTEM'@'localhost' (using password: NO)
+-------
+[2010-05-28 23:49:23]MYSQL CONNECTION ERROR - Code: 1045 - Message: B3 Database Connection Error: (#1045) Access denied for user 'SYSTEM'@'localhost' (using password: NO)
+-------
+[2010-05-28 23:49:51]MYSQL CONNECTION ERROR - Code: 1045 - Message: B3 Database Connection Error: (#1045) Access denied for user 'SYSTEM'@'localhost' (using password: NO)
+-------
+[2010-05-28 23:51:21]MYSQL CONNECTION ERROR - Code: 1045 - Message: B3 Database Connection Error: (#1045) Access denied for user 'SYSTEM'@'localhost' (using password: NO)
+-------
+[2010-05-28 23:51:32]MYSQL CONNECTION ERROR - Code: 1045 - Message: B3 Database Connection Error: (#1045) Access denied for user 'SYSTEM'@'localhost' (using password: NO)
+-------
+[2010-05-28 23:54:44]MYSQL CONNECTION ERROR - Code: 1045 - Message: B3 Database Connection Error: (#1045) Access denied for user 'SYSTEM'@'localhost' (using password: NO)

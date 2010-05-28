@@ -43,7 +43,7 @@ $query = "SELECT p.time_add, p.reason, target.id as target_id, target.name as ta
 $query .= sprintf(" ORDER BY %s ", $orderby);
 
 ## Append this section to all queries since it is the same for all ##
-if($order == "desc")
+if($order == "DESC")
 	$query .= " DESC"; // set to desc 
 else
 	$query .= " ASC"; // default to ASC if nothing adds up

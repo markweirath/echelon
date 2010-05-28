@@ -16,6 +16,9 @@ if($pagination == true && (!$db_error)) : // if pagination is needed on the page
 	// create query_string
 	$query_string_page = queryStringPage();
 	$total_pages = totalPages($total_rows, $limit_rows);
+	
+	if($page_no > $total_pages)
+		$db->error = true;
 endif;
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -71,6 +74,7 @@ endif;
 			
 				<li class="home<?php if(isHome($page)) echo ' selected'; ?>"><a href="<?php echo PATH; ?>" title="Home Page">Home</a></li>
 				
+				<?php if(!$no_games) : ?>
 				
 				<li class="cdd">
 					<a href="#">Games</a>
@@ -140,6 +144,8 @@ endif;
 						</li>
 					</ul>
 				</li>
+				
+				<?php endif; // end if no games hide the majority of the navigation ?>
 				
 				
 				<li class="cdd">

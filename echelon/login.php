@@ -48,7 +48,7 @@ if($mem->loggedIn()) { ## if logged in users may skip this page
 	} // end foreach
 	
 		
-	if(!is_numeric($game_input)) {
+	if(!is_numeric($game_input) && !$no_games) {
 		wrong(1); // plus 1 to wrong counter
 		hack(1); // plus 1 to hack counter
 		writeLog('Login - Bad game number'); // make note in log
@@ -56,7 +56,7 @@ if($mem->loggedIn()) { ## if logged in users may skip this page
 		exit;
 	}
 		
-	if($game_input > $num_games)
+	if($game_input > $num_games && !$no_games)
 		sendBack('That is not a game, please choose to load a real game');
 	
 	######## Everything is all right continue with script #########
@@ -359,7 +359,9 @@ if($mem->loggedIn()) { ## if logged in users may skip this page
 
 		 <label for="f-pw">Password:</label>
 			<input type="password" name="f-pw" id="f-pw" tabindex="2" />
-
+		
+		<?php if($num_games != 0) : ?>
+		
 		<label for="f-game">Game:</label>
 			<select name="f-game" id="f-game" tabindex="3">
 				<?php
@@ -375,6 +377,8 @@ if($mem->loggedIn()) { ## if logged in users may skip this page
 					endwhile;
 				?>	
 			</select>
+			
+		<?php endif; ?>
 
 		<input type="hidden" name="token" value="<?php echo $token; ?>" />	
 

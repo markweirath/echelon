@@ -10,19 +10,34 @@ if (!empty($_SERVER['SCRIPT_FILENAME']) && 'dbl-class.php' == basename($_SERVER[
 class DbL {
 
 	private $mysql = NULL;
+	private $install = false;
 	
+	public $install_erorr = NULL;
 	public $dbl_error = false;
 	
+
 	/**
      * Auto run on creation of instance: attempts to connect to the Echelon DB or dies with the mysql error
      */
-	public function __construct() { 
+	public function __construct($install = false) {
+	
+		if(isset($install))
+			$this->install = $install;
+		
 		try { 
-			$this->connectDB(); 
-		} catch (Exception $e) { 
-			die($e->getMessage()); 
-		} 
-	} 
+			$this->connectDB(); // try to connect to the database
+			
+		} catch (Exception $e) {
+		
+			if($this->install) { // if this is an install test return message
+				$this->install_error = $e->getMessage();
+			} else {
+				die($e->getMessage());
+			} 
+			
+		} // end try/catch
+		
+	} // end construct
 
 	/**
      * Makes the connection to the DB or throws error
@@ -33,15 +48,23 @@ class DbL {
 
         $this->mysql = @new mysqli(DBL_HOSTNAME, DBL_USERNAME, DBL_PASSWORD, DBL_DB); // block any error on connect, it will be cuahgt in the next line and handled properly
 		
-		if (mysqli_connect_errno()) : // if the connection error is on then throw exception
+		if(mysqli_connect_errno()) : // if the connection error is on then throw exception
 
-			if(DB_CON_ERROR_SHOW) // only if settings say show to con error, will we show it, else just say error
+			if($this->install == true) :
+				$error_msg = '<strong>Database Connection Error</strong>
+									<p>'.mysqli_connect_error().'<br />
+									The connection information you supplied is incorrect. Please try again.</p>';
+			
+			elseif(DB_CON_ERROR_SHOW) : // only if settings say show to con error, will we show it, else just say error
 				$error_msg = '<h3>Database Connection Error</h3> 
 								<p>'.mysqli_connect_error().'<br />
 								Since we have encountered a database error, Echelon is shutting down.</p>';
-			else
+								
+			else :
 				$error_msg = '<h3>Database Problem</h3>
 								<p>Since we have encountered a database error, Echelon is shutting down.</p>';
+								
+			endif;
 
 			throw new Exception ($error_msg);
 		endif;
@@ -72,7 +95,7 @@ class DbL {
 	 * @return array
 	 */
 	function getSettings($cat) {
-        $query = "SELECT name, value FROM config WHERE category = ?";
+        $query = "SELECT name, value FROM ech_config WHERE category = ?";
         $stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('s', $cat);
 		$stmt->execute();
@@ -93,7 +116,7 @@ class DbL {
 	
 	function getGamesInfo() {
 	
-		$query = "SELECT id, game, name, name_short, num_srvs, db_host, db_user, db_pw, db_name FROM games ORDER BY id ASC";
+		$query = "SELECT id, game, name, name_short, num_srvs, db_host, db_user, db_pw, db_name FROM ech_games ORDER BY id ASC";
 		$results = $this->mysql->query($query) or die('Database Error');
         
 		$games = array();
@@ -127,7 +150,7 @@ class DbL {
 	 */
     function setSettings($value, $name, $value_type) {
         
-		$query = "UPDATE config SET value = ? WHERE name = ? LIMIT 1";
+		$query = "UPDATE ech_config SET value = ? WHERE name = ? LIMIT 1";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param($value_type.'s', $value, $name);
 		$stmt->execute();
@@ -146,7 +169,7 @@ class DbL {
 	 */
     function setGameSettings($game, $name, $name_short, $db_user, $db_host, $db_name, $db_pw, $change_db_pw) {
 		
-		$query = "UPDATE games SET name = ?, name_short = ?, db_host = ?, db_user = ?, db_name = ?";
+		$query = "UPDATE ech_games SET name = ?, name_short = ?, db_host = ?, db_user = ?, db_name = ?";
 		
 		if($change_db_pw) // if the DB password is to be chnaged
 			$query .= ", db_pw = ?";
@@ -181,7 +204,7 @@ class DbL {
 	 */
 	function addGame($name, $game, $name_short, $db_host, $db_user, $db_pw, $db_name) {
 		// id, name, game, name_short, num_srvs, db_host, db_user, db_pw, db_name
-		$query = "INSERT INTO games VALUES(NULL, ?, ?, ?, 0, ?, ?, ?, ?)";
+		$query = "INSERT INTO ech_games VALUES(NULL, ?, ?, ?, 0, ?, ?, ?, ?)";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('sssssss', $name, $game, $name_short, $db_host, $db_user, $db_pw, $db_name);
 		$stmt->execute();
@@ -194,14 +217,14 @@ class DbL {
 	}
 	
 	function addGameCount() {
-		$query = "UPDATE config SET value = (value + 1) WHERE name = 'num_games' LIMIT 1";
+		$query = "UPDATE ech_config SET value = (value + 1) WHERE name = 'num_games' LIMIT 1";
 		$result = $this->mysql->query($query) or die('Database Error');
 		
 		return $result;
 	}
 	
 	function getServers($cur_game) {
-		$query = "SELECT id, name, ip, pb_active, rcon_pass, rcon_ip, rcon_port FROM servers WHERE game = ?";
+		$query = "SELECT id, name, ip, pb_active, rcon_pass, rcon_ip, rcon_port FROM ech_servers WHERE game = ?";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('i', $cur_game);
 		$stmt->execute();
@@ -224,7 +247,7 @@ class DbL {
 	}
 	
 	function getServer($id) {
-		$query = "SELECT game, name, ip, pb_active, rcon_pass, rcon_ip, rcon_port FROM servers WHERE id = ?";
+		$query = "SELECT game, name, ip, pb_active, rcon_pass, rcon_ip, rcon_port FROM ech_servers WHERE id = ?";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('i', $id);
 		$stmt->execute();
@@ -255,7 +278,7 @@ class DbL {
 	 */
 	function getServerList($orderby, $order) {
 			
-		$query = "SELECT s.id, s.name, s.ip, s.game, s.pb_active, g.name as g_name FROM servers s LEFT JOIN games g ON s.game = g.id ORDER BY ".$orderby." ".$order;
+		$query = "SELECT s.id, s.name, s.ip, s.game, s.pb_active, g.name as g_name FROM ech_servers s LEFT JOIN ech_games g ON s.game = g.id ORDER BY ".$orderby." ".$order;
 		$result = $this->mysql->query($query);
 		$num_rows = $result->num_rows;
 		
@@ -286,7 +309,7 @@ class DbL {
 	 */
     function setServerSettings($server_id, $name, $ip, $pb, $rcon_ip, $rcon_port, $rcon_pw, $change_rcon_pw) {
 		
-		$query = "UPDATE servers SET name = ?, ip = ?, pb_active = ?, rcon_ip = ?, rcon_port = ?";
+		$query = "UPDATE ech_servers SET name = ?, ip = ?, pb_active = ?, rcon_ip = ?, rcon_port = ?";
 		
 		if($change_rcon_pw) // if the DB password is to be chnaged
 			$query .= ", rcon_pass = ?";
@@ -314,7 +337,7 @@ class DbL {
     function addServer($game_id, $name, $ip, $pb, $rcon_ip, $rcon_port, $rcon_pw) {
 		
 		// id, game, name, ip, pb_active, rcon_pass, rcon_ip, rcon_port
-		$query = "INSERT INTO servers VALUES(NULL, ?, ?, ?, ?, ?, ?, ?)";
+		$query = "INSERT INTO ech_servers VALUES(NULL, ?, ?, ?, ?, ?, ?, ?)";
 			
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('ississi', $game_id, $name, $ip, $pb, $rcon_pw, $rcon_ip, $rcon_port);
@@ -330,7 +353,7 @@ class DbL {
 	 * After adding a server we need to update the games table to add 1 to num_srvs
 	 */
 	function addServerUpdateGames($game_id) {
-		$query = "UPDATE games SET num_srvs = (num_srvs + 1) WHERE game_id = ? LIMIT 1";
+		$query = "UPDATE ech_games SET num_srvs = (num_srvs + 1) WHERE game_id = ? LIMIT 1";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');;
 		$stmt->bind_param('i', $game_id);
 		$stmt->execute();
@@ -338,7 +361,7 @@ class DbL {
 	
 	function getPlugins($game) {
 	
-		$query = "SELECT id, name, title, info FROM plugins WHERE game_id = ? AND enabled = 1";
+		$query = "SELECT id, name, title, info FROM ech_plugins WHERE game_id = ? AND enabled = 1";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('i', $game);
 		$stmt->execute();
@@ -360,7 +383,7 @@ class DbL {
 	}
 	
 	function getGamesList() {
-		$query = "SELECT id, name, name_short FROM games ORDER BY id ASC";
+		$query = "SELECT id, name, name_short FROM ech_games ORDER BY id ASC";
 		$results = $this->mysql->query($query) or die('Database error');
 		
 		while($row = $results->fetch_object()) :	
@@ -381,7 +404,7 @@ class DbL {
 	 */
 	function getUserSalt($username) {
 		
-		$query = "SELECT salt FROM users WHERE username = ? LIMIT 1";
+		$query = "SELECT salt FROM ech_users WHERE username = ? LIMIT 1";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('s', $username);
 		$stmt->execute(); // run query
@@ -406,7 +429,7 @@ class DbL {
 	 * @return array
 	 */
 	function getPermissions() {
-		$query = "SELECT id, name, description FROM permissions ORDER BY id DESC";
+		$query = "SELECT id, name, description FROM ech_permissions ORDER BY id DESC";
 		$results = $this->mysql->query($query);
 		
 		while($row = $results->fetch_object()) : // get results		
@@ -428,7 +451,7 @@ class DbL {
 	 */
 	function login($username, $pw) {
 
-		$query = "SELECT u.id, u.ip, u.last_seen, u.display, u.email, u.ech_group, g.premissions FROM users u LEFT JOIN groups g ON u.ech_group = g.id WHERE u.username = ? AND u.password = ? LIMIT 1";
+		$query = "SELECT u.id, u.ip, u.last_seen, u.display, u.email, u.ech_group, g.premissions FROM ech_users u LEFT JOIN ech_groups g ON u.ech_group = g.id WHERE u.username = ? AND u.password = ? LIMIT 1";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('ss', $username, $pw);
 		$stmt->execute(); // run query
@@ -458,7 +481,7 @@ class DbL {
 	function newUserInfo($ip, $id) { // updates user records with new IP, time of login and sets active to 1 if needed
 		
 		$time = time();
-		$query = "UPDATE users SET ip = ?, last_seen = ? WHERE id = ?";
+		$query = "UPDATE ech_users SET ip = ?, last_seen = ? WHERE id = ?";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('sii', $ip, $time, $id);
 		$stmt->execute(); // run query
@@ -474,7 +497,7 @@ class DbL {
 	 */
 	function checkBlacklist($ip) {
 
-		$query = "SELECT ip FROM blacklist WHERE ip = ? AND active = 1";
+		$query = "SELECT ip FROM ech_blacklist WHERE ip = ? AND active = 1";
 		$stmt = $this->mysql->prepare($query) or die('Database error');
 		$stmt->bind_param('s', $ip);
 		$stmt->execute();
@@ -508,7 +531,7 @@ class DbL {
 	function blacklist($ip, $comment = 'Auto Added Ban') { // add an Ip to the blacklist
 		$comment = cleanvar($comment);
 		// id, ip, active, reason, time_add, admin_id
-		$query = "INSERT INTO blacklist VALUES(NULL, ?, 1, ?, UNIX_TIMESTAMP(), 0)";
+		$query = "INSERT INTO ech_blacklist VALUES(NULL, ?, 1, ?, UNIX_TIMESTAMP(), 0)";
 		$stmt = $this->mysql->prepare($query) or die('Database error');
 		$stmt->bind_param('ss', $ip, $comment);
 		$stmt->execute(); // run query
@@ -524,7 +547,7 @@ class DbL {
 	function getBL() { // return the rows of info for the BL table
 
 		$query = "SELECT bl.id, bl.ip, bl.active, bl.reason, bl.time_add, u.display 
-					FROM blacklist bl LEFT JOIN users u ON bl.admin_id = u.id 
+					FROM ech_blacklist bl LEFT JOIN ech_users u ON bl.admin_id = u.id 
 					ORDER BY active ASC";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->execute();
@@ -558,7 +581,7 @@ class DbL {
 	function addBlBan($ip, $reason, $admin) {
 		$time = time();
 							// id, ip, active, reason, time_add, admin_id
-		$query = "INSERT INTO blacklist VALUES(NULL, ?, 1, ?, ?, ?)";
+		$query = "INSERT INTO ech_blacklist VALUES(NULL, ?, 1, ?, ?, ?)";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('ssii', $ip, $reason, $time, $admin);
 		$stmt->execute(); // run query
@@ -583,7 +606,7 @@ class DbL {
 		else
 			$active = 1;
 
-		$query = "UPDATE blacklist SET active = ? WHERE id = ? LIMIT 1";
+		$query = "UPDATE ech_blacklist SET active = ? WHERE id = ? LIMIT 1";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('ii', $active, $id);
 		$stmt->execute(); // run query
@@ -598,7 +621,7 @@ class DbL {
 	 */
 	function getUsers() { // gets an array of all the users basic info
 
-		$query = "SELECT u.id, u.display, u.email, u.ip, u.first_seen, u.last_seen, g.display FROM users u LEFT JOIN groups g ON u.ech_group = g.id ORDER BY id ASC";
+		$query = "SELECT u.id, u.display, u.email, u.ip, u.first_seen, u.last_seen, g.display FROM ech_users u LEFT JOIN ech_groups g ON u.ech_group = g.id ORDER BY id ASC";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->execute();
 		$stmt->bind_result($id, $display, $email, $ip, $first_seen, $last_seen, $group); // store results
@@ -632,7 +655,7 @@ class DbL {
 		$time = time();
 		$expires = $time+$limit_seconds;
 		$query = "SELECT k.reg_key, k.email, k.comment, k.time_add, k.admin_id, u.display 
-				  FROM user_keys k LEFT JOIN users u ON k.admin_id = u.id
+				  FROM ech_user_keys k LEFT JOIN ech_users u ON k.admin_id = u.id
 				  WHERE k.active = 1  AND k.time_add < ? AND comment != 'PW' ORDER BY time_add ASC";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('i', $expires);
@@ -665,7 +688,7 @@ class DbL {
 	 */
 	function checkUsername($username) {
 
-		$query = "SELECT username FROM users WHERE username = ?";
+		$query = "SELECT username FROM ech_users WHERE username = ?";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('s', $username);
 		$stmt->execute(); // run query
@@ -688,7 +711,7 @@ class DbL {
 	 */
 	function getUserSaltById($user_id) {
 		
-		$query = "SELECT salt FROM users WHERE id = ? LIMIT 1";
+		$query = "SELECT salt FROM ech_users WHERE id = ? LIMIT 1";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('s', $user_id);
 		$stmt->execute(); // run query
@@ -715,7 +738,7 @@ class DbL {
 	 * @return bool
 	 */
 	function validateUserRequest($user_id, $hash_pw) { // see if the supplied password matches that of the supplied user id
-		$query = "SELECT id FROM users WHERE id = ? AND password = ? LIMIT 1";
+		$query = "SELECT id FROM ech_users WHERE id = ? AND password = ? LIMIT 1";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('is', $user_id, $hash_pw);
 		$stmt->execute();
@@ -737,7 +760,7 @@ class DbL {
 	 * @return bool
 	 */
 	function editMe($name, $email, $user_id) {
-		$query = "UPDATE users SET display = ?, email = ? WHERE id = ? LIMIT 1";
+		$query = "UPDATE ech_users SET display = ?, email = ? WHERE id = ? LIMIT 1";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('ssi', $name, $email, $user_id);
 		$stmt->execute();
@@ -759,7 +782,7 @@ class DbL {
 	 * @return bool
 	 */
 	function editMePW($password_new, $salt_new, $user_id) { // update a user with a new pw and salt
-		$query = "UPDATE users SET password = ?, salt = ? WHERE id = ? LIMIT 1";
+		$query = "UPDATE ech_users SET password = ?, salt = ? WHERE id = ? LIMIT 1";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('ssi', $password_new, $salt_new, $user_id);
 		$stmt->execute();
@@ -786,7 +809,7 @@ class DbL {
 	function addEchKey($user_key, $email, $comment, $group, $admin_id) {
 		$time = time();
 		// key, ech_group, admin_id, comment, time_add, email, active
-		$query = "INSERT INTO user_keys VALUES(?, ?, ?, ?, ?, ?, 1)";
+		$query = "INSERT INTO ech_user_keys VALUES(?, ?, ?, ?, ?, ?, 1)";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('siisis', $user_key, $group, $admin_id, $comment, $time, $email);
 		$stmt->execute();
@@ -807,7 +830,7 @@ class DbL {
 	 */
 	function delKey($key) {
 	
-		$query = "DELETE FROM user_keys WHERE reg_key = ? LIMIT 1";
+		$query = "DELETE FROM ech_user_keys WHERE reg_key = ? LIMIT 1";
 		$stmt = $this->mysql->prepare($query);
 		$stmt->bind_param('s', $key);
 		$stmt->execute();
@@ -830,7 +853,7 @@ class DbL {
 	 */
 	function editKeyComment($key, $comment, $admin_id){
 	
-		$query = "UPDATE user_keys SET comment = ? WHERE reg_key = ? AND admin_id = ? LIMIT 1";
+		$query = "UPDATE ech_user_keys SET comment = ? WHERE reg_key = ? AND admin_id = ? LIMIT 1";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('ssi', $comment, $key, $admin_id);
 		$stmt->execute();
@@ -857,7 +880,7 @@ class DbL {
 		$time = time();
 		$expires = $time+$limit_seconds;
 	
-		$query = "SELECT reg_key, email FROM user_keys WHERE reg_key = ? AND email = ? AND active = 1 AND time_add < ? LIMIT 1";
+		$query = "SELECT reg_key, email FROM ech_user_keys WHERE reg_key = ? AND email = ? AND active = 1 AND time_add < ? LIMIT 1";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('ssi', $key, $email, $expires);
 		$stmt->execute();
@@ -882,7 +905,7 @@ class DbL {
 	 */
 	function getGroupAndIdWithKey($key) {
 	
-		$query = "SELECT ech_group, admin_id FROM user_keys WHERE reg_key = ? LIMIT 1";
+		$query = "SELECT ech_group, admin_id FROM ech_user_keys WHERE reg_key = ? LIMIT 1";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('s', $key);
 		$stmt->execute();
@@ -897,7 +920,7 @@ class DbL {
 	
 	function getIdWithKey($key) {
 	
-		$query = "SELECT admin_id FROM user_keys WHERE reg_key = ? LIMIT 1";
+		$query = "SELECT admin_id FROM ech_user_keys WHERE reg_key = ? LIMIT 1";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('s', $key);
 		$stmt->execute();
@@ -920,7 +943,7 @@ class DbL {
 	 * @return bool
 	 */
 	function deactiveKey($key) {
-		$query = "UPDATE user_keys SET active = 0 WHERE reg_key = ? LIMIT 1";
+		$query = "UPDATE ech_user_keys SET active = 0 WHERE reg_key = ? LIMIT 1";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('s', $key);
 		$stmt->execute();
@@ -948,7 +971,7 @@ class DbL {
 	function addUser($username, $display, $email, $password, $salt, $group, $admin_id) {
 		$time = time();
 		// id, username, display, email, password, salt, ip, group, admin_id, first_seen, last_seen
-		$query = "INSERT INTO users VALUES(NULL, ?, ?, ?, ?, ?, NULL, ?, ?, ?, NULL)";
+		$query = "INSERT INTO ech_users VALUES(NULL, ?, ?, ?, ?, ?, NULL, ?, ?, ?, NULL)";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('sssssiii', $username, $display, $email, $password, $salt, $group, $admin_id, $time);
 		$stmt->execute();
@@ -968,7 +991,7 @@ class DbL {
 	 * @return bool
 	 */
 	function delUser($user_id) {
-		$query = "DELETE FROM users WHERE id = ? LIMIT 1";
+		$query = "DELETE FROM ech_users WHERE id = ? LIMIT 1";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('i', $user_id);
 		$stmt->execute();
@@ -982,7 +1005,7 @@ class DbL {
 	}
 	
 	function editUser($id, $username, $display, $email, $ech_group) {
-		$query = "UPDATE users SET username = ?, display = ?, email = ?, ech_group = ? WHERE id = ? LIMIT 1";
+		$query = "UPDATE ech_users SET username = ?, display = ?, email = ?, ech_group = ? WHERE id = ? LIMIT 1";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('sssii', $username, $display, $email, $ech_group, $id);
 		$stmt->execute();
@@ -1004,7 +1027,7 @@ class DbL {
 	 */
 	function getUserDetails($id) {
 		$query = "SELECT u.username, u.display, u.email, u.ip, u.ech_group, u.admin_id, u.first_seen, u.last_seen, a.display 
-				  FROM users u LEFT JOIN users a ON u.admin_id = a.id WHERE u.id = ? LIMIT 1";
+				  FROM ech_users u LEFT JOIN ech_users a ON u.admin_id = a.id WHERE u.id = ? LIMIT 1";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('i', $id);
 		$stmt->execute();
@@ -1026,7 +1049,7 @@ class DbL {
 	}
 	
 	function getUserDetailsEdit($id) {
-		$query = "SELECT username, display, email, ech_group FROM users WHERE id = ? LIMIT 1";
+		$query = "SELECT username, display, email, ech_group FROM ech_users WHERE id = ? LIMIT 1";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('i', $id);
 		$stmt->execute();
@@ -1056,7 +1079,7 @@ class DbL {
 	 */
 	function verifyUser($name, $email) {
 	
-		$query = "SELECT id FROM users WHERE username = ? AND email = ? LIMIT 1";
+		$query = "SELECT id FROM ech_users WHERE username = ? AND email = ? LIMIT 1";
 		$stmt =  $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('ss', $name, $email);
 		$stmt->execute();
@@ -1079,7 +1102,7 @@ class DbL {
 	 * @return array
 	 */
 	function getGroups() {
-		$query = "SELECT id, display FROM groups ORDER BY id ASC";
+		$query = "SELECT id, display FROM ech_groups ORDER BY id ASC";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->execute();
 		$stmt->bind_result($id, $display);
@@ -1097,7 +1120,7 @@ class DbL {
 	}
 	
 	function getEchLogs($client_id) {
-		$query = "SELECT log.id, log.type, log.msg, log.user_id, u.display, log.time_add FROM ech_logs log LEFT JOIN users u ON log.user_id = u.id WHERE client_id = ? ORDER BY log.time_add DESC";
+		$query = "SELECT log.id, log.type, log.msg, log.user_id, u.display, log.time_add FROM ech_logs log LEFT JOIN ech_users u ON log.user_id = u.id WHERE client_id = ? ORDER BY log.time_add DESC";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('i', $client_id);
 		$stmt->execute();
@@ -1136,7 +1159,7 @@ class DbL {
 	}
 	
 	function getLinks() {
-		$query = "SELECT url, name, title FROM links";
+		$query = "SELECT url, name, title FROM ech_links";
 		$result = $this->mysql->query($query);
 		
 		while($row = $result->fetch_object()) :	

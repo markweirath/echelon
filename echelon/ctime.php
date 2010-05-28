@@ -15,16 +15,16 @@ require 'inc.php';
 ######## Varibles ########
 
 if($_GET['d'])
-	$duration = addslashes($_GET['d']);
+	$duration = cleanvar($_GET['d']);
 else
 	$duration = false;
 	
 if($_GET['f'])
-	$filter = addslashes($_GET['f']);
+	$filter = cleanvar($_GET['f']);
 
 ## Page Vars ##
 if ($_GET['p'])
-  $page_no = addslashes($_GET['p']);
+  $page_no = cleanvar($_GET['p']);
 
 $start_row = $page_no * $limit_rows;
 

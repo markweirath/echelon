@@ -21,9 +21,9 @@ require 'inc/header.php';
 		<fieldset class="none">
 			<legend>General Echelon Settings</legend>
 			
-			<label for="name">Site Name:</label><?php tooltip('The name ofyour site (eg your clanname)'); ?>
+			<label for="name">Site Name:</label><?php tooltip('The name of your site (eg your clanname)'); ?>
 				<input type="text" name="name" value="<?php echo $settings['name']; ?>">
-				
+
 			<label for="email">Echelon Admin Email:</label><?php tooltip('Email for the admin of this site'); ?>
 				<input type="text" name="email" value="<?php echo $settings['email']; ?>">
 				
@@ -75,7 +75,9 @@ require 'inc/header.php';
 				<p class="tip">Forces HTTPS, only enable if you have an SSL cert, consult the <a href="http://echelon.bigbrotherbot.com/help/ssl" class="external help-docs">Help Docs</a></p>
 			
 			<input type="checkbox" name="allow_ie"<?php if($settings['allow_ie'] == 1) echo ' checked="checked"'; ?>><label for="allow_ie">Allow Internet Explorer</label><?php tooltip('If checked, this bans users from using Internet Explorer anywhere but the Public Ban List page'); ?>
-				
+			
+			<?php if(!$no_games) : ?>
+			
 			<fieldset class="none">
 				<legend>Require password for client level edits</legend>
 				
@@ -94,7 +96,9 @@ require 'inc/header.php';
 					?>
 				</select>
 				
-			</fieldset>	
+			</fieldset>
+			
+			<?php endif; ?>
 		
 		</fieldset>
 

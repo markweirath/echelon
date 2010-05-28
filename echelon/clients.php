@@ -16,8 +16,6 @@ $order = "ASC";
 
 $is_search = false;
 
-//$limit_rows = 75; // limit_rows can be set by the DB settings // uncomment this line to manually overide the number of table rows per page
-
 ## Sorts requests vars ##
 if($_GET['ob'])
 	$orderby = addslashes($_GET['ob']);
@@ -54,25 +52,25 @@ if($_GET['t']) {
 ###########################
 ######### QUERIES #########
 
-$query = "SELECT c.id, c.name, c.connections, c.time_edit, c.time_add, g.name as level
+$query = "SELECT c.id, c.name, c.connections, c.time_edit, c.time_add, c.group_bits, g.name as level
 			FROM clients c LEFT JOIN groups g
 			ON c.group_bits = g.id WHERE c.id > 1 ";
 
 if($is_search == true) : // IF SEARCH
 	if($search_type == 'name') { // ALIAS
-		$query .= sprintf("AND c.name LIKE '%%%s%%' ORDER BY %s", $search_string, $orderby);
+		$query .= sprintf("AND c.name LIKE '%%s%%' ORDER BY %s", $search_string, $orderby);
 		
 	} elseif($search_type == 'id') { // ID
-		$query .= sprintf("AND c.id LIKE '%%%s%%' ORDER BY %s", $search_string, $orderby);
+		$query .= sprintf("AND c.id LIKE '%%s%%' ORDER BY %s", $search_string, $orderby);
 		
 	} elseif($search_type == 'pbid') { // PBID
-		$query .= sprintf("AND c.pbid LIKE '%%%s%%' ORDER BY %s", $search_string, $orderby);
+		$query .= sprintf("AND c.pbid LIKE '%%s%%' ORDER BY %s", $search_string, $orderby);
 		
 	} elseif($search_type == 'ip') { // IP
-		$query .= sprintf("AND c.ip LIKE '%%%s%%' ORDER BY %s", $search_string, $orderby);
+		$query .= sprintf("AND c.ip LIKE '%%s%%' ORDER BY %s", $search_string, $orderby);
 		
 	} else { // ALL
-		$query .= sprintf("AND c.name LIKE '%%%s%%' OR c.pbid LIKE '%%%s%%' OR c.ip LIKE '%%%s%%' OR c.id LIKE '%%%s%%'
+		$query .= sprintf("AND c.name LIKE '%%s%%' OR c.pbid LIKE '%%s%%' OR c.ip LIKE '%%s%%' OR c.id LIKE '%%%s%%'
 			ORDER BY %s", $search_string, $search_string, $search_string, $search_string, $orderby);
 	}
 else : // IF NOT SEARCH
@@ -81,7 +79,7 @@ else : // IF NOT SEARCH
 endif; // end if search request
 
 ## Append this section to all queries since it is the same for all ##
-if($order == "desc") {
+if($order == "DESC") {
 	$query .= " DESC"; // set to desc 
 } else {
 	$query .= " ASC"; // default to ASC if nothing adds up
@@ -123,19 +121,18 @@ if(!$db->error) :
 	<caption>Client Listings
 		<small>
 			<?php
-			if($search_type == "all") {
+			if($search_type == "all")
 				echo 'You are searching all clients that match <strong>'.$search_string.'</strong>.';
-			} elseif($search_type == 'alias') {
+			elseif($search_type == 'alias')
 				echo 'You are searching all clients names for <strong>'.$search_string.'</strong>.';
-			} elseif($search_type == 'pbid') {
+			elseif($search_type == 'pbid')
 				echo 'You are searching all clients Punkbuster Guids for <strong>'.$search_string.'</strong>.';
-			} elseif($search_type == 'id') {
+			elseif($search_type == 'id')
 				echo 'You are searching all clients B3 IDs for <strong>'.$search_string.'</strong>.';
-			} elseif($search_type == 'ip') {
+			elseif($search_type == 'ip')
 				echo 'You are searching all clients IP addresses for <strong>'.$search_string.'</strong>.';
-			} else {
+			else
 				echo 'A list of all players who have ever connected to the server.';
-			}
 			?>
 		</small>
 	</caption>
