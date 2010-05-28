@@ -1,0 +1,24 @@
+## Echelon Development v2 ##
+All the files are copyrighted by Eire.32 (eire32designs.com) and Bigbrotherbot (bigbrotherbot.com)
+
+Echelon is a web interface for the B3 administator program for gameservers.
+
+## Requirements ##
+- Webserver
+- Version 5+ PHP
+- MySQL DB (your B3 DB will work, but a seperate  one is advised)
+- A MySQL user with connection rights to your B3 databases
+- RCON details for the servers running B3 (RCON support is currently being phased out of Echelon)
+
+## Installtion ##
+// This is by no means a comprehensive guide, it is a quick guide to get any of you started
+- Create a MySQL user to connect your B3 database from your Webserver
+- Run the echelon.sql file on your database to create the Echelon tables
+- Go to http://example.com/path/echelon/ and follow the installer
+- Delete the install folder once the web installer is done
+- Login to Echelon using the credentials that were emailed to you
+- Setup and config your Echelon to your needs
+
+## NOTE ##
+Please understand that there are large portions of Echelon that are unfinished. Please check back to this repo for the latest version.
+There is also spotty support for BFBC2, (rcon will not work and will most likely error)
