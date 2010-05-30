@@ -1,10 +1,15 @@
 ## Echelon Development v2 ##
 All the files are copyrighted by Eire.32 (eire32designs.com) and Bigbrotherbot (bigbrotherbot.com)
 
-Echelon is a web interface for the B3 administator program for gameservers.
+# Echelon is a web interface for the B3 administator program for gameservers.
+
+# This is a is a developing version of Echelon
+# It is nearly finished but there are still a few features not finished, and errors/bugs not solved
+# The Dev. Team are no offering any support other than this readme
+# Currently the version here is changing at least once a week, so 'updates' are frequent enough
 
 ## Requirements ##
-- Webserver
+- Webserver (Aphace currently, other support coming soon)
 - Version 5+ PHP
 - MySQL DB (your B3 DB will work, but a seperate  one is advised)
 - A MySQL user with connection rights to your B3 databases
