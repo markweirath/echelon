@@ -39,11 +39,11 @@ require 'inc/header.php';
 			<legend>Email Messages</legend>
 			
 			<label for="email_header">Text to start all emails:</label><?php tooltip('All emails sent by Echelon will user this email header.'); ?><br />
-				<textarea name="email_header"><?php echo tableClean($settings['email_header']); ?></textarea>
+				<textarea name="email_header"><?php echo $settings['email_header']; ?></textarea>
 				<br />
 				
 			<label for="email_footer">Text to end all emails:</label><?php tooltip('This template will be appended to the end of all emails'); ?><br />
-				<textarea name="email_footer"><?php echo tableClean($settings['email_footer']); ?></textarea>
+				<textarea name="email_footer"><?php echo $settings['email_footer']; ?></textarea>
 				
 			<p class="tip">There are some varibles that can be used in the email templates, <strong>%name%</strong> is replaced with the users name, and <strong>%ech_name%</strong> is replaced with the name of the website (eg. your clan name)</p>	
 				
@@ -55,11 +55,11 @@ require 'inc/header.php';
 			<legend>Time Settings</legend>
 			
 			<label for="time_format">Format of time:</label><?php tooltip('This time format will be used for almost all times displayed on the website'); ?>
-				<input type="text" name="time_format" value="<?php echo tableClean($settings['time_format']); ?>">
+				<input type="text" name="time_format" value="<?php echo $settings['time_format']; ?>">
 				<p class="tip">Time format field is the PHP <a class="external" href="http://php.net/manual/en/function.date.php" title="PHP time format setup">time format</a>.</p>
 			
 			<label for="time_zone">Time Zone:</label><?php tooltip('Timezone of your game server or web server'); ?>
-				<input type="text" name="time_zone" value="<?php echo tableClean($settings['time_zone']); ?>">
+				<input type="text" name="time_zone" value="<?php echo $settings['time_zone']; ?>">
 				<p class="tip">Timezone field uses PHP <a class="external" href="http://php.net/manual/en/timezones.php" title="PHP time zone lisiting">time zones</a>.</p>
 			
 		</fieldset>
@@ -74,7 +74,7 @@ require 'inc/header.php';
 			<input type="checkbox" name="https"<?php if($settings['https'] == 1) echo ' checked="checked"'; ?>><label for="https">SSL connection required</label><br>
 				<p class="tip">Forces HTTPS, only enable if you have an SSL cert, consult the <a href="http://echelon.bigbrotherbot.com/help/ssl" class="external help-docs">Help Docs</a></p>
 			
-			<input type="checkbox" name="allow_ie"<?php if($settings['allow_ie'] == 1) echo ' checked="checked"'; ?>><label for="allow_ie">Allow Internet Explorer</label><?php tooltip('If checked, this bans users from using Internet Explorer anywhere but the Public Ban List page'); ?>
+			<input type="checkbox" name="allow_ie"<?php if($settings['allow_ie'] == 1) echo ' checked="checked"'; ?>><label for="allow_ie">Allow Internet Explorer</label><?php tooltip('If unchecked, this bans users from using Internet Explorer anywhere but the Public Ban List page'); ?>
 			
 			<?php if(!$no_games) : ?>
 			

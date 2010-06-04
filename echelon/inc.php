@@ -37,19 +37,19 @@ if($auth_user_here != false) // some pages do not need auth but include this fil
 	$mem->auth($auth_name); // see if user has the right access level is not on the BL and has not got a hack counter above 3
 
 ## remove tokens from 2 pages ago to stop build up
-if(!isLogin($page)) { // stop login page from using this and moving the vars
+if(!isLogin()) : // stop login page from using this and moving the vars
 	$tokens = array();
 	foreach($_SESSION['tokens'] as $key => $value) :
 		$tokens[$key] = $value;
 	endforeach;
 	$_SESSION['tokens'] = array();
-}
+endif;
 
 ## Check for HTTPS ##
 $https = detectSSL(); // find out if SSL is enabled for this site
 
 if($https_enabled) : // if https is FORCE enabled
-	if($https == FALSE && !isError($page)) { // Check if https is off // If off throw error, logout and end script
+	if($https == FALSE && !isError()) { // Check if https is off // If off throw error, logout and end script
 		if($mem->loggedIn()) // if logged in
 			$ses->logout(); // log user out
 		exit;
@@ -63,6 +63,6 @@ if(NO_TIME_ZONE) // if no time zoneset show warning message
 
 ## Block Internet Explorer ###
 if($allow_ie == 0) {
-	if (detectIE() && $page != 'error') // alow IE on the pubbans page aswell as the error page
+	if (detectIE() && !isError()) // alow IE on the pubbans page aswell as the error page
 		sendError('ie');
 }

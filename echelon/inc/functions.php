@@ -836,7 +836,7 @@ function time_duration($seconds, $use = null, $zeros = false) {
  *
  * @return	string	contents of that page
  */
- function getEchVer(){
+function getEchVer(){
 
 	$c = @file_get_contents(VER_CHECK_URL);
 	if($c == false) {
@@ -851,35 +851,45 @@ function time_duration($seconds, $use = null, $zeros = false) {
 /**
  * Simple isPage($page) functions
  */
-function isHome($page) {
+function isHome() {
+	global $page;
+
 	if($page == 'home')
 		return true;
 	else
 		return false;
 }
 
-function isClients($page) {
+function isClients() {
+	global $page;
+
 	if($page == 'client')
 		return true;
 	else
 		return false;
 }
 
-function isCD($page) {
+function isCD() {
+	global $page;
+
 	if($page == 'clientdetails')
 		return true;
 	else
 		return false;
 }
 
-function isLogin($page) {
+function isLogin() {
+	global $page;
+
 	if($page == 'login')
 		return true;
 	else
 		return false;
 }
 
-function isError($page) {
+function isError() {
+	global $page;
+
 	if($page == 'error')
 		return true;
 	else
@@ -887,56 +897,72 @@ function isError($page) {
 }
 
 
-function isSettings($page) {
+function isSettings() {
+	global $page;
+
 	if($page == 'settings')
 		return true;
 	else
 		return false;
 }
 
-function isSettingsGame($page) {
+function isSettingsGame() {
+	global $page;
+
 	if($page == 'settings-game')
 		return true;
 	else
 		return false;
 }
 
-function isSettingsServer($page) {
+function isSettingsServer() {
+	global $page;
+	
 	if($page == 'settings-server')
 		return true;
 	else
 		return false;
 }
 
-function isSA($page) {
+function isSA() {
+	global $page;
+
 	if($page == 'sa')
 		return true;
 	else
 		return false;
 }
 
-function isPerms($page) {
+function isPerms() {
+	global $page;
+
 	if($page == 'perms')
 		return true;
 	else
 		return false;
 }
 
-function isMe($page) {
+function isMe() {
+	global $page;
+
 	if($page == 'me')
 		return true;
 	else
 		return false;
 }
 
-function isPubbans($page) {
+function isPubbans() {
+	global $page;
+
 	if($page == 'pubbans')
 		return true;
 	else
 		return false;
 }
 
-function isMap($page) {
+function isMap() {
+	global $page;
+
 	if($page == 'map')
 		return true;
 	else
