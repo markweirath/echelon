@@ -1,5 +1,6 @@
 <?php
 $auth_name = 'manage_settings';
+$b3_conn = true; // needed to test the B3 DB for a successful connection
 require '../inc.php';
 
 ## Check that the form was posted and that the user did not just stumble here ##
@@ -8,10 +9,13 @@ if(!$_POST['game-settings-sub']) :
 	send('../index.php');
 endif;
 
+## Find Type ##
 if($_POST['type'] == 'add')
 	$is_add = true;
+	
 elseif($_POST['type'] == 'edit')
 	$is_add = false;
+	
 else
 	sendBack('Missing Data');
 
@@ -58,9 +62,18 @@ if(!$is_add)
 	emptyInput($password, 'your current password');
 	
 if($is_add) :
+
+	## Check game is supported ##
 	if(!array_key_exists($game_type, $supported_games))
 		sendBack('That game type does not exist, please choose a game');
 endif;
+
+
+## Check that the DB information supplied will make a connection to the B3 database.
+$db_test = new DB_B3($db_host, $db_user, $db_pw, $db_name, true); // the last argument is hard coded because any error report needs to be the full error message, not just the failed connection line; this will only be seen by people who can add/edit settings
+
+if($db_test->error)
+	sendBack($db_test->error_msg); // send back with a failed connection message
 	
 
 ## Update DB ##

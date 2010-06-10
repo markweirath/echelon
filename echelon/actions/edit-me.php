@@ -40,7 +40,7 @@ if( (!$is_change_display_email) && (!$is_change_pw) )
 	sendBack('You didn\'t change anything, so Echelon has done nothing');
 
 ## Query Section ##
-$mem->reAuthUser($mem->id, $dbl); // check user current password is correct
+$mem->reAuthUser($cur_pw, $dbl); // check user current password is correct
 
 if($is_change_display_email) : // if the display or email have been altered edit them if not skip this section
 	// update display name and email

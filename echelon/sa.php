@@ -78,7 +78,21 @@ if($_GET['t'] == 'perms') :
 
 	$is_permissions = true; // helper var
 	$page = "perms";
-	$page_title = "User Permissions Management";
+	$page_title = "Echelon Group Management";
+
+endif;
+
+if($_GET['t'] == 'perms-group') :
+	
+	$group_id = cleanvar($_GET['id']);
+	$is_perms_group = true; // helper var
+	
+	$group_info = $dbl->getGroupInfo($id);
+	$group_name = $group_info[0];
+	$group_perms = $group_info[1];
+	$page = "perms";
+	$page_title = $group_name." Group";
+	
 
 endif;
 
@@ -136,10 +150,104 @@ if($is_edit_user) : ?>
 	
 <?php elseif($is_permissions) : ?>
 	
-	<a href="sa.php" title="Go back to site admin page" class="float-left">&laquo; Site Admin</a><br />
+	<a href="sa.php" title="Go back to site admin page" class="float-left">&laquo; Site Admin</a>
 	
-	<h3>Group Permissions</h3>
+	<a href="sa.php?t=perms-add" title="Add a new Echelon group" class="float-right">Add Group &raquo;</a><br />
 
+	<table>
+		<caption>Groups<small>A list of all the Echelon Groups</caption>
+		<thead>
+			<tr>
+				<th>id</th>
+				<th>Name</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tfoot>
+			<tr>
+				<td colspan="3"></td>
+			</tr>
+		</tfoot>
+		
+		<tbody>
+			<?php
+				$ech_list_groups = $dbl->getGroups();
+				
+				$num_rows = count($ech_list_groups);
+				
+				if($num_rows > 0) :
+					foreach($ech_list_groups as $group):
+						$id = $group['id'];
+						$name = $group['display'];
+						
+						$rowcolor = 1 - $rowcolor;
+						if($rowcolor == 0)
+							$odd_even = "odd";
+						else 
+							$odd_even = "even";
+							
+						$name_link = echGroupLink($id, $name);
+						
+						// setup heredoc (table data)			
+						$data = <<<EOD
+						<tr class="$odd_even">
+							<td>$id</td>
+							<td><strong>$name_link</strong></td>
+							<td></td>
+						</tr>
+EOD;
+
+						echo $data;
+					endforeach;
+				else:
+				
+					echo '<tr><td colspan="3">There are no groups in the Echelon database. <a href="sa.php?t=perms-add" title="Add a new group to Echelon">Add Group</a></td></tr>';
+				
+				endif;
+			
+			?>
+		</tbody>
+	</table>
+	
+<?php elseif($is_perms_group) : ?>
+
+	<h3><?php echo $group_name; ?></h3>
+	
+	<fieldset>
+		<legend>Permissions</legend>
+		
+		<?php
+			$perms = $dbl->getPermissions(); // gets a comprehensive list of Echelon groups
+		
+			$perms_list = array();
+			$perms_list = explode(",", $group_perms);
+
+			foreach($perms as $perm) :
+				$p_id = $perm['id'];
+				$p_name = $perm['name'];
+				$p_desc = $perm['desc'];
+				
+				if(in_array($p_id, $perms_list)) {
+					$checked = 'checked="checked" ';
+				} else {
+					$checked =  NULL;
+				}
+				
+				if($p_name != 'pbss') {
+					$p_name_read = preg_replace('#_#', ' ', $p_name);
+					$p_name_read = ucwords($p_name_read);
+				} else
+					$p_name_read = 'PBSS';
+				
+				echo '<span class="perm-check"><label>' . $p_name_read . '</label><input type="checkbox" name="' . $p_name . '" ' . $checked . '/>'; 
+				tooltip($p_desc);
+				echo '</span>';
+				
+			endforeach;
+		?>
+		
+	</fieldset>	
+	
 <?php else : ?>
 <a href="sa.php?t=perms" title="Manage Echelon User Permissions" class="float-right">User Permissions &raquo;</a><br />
 
@@ -199,12 +307,14 @@ if($is_edit_user) : ?>
 			
 			$token_del = genFormToken('del'.$id);
 			
+			$name_link = echUserLink($id, $name);
+			
 			// setup heredoc (table data)			
 			$data = <<<EOD
 			<tr class="$odd_even">
 				$grav
 				<td>$id</td>
-				<td><strong><a href="sa.php?t=user&amp;id=$id" title="View $name in more detail">$name</a></strong></td>
+				<td><strong>$name_link</strong></td>
 				<td>$group</td>
 				<td>$email_link</td>
 				<td>$ip</td>

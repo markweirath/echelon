@@ -60,14 +60,12 @@ if($change_rcon_pw == true)
 	emptyInput($rcon_pw, 'Rcon password');
 
 // check that the rcon_ip is valid
-$rcon_ip = strtolower($rcon_ip);
-if( (!filter_var($rcon_ip, FILTER_VALIDATE_IP)) || ($rcon_ip == 'localhost') )
-	sendBack('That Rcon IP Address is not valid, localhost can also be used');
+if(!filter_var($rcon_ip, FILTER_VALIDATE_IP))
+	sendBack('That Rcon IP Address is not valid');
 	
 // check that the rcon_ip is valid
-$ip = strtolower($ip);
-if( (!filter_var($ip, FILTER_VALIDATE_IP)) || ($ip == 'localhost') )
-	sendBack('That server IP Address is not valid, localhost can also be used');
+if( (!filter_var($ip, FILTER_VALIDATE_IP)))
+	sendBack('That server IP Address is not valid');
 	
 // Check Port is a number between 4-5 digits
 if( (!is_numeric($rcon_port)) || (!preg_match('/^[0-9]{4,5}$/', $rcon_port)) )
@@ -79,11 +77,12 @@ if($is_add) : // if is add server request
 endif;
 	
 ## Update DB ##
-if($is_add)
+if($is_add) :
 	$result = $dbl->addServer($game_id, $name, $ip, $pb, $rcon_ip, $rcon_port, $rcon_pw);
 	$dbl->addServerUpdateGames($game_id);
-else
+else :
 	$result = $dbl->setServerSettings($server_id, $name, $ip, $pb, $rcon_ip, $rcon_port, $rcon_pw, $change_rcon_pw); // update the settings in the DB
+endif;
 
 if($result == false)
 	sendBack('Something did not update');

@@ -338,6 +338,8 @@ label.uname:hover { color: #bbb; }
 .edit-key-comment { display: none; } /* We'll use JS to show the button since this is an JS enabled only button */
 .edit-key-comment:hover { cursor: pointer; }
 
+.perm-check  { padding: 0 20px 0 0; }
+
 /* Error Styling */
 .error-msg { margin: 70px 20px; width: 46%; font-size: 18px; float: right; padding: 20px; border: 2px solid #ae2525; -moz-border-radius: 5px; -webkit-border-radius: 5px; }
 
@@ -352,3 +354,5 @@ label.uname:hover { color: #bbb; }
 .r-bad { background: #CB908B; border-color: #BD3F32; color: #fdfdfd; }
 .r-good { border-color : #5f9249; background: #9ACA86; }
 .loader { display: none; float: left; position: relative; top: 5px; }
+
+#pqp-metrics tbody tr:hover, #pqp-footer tbody tr:hover { background: none; }

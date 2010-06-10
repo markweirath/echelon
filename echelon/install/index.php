@@ -44,7 +44,7 @@
 		
 		// start connectionn to the DB
 		require '../classes/dbl-class.php';
-		$dbl = new DBL(true); // test connection if it failes then it dies (install test is true)
+		$dbl = new DBL(true); // test connection if it fails then it dies (install test is true)
 		
 		if($dbl->install_error != NULL)
 			sendBack($dbl->install_error);

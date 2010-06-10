@@ -15,7 +15,6 @@ class DbL {
 	public $install_erorr = NULL;
 	public $dbl_error = false;
 	
-
 	/**
      * Auto run on creation of instance: attempts to connect to the Echelon DB or dies with the mysql error
      */
@@ -52,31 +51,22 @@ class DbL {
 
 			if($this->install == true) :
 				$error_msg = '<strong>Database Connection Error</strong>
-									<p>'.mysqli_connect_error().'<br />
-									The connection information you supplied is incorrect. Please try again.</p>';
+					<p>'.mysqli_connect_error().'<br />
+					The connection information you supplied is incorrect. Please try again.</p>';
 			
 			elseif(DB_CON_ERROR_SHOW) : // only if settings say show to con error, will we show it, else just say error
 				$error_msg = '<h3>Database Connection Error</h3> 
-								<p>'.mysqli_connect_error().'<br />
-								Since we have encountered a database error, Echelon is shutting down.</p>';
+					<p>'.mysqli_connect_error().'<br />
+					Since we have encountered a database error, Echelon is shutting down.</p>';
 								
 			else :
 				$error_msg = '<h3>Database Problem</h3>
-								<p>Since we have encountered a database error, Echelon is shutting down.</p>';
+					<p>Since we have encountered a database error, Echelon is shutting down.</p>';
 								
 			endif;
 
 			throw new Exception ($error_msg);
 		endif;
-    }
-	
-	/**
-	 * If access to a protected or private function is called
-	 */
-	public function __call($name, $arg) {
-        // Note: value of $name is case sensitive.
-		echLog('error', 'System tried to access function '. $name .', a private or protected function in class '. get_class($this)); // log error
-		echo "<strong>" . $name . "</strong> is a private function that cannot be accessed outside the Echelon Database class"; // error out error
     }
 	
 	/**
@@ -87,17 +77,15 @@ class DbL {
             @$this->mysql->close(); // close the connection
     }
 	
-	
 	/**
 	 * Gets an array of data for the settings form
 	 *
 	 * @param string $cat - category of settigs to retrieve
 	 * @return array
 	 */
-	function getSettings($cat) {
-        $query = "SELECT name, value FROM ech_config WHERE category = ?";
+	function getSettings() {
+        $query = "SELECT name, value FROM ech_config";
         $stmt = $this->mysql->prepare($query) or die('Database Error');
-		$stmt->bind_param('s', $cat);
 		$stmt->execute();
 		
 		$stmt->store_result();
@@ -116,7 +104,7 @@ class DbL {
 	
 	function getGamesInfo() {
 	
-		$query = "SELECT id, game, name, name_short, num_srvs, db_host, db_user, db_pw, db_name FROM ech_games ORDER BY id ASC";
+		$query = "SELECT * FROM ech_games ORDER BY id ASC";
 		$results = $this->mysql->query($query) or die('Database Error');
         
 		$games = array();
@@ -404,7 +392,7 @@ class DbL {
 	 */
 	function getUserSalt($username) {
 		
-		$query = "SELECT salt FROM ech_users WHERE username = ? LIMIT 1";
+		$query = "SELECT salt FROM ech_users WHERE username = ?";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('s', $username);
 		$stmt->execute(); // run query
@@ -429,7 +417,7 @@ class DbL {
 	 * @return array
 	 */
 	function getPermissions() {
-		$query = "SELECT id, name, description FROM ech_permissions ORDER BY id DESC";
+		$query = "SELECT * FROM ech_permissions ORDER BY id DESC";
 		$results = $this->mysql->query($query);
 		
 		while($row = $results->fetch_object()) : // get results		
@@ -688,7 +676,7 @@ class DbL {
 	 */
 	function checkUsername($username) {
 
-		$query = "SELECT username FROM ech_users WHERE username = ?";
+		$query = "SELECT username FROM ech_users WHERE username = ? LIMIT 1";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('s', $username);
 		$stmt->execute(); // run query
@@ -1119,6 +1107,20 @@ class DbL {
 	
 	}
 	
+	function getGroupInfo($id) {
+		$query = "SELECT display, premissions FROM ech_groups WHERE id = ? LIMIT 1";
+		$stmt = $this->mysql->prepare($query);
+		$stmt->bind_param('i', $id);
+		$stmt->execute();
+		
+		$stmt->bind_result($display, $perms);
+		
+		$info = array($display, $perms);
+		
+		$stmt->close();
+		return $info;
+	}
+	
 	function getEchLogs($client_id) {
 		$query = "SELECT log.id, log.type, log.msg, log.user_id, u.display, log.time_add FROM ech_logs log LEFT JOIN ech_users u ON log.user_id = u.id WHERE client_id = ? ORDER BY log.time_add DESC";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
@@ -1159,7 +1161,7 @@ class DbL {
 	}
 	
 	function getLinks() {
-		$query = "SELECT url, name, title FROM ech_links";
+		$query = "SELECT * FROM ech_links";
 		$result = $this->mysql->query($query);
 		
 		while($row = $result->fetch_object()) :	

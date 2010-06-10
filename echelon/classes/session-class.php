@@ -20,26 +20,24 @@ class Session {
 
                 // Set SSL level
                 $https = isset($secure) ? $secure : isset($_SERVER['HTTPS']);
-
+				
                 // Set session cookie options
 				// httpOnly is set to true // this can help prevent identiy theft with XSS hacks
                 session_set_cookie_params($limit, $path, $domain, $https, true);
                 session_start();
 				
-				
-
                 // Make sure the session hasn't expired, and destroy it if it has
-                if(self::validateSession())
-                {
+                if(self::validateSession()) {
+				
 					// Check to see if the session is new or a hijacking attempt
 					if(!self::preventHijacking()) {
 					
 							// Reset session data and regenerate id
-							$_SESSION['finger'] = member::getFinger();
+							$_SESSION['finger'] = self::getFinger();
 							self::regenerateSession();
 
-					// Give a 40% chance of the session id changing on any request
-					} elseif(mt_rand(1, 100) <= 40) {
+					// Give a 20% chance of the session id changing on any request
+					} elseif(mt_rand(1, 100) <= 20) {
 							self::regenerateSession();
 					}
                 } else {
@@ -59,7 +57,7 @@ class Session {
 		
                 // If this session is obsolete it means there already is a new id
                 if(isset($_SESSION['OBSOLETE']) || $_SESSION['OBSOLETE'] == true)
-                        return;
+					return;
 
                 // Set current session to expire in 10 seconds
                 $_SESSION['OBSOLETE'] = true;
@@ -105,10 +103,10 @@ class Session {
          */
         static protected function preventHijacking() {
 	
-                if(!isset($_SESSION['finger']) )
+                if(!isset($_SESSION['finger']))
                 	return false;
 
-                if($_SESSION['finger'] != member::getFinger())
+                if($_SESSION['finger'] != self::getFinger())
                 	return false;
 
                 return true;
@@ -126,18 +124,29 @@ class Session {
 			// If it's desired to kill the session, also delete the session cookie.
 			// Note: This will destroy the session, and not just the session data!
 			if (isset($_COOKIE[session_name()])) {
-			   setcookie(session_name(), '', time()-42000, PATH);
+			   setcookie(session_name(), '', time()-420, PATH);
 			}
 			
 			// This is useful for when you change authentication states as it also invalidates the old session. 
-			session::regenerateSession();
+			self::regenerateSession();
 			
 			// Finally, destroy the session.
 			session_destroy();
 
-			session::sesStart(); // start session
+			self::sesStart(); // start session
 			$_SESSION['error'] = $error; // add error to new session
 			
 		}
+		
+		/**
+		 * Generates a fingerprint for anti session hijacking
+		 *
+		 * @return string
+		 */
+		static function getFinger() {
+			$user_agent = $_SERVER['HTTP_USER_AGENT']; // get browser name from user
+			return genHash($user_agent.SALT); // return hash of browser and salt
+		}
+
 		
 } // end class

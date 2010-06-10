@@ -420,6 +420,11 @@ function echUserLink($id, $name) {
 	return $msg;
 }
 
+function echGroupLink($id, $name) {
+	$msg = '<a href="sa.php?t=perms-group&amp;id='.$id.'" title="View group '.$name.' in more detail">'.$name.'</a>';
+	return $msg;
+}
+
 function totalPages($total_rows, $max_rows) {
 	$total_pages = ceil($total_rows/$max_rows)-1;
 	return $total_pages;

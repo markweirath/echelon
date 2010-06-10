@@ -1,13 +1,13 @@
 <?php
 error_reporting(E_ALL ^ E_NOTICE); // show all errors but notices
+
 require_once 'inc/ctracker.php'; // anti worm injection protection
 require_once 'inc/config.php'; // load the config file
 
 if(INSTALLED != 'yes') // if echelon is not install (a constant is added to the end of the cnfig during install) then die and tell the user to go  install Echelon
-	die('You must install Echelon. <a href="install/index.php">Install</a>');
+	die('You still need to install Echelon. <a href="install/index.php">Install</a>');
 
 require_once 'inc/functions.php'; // require all the basic functions used in this site
-
 require 'classes/dbl-class.php'; // class to preform all DB related actions
 $dbl = new DBL(); // start connection to the local Echelon DB
 
@@ -23,9 +23,8 @@ $ses->sesStart('echelon', 0, PATH); // start session (name 'echelon', 0 => sessi
 $mem = new member($_SESSION['user_id'], $_SESSION['name'], $_SESSION['email']);
 
 ## Is B3 needed on this page ##
-if($b3_conn == true) : // This is to stop connecting to the B3 Db for non B3 Db connection pages eg. Home, Site Admin, My Account
+if($b3_conn) : // This is to stop connecting to the B3 Db for non B3 Db connection pages eg. Home, Site Admin, My Account
 	require 'classes/mysql-class.php'; // class to preform all B3 DB related actions
-	require 'classes/mysql-exception-class.php'; // class to preform all B3 DB related actions
 	$db = new DB_B3($game_db_host, $game_db_user, $game_db_pw, $game_db_name, DB_B3_ERROR_ON); // create connection to the B3 DB
 endif;
 
@@ -43,18 +42,6 @@ if(!isLogin()) : // stop login page from using this and moving the vars
 		$tokens[$key] = $value;
 	endforeach;
 	$_SESSION['tokens'] = array();
-endif;
-
-## Check for HTTPS ##
-$https = detectSSL(); // find out if SSL is enabled for this site
-
-if($https_enabled) : // if https is FORCE enabled
-	if($https == FALSE && !isError()) { // Check if https is off // If off throw error, logout and end script
-		if($mem->loggedIn()) // if logged in
-			$ses->logout(); // log user out
-		exit;
-		sendError('ssl'); // send user to error page with the SSL error code
-	}
 endif;
 
 ## if no time zone set display error ##

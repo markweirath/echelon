@@ -226,7 +226,9 @@ endif;
 	
 		## if Site Admin check for current Echelon Version and if not equal add warning
 		if($mem->reqLevel('see_update_msg')) :
-			if(isSA() || isSettings() || isHome()) {
+			$day_of_week = date('N');
+		
+			if( (isSA() || isHome()) && ($day_of_week == 1) ) {
 				$latest = getEchVer();
 				if(ECH_VER !== $latest && $latest != false) // if current version does not equal latest version show warning message
 					set_warning('You are not using the lastest version of Echelon, please check the <a href="http://www.bigbrotherbot.com/forums/" title="Check the B3 Forums">B3 Forums</a> for more information.');

@@ -97,16 +97,6 @@ function genAndSetNewPW($password, $user_id, $dbl) {
 }
 
 /**
- * Generates a fingerprint for anti session hijacking
- *
- * @return string
- */
-static function getFinger() {
-	$user_agent = $_SERVER['HTTP_USER_AGENT']; // get browser name from user
-	return genHash($user_agent."DcEx"); // return hash of browser and a small salt
-}
-
-/**
  * Echo out the display name in a link, if the display name is not set echo guest.
  */
 function displayName() {
@@ -176,7 +166,7 @@ function reAuthUser($password, $dbl) {
 
 	// Check to see that the supplied password is correct
 	$validate = $dbl->validateUserRequest($this->id, $hash_pw);
-	if($validate == false) {
+	if(!$validate) {
 		hack(1); // add one to hack counter to stop brute force
 		sendBack('You have supplied an incorrect current password');
 	}

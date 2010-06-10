@@ -87,7 +87,7 @@ if($mem->loggedIn()) { ## if logged in users may skip this page
 	}
 	
 	## get premissions
-	$perms = $dbl->getPermissions(); // use user's id
+	$perms = $dbl->getPermissions(); // get a comprehensive list of Echelon permissions
 	$perms_list = $results[6]; // value of perms for users group db
 
 	$_SESSION['perms'] = array();
@@ -105,11 +105,11 @@ if($mem->loggedIn()) { ## if logged in users may skip this page
 		}	
 	endforeach;
 		
-	if($_SESSION['perms']['login'] == false) { // if the perm login is not granted the account has been deactivated
+	if(!$_SESSION['perms']['login']) : // if the perm login is not granted the account has been deactivated
 		wrong(1);
 		sendBack('Your account has beeen de-activated, please contact your site admin.');
 		exit;
-	}
+	endif;
 	
 	$_SESSION['user_id'] = $results[0]; // set user id	
 	$_SESSION['last_ip'] = $results[1]; // set last known ip
@@ -125,7 +125,7 @@ if($mem->loggedIn()) { ## if logged in users may skip this page
 	
 	setcookie("game", $game_input, time()*60*60*24*31, $path); // set the game cookie equal to the game choosen in the login form
 
-	$_SESSION['finger'] = $mem->getFinger(); // find the hash of user agent plus salt
+	$_SESSION['finger'] = $ses->getFinger(); // find the hash of user agent plus salt
 
 	$ip = getRealIp(); // get users current IP
 	$result = $dbl->newUserInfo($ip, $results[0]); // update user to have new time and IP

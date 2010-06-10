@@ -30,7 +30,7 @@ $config = array();
 $config['cosmos'] = array();
 
 ## Get the config array ##
-$config['cosmos'] = $dbl->getSettings('cosmos');
+$config['cosmos'] = $dbl->getSettings();
 
 // find the number of games from the config array
 $num_games = $config['cosmos']['num_games'];
