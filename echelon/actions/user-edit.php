@@ -13,7 +13,7 @@ if($_POST['t'] == 'del') :
 		sendBack('Invalid data sent, request aborted');
 		
 	# verify token #
-	if(verifyFormToken('del'.$id, $tokens) == false)
+	if(!verifyFormToken('del'.$id, $tokens))
 		ifTokenBad('Delete Echelon User');
 
 	$result = $dbl->delUser($id);
@@ -38,7 +38,7 @@ elseif($_POST['ad-edit-user']):
 		sendBack('Invalid data sent, request aborted');
 		
 	# verify token #
-	if(verifyFormToken('adedituser', $tokens) == false)
+	if(!verifyFormToken('adedituser', $tokens))
 		ifTokenBad('Edit Echelon User');	
 	
 	$result = $dbl->editUser($id, $username, $display, $email, $group);

@@ -25,12 +25,12 @@ endif;
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-	
+
 	<title><?php echo $site_name; ?> Echelon - <?php echo $page_title; ?></title>
-	
+
 	<!-- Load CSS Stylesheet -->
 	<link href="<?php echo PATH; ?>css/style.css" rel="stylesheet" media="screen" type="text/css" />
-	
+
 	<?php 
 	## Include CSS For pages ##
 	if(isLogin())
@@ -48,34 +48,33 @@ endif;
 	## Header JS for Map Page ##
 	if(isMap())
 		echo $map_js;
-		
+
 	?>
-	
+
 	<!-- ALL JS TO BE LOADED INTO THE FOOTER -->
 </head>
 
 <body id="<?php echo $page; ?>">
-		
+
 <div id="page-wrap">
-	
+
 <div id="header">
 	<a name="t"></a>
 	<h1 id="title"><a href="<?php echo PATH; ?>" title="Go to the home page">Echelon</a></h1>
 	<h2 id="subtitle">B3 repository and investigation tool</h2>		
 </div><!-- end #header -->
-		
-						
+	
 <div id="mc">
 
 	<div id="menu">
-	
+
 		<ul id="nav">
 			<?php if($mem->loggedIn()) { ?>
-			
+
 				<li class="home<?php if(isHome()) echo ' selected'; ?>"><a href="<?php echo PATH; ?>" title="Home Page">Home</a></li>
-				
+
 				<?php if(!$no_games) : ?>
-				
+
 				<li class="cdd">
 					<a href="#">Games</a>
 					<ul class="dd games-list">
@@ -99,7 +98,6 @@ endif;
 					</ul>
 				</li>
 				
-				
 				<?php if($mem->reqLevel('clients')) : ?>
 				<li class="cdd">
 					<a href="#">Clients</a>
@@ -113,7 +111,6 @@ endif;
 				</li>
 				<?php
 					endif; // reqLevel clients DD
-					
 					
 					if($mem->reqLevel('penalties')) :
 				?>
@@ -129,7 +126,6 @@ endif;
 				<?php
 					endif; // end reqLevel penalties DD
 				?>
-				
 				
 				<li class="cdd">
 					<a href="#">Other</a>
@@ -148,10 +144,9 @@ endif;
 						</li>
 					</ul>
 				</li>
-				
+
 				<?php endif; // end if no games hide the majority of the navigation ?>
-				
-				
+
 				<li class="cdd">
 					<a href="#">Echelon</a>
 					<ul class="dd">
@@ -170,7 +165,7 @@ endif;
 								</ul>
 							</li>
 						<?php endif; ?>
-						
+
 						<?php if($mem->reqLevel('siteadmin')) : ?>
 							<li class="n-sa<?php if(isSA()) echo ' selected'; ?>">
 								<a href="<?php echo PATH; ?>sa.php" title="Site Administration">Site Admin</a>
@@ -185,22 +180,22 @@ endif;
 						</li>
 					</ul>
 				</li>			
-				
+
 			<?php } else { ?>
 			
 				<li class="login<?php if(isLogin()) echo ' selected'; ?>"><a href="<?php echo PATH; ?>login.php" title="Login to Echelon to see the good stuff!">Login</a></li>
 				<li class="pubbans<?php if(isPubbans()) echo ' selected'; ?>"><a href="<?php echo PATH; ?>pubbans.php" title="Public Ban List">Public Ban List</a></li>
-				
+
 			<?php } ?>
 		</ul><!-- end #nav -->
-		
+
 		<div id="user-info">
 			<?php if($mem->loggedIn()) { ?>
 				<div class="log-cor">
 					<a href="<?php echo PATH; ?>actions/logout.php" class="logout" title="Sign out">Sign Out</a>
 				</div>
 			<?php } ?>
-			
+
 			<div class="info">
 				<?php 
 					if(GRAVATAR)
@@ -213,33 +208,33 @@ endif;
 					echo '</span>';	
 				} ?>
 			</div>
-			
-		</div><!-- end #user-info -->
-		
-		<br class="clear" />
-		
-	</div><!-- end #menu -->
-		
-	<div id="content">
-	
-	<?php 
-	
-		## if Site Admin check for current Echelon Version and if not equal add warning
-		if($mem->reqLevel('see_update_msg')) :
-			$day_of_week = date('N');
-		
-			if( (isSA() || isHome()) && ($day_of_week == 1) ) {
-				$latest = getEchVer();
-				if(ECH_VER !== $latest && $latest != false) // if current version does not equal latest version show warning message
-					set_warning('You are not using the lastest version of Echelon, please check the <a href="http://www.bigbrotherbot.com/forums/" title="Check the B3 Forums">B3 Forums</a> for more information.');
-			}
-		endif;
-		
-		errors(); // echo out all errors/success/warnings
 
-		if($query_normal) : // if this is a normal query page and there is a db error show message
-		
-			if($db->error)
-				dbErrorShow($db->error_msg); // show db error
-				
-		endif;
+		</div><!-- end #user-info -->
+
+		<br class="clear" />
+
+	</div><!-- end #menu -->
+
+	<div id="content">
+
+	<?php 
+
+	## if Site Admin check for current Echelon Version and if not equal add warning
+	if($mem->reqLevel('see_update_msg')) :
+		$day_of_week = date('N');
+	
+		if( (isSA() || isHome()) && ($day_of_week == 1) ) {
+			$latest = getEchVer();
+			if(ECH_VER !== $latest && $latest != false) // if current version does not equal latest version show warning message
+				set_warning('You are not using the lastest version of Echelon, please check the <a href="http://www.bigbrotherbot.com/forums/" title="Check the B3 Forums">B3 Forums</a> for more information.');
+		}
+	endif;
+
+	errors(); // echo out all errors/success/warnings
+
+	if($query_normal) : // if this is a normal query page and there is a db error show message
+
+		if($db->error)
+			dbErrorShow($db->error_msg); // show db error
+
+	endif;

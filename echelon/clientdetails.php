@@ -99,13 +99,11 @@ require 'inc/header.php';
 						if($guid_len == 32) {
 							$half_guid = substr($guid, -8); // get the last 8 characters of the guid
 							guidCheckLink($half_guid);
-						} else {
+						} else
 							echo $guid.' <span class="red" title="This guid is only 31 characters long, it should be 32 characters!">['. $guid_len .']</span>';
-						}
 					
 					} else { // if not allowed to see any part of the guid
 						echo '(You do not have access to see the GUID)';
-					
 					}
 				?>
 				</td>
@@ -115,11 +113,11 @@ require 'inc/header.php';
 					$ip = tableClean($ip);
 					if($mem->reqLevel('view_ip')) :
 						if ($ip != "") { ?>
-						<a href="clients.php?s=<?php echo $ip; ?>&amp;t=ip" title="Search for other users with this IP adreess"><?php echo $ip; ?></a>
-							&nbsp;&nbsp;
-						<a href="http://whois.domaintools.com/<?php echo $ip; ?>" title="Whois IP Search"><img src="images/id_card.png" width="16" height="16" alt="W" /></a>
-							&nbsp;&nbsp;
-						<a href="http://geotool.servehttp.com/?ip=<?php echo $ip; ?>" title="Show Location of IP origin on map"><img src="images/globe.png" width="16" height="16" alt="L" /></a>
+							<a href="clients.php?s=<?php echo $ip; ?>&amp;t=ip" title="Search for other users with this IP adreess"><?php echo $ip; ?></a>
+								&nbsp;&nbsp;
+							<a href="http://whois.domaintools.com/<?php echo $ip; ?>" title="Whois IP Search"><img src="images/id_card.png" width="16" height="16" alt="W" /></a>
+								&nbsp;&nbsp;
+							<a href="http://geotool.servehttp.com/?ip=<?php echo $ip; ?>" title="Show Location of IP origin on map"><img src="images/globe.png" width="16" height="16" alt="L" /></a>
 					<?php
 						} else {
 							echo "(No IP address available)";

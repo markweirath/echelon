@@ -23,10 +23,12 @@ function rcon($rcon_ip, $rcon_port, $rcon_pass, $command) {
 		$query = "\xFF\xFF\xFF\xFFrcon \"" . $rcon_pass . "\" " . $command;
 		fwrite($fp,$query);
 	}
+	
 	$data = '';
-	while($d = fread($fp, 10000)) {
+	while($d = fread($fp, 10000)) :
 	    $data .= $d;
-	}
+	endwhile;
+	
 	fclose($fp);
 	$data = preg_replace("/....print\n/", "", $data);
 	return $data;
@@ -158,20 +160,23 @@ function detectIE() {
  * Checks if a user has attempted to login to many times or has been caught hacking the site
  */
 function locked() {
-	if($_SESSION['wrong'] >= 3 || $_SESSION['hack'] >= 3) {#
+	if($_SESSION['wrong'] >= 3 || $_SESSION['hack'] >= 3) : // if the user has three wrongs or three hack attempts 
+		// logout the user, then add the IP of the user to the Blacklist
+	
 		if(!$dbl)
 			$dbl = new DBL();
 		if(!$mem)
 			$mem = new member(); 
 		
-		if($mem->loggedIn()) {
+		if($mem->loggedIn())
 			session::logout(); // if they are logged in log them out
-		}
+
 		$ip = getRealIp(); // get users ip
 		$dbl->blacklist($ip); // add top blacklist
 		writeLog('Locked out automatically.');
 		sendLocked();
-	}
+		
+	endif;
 }
 
 /**
@@ -183,8 +188,11 @@ function checkBL() {
 	}
 	$ip = getRealIp(); // find real IP
 	$result = $dbl->checkBlacklist($ip); // query db and check if ip is on list
-	if($result == true)// if on blacklist
+	
+	if($result) {// if on blacklist
 		sendLocked(); // send to locked page
+		exit;
+	}
 }
 
 /**
@@ -256,9 +264,9 @@ function css_file($name) {
  * @return string $ip - IP address of the user
  */
 function getRealIp() {
-	if(!empty($_SERVER['HTTP_CLIENT_IP'])) {  //check ip from share internet
+	if(!empty($_SERVER['HTTP_CLIENT_IP'])) {  // check ip from share internet
 		$ip = $_SERVER['HTTP_CLIENT_IP'];
-	} elseif(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {  //to check ip is pass from proxy
+	} elseif(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {  // to check ip is pass from proxy
 		$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
 	} else {
 		$ip = $_SERVER['REMOTE_ADDR'];
@@ -299,7 +307,7 @@ function cleanvar($var) {
  * @param string $error - the error message that will be sent to the user
  */
 function sendBack($error) {
-	$ref = cleanvar($_SERVER['HTTP_REFERER']);
+	$ref = $_SERVER['HTTP_REFERER'];
 	set_error($error);
 	send($ref); // send back to referering page
 	exit; // end script
@@ -311,7 +319,7 @@ function sendBack($error) {
  * @param string $good - sucess message to be sent to the user
  */
 function sendGood($good) {
-	$ref = cleanvar($_SERVER['HTTP_REFERER']);
+	$ref = $_SERVER['HTTP_REFERER'];
 	set_good($good);
 	send($ref); // send back to referering page
 	exit; // end script

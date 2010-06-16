@@ -49,14 +49,12 @@ function loggedIn() { // are they logged in
  */
 function auth($name) {
 	locked(); // stop blocked people from acessing	
-	if(!$this->loggedIn()) { // if not authorised
+	if(!$this->loggedIn()) { // if not authorised/logged in
 		set_error('You must log in');
 		sendLogin();
 		exit;
 	}
-	checkBL(); // check ban list for IP	
-	$perm_required = $_SESSION['perms'][$name];
-	if(!$perm_required) { // if users level is less than needed access, deny entry, and cause error
+	if(!$this->reqLevel($name)) { // if users level is less than needed access, deny entry, and cause error
 		set_error('You do not have the correct privilages to view that page');
 		sendHome();
 		exit;
@@ -91,9 +89,8 @@ function genAndSetNewPW($password, $user_id, $dbl) {
 	if(results_pw == false) {
 		set_error('There was an error changing your password');
 		return false;
-	} else {
+	} else
 		return true;
-	}
 }
 
 /**
@@ -104,7 +101,7 @@ function displayName() {
 	if($this->name == '')
 		echo 'Guest';
 	else
-		echo '<a href="'.PATH.'me.php" title="Go to your own account settings">'.$this->name.'</a>';
+		echo '<a href="'.PATH.'me.php" title="Go to your own account settings">'. $this->name .'</a>';
 		
 	return;
 }

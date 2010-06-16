@@ -15,36 +15,36 @@ class Session {
          */
         static function sesStart($name = 'echelon', $limit = 0, $path = '/', $domain = null, $secure = null) {
 		
-				// Set the cookie name
-                session_name($name . '_session');
+			// Set the cookie name
+			session_name($name . '_session');
 
-                // Set SSL level
-                $https = isset($secure) ? $secure : isset($_SERVER['HTTPS']);
+			// Set SSL level
+			$https = isset($secure) ? $secure : isset($_SERVER['HTTPS']);
+			
+			// Set session cookie options
+			// httpOnly is set to true // this can help prevent identiy theft with XSS hacks
+			session_set_cookie_params($limit, $path, $domain, $https, true);
+			session_start();
+			
+			// Make sure the session hasn't expired, and destroy it if it has
+			if(self::validateSession()) {
+			
+				// Check to see if the session is new or a hijacking attempt
+				if(!self::preventHijacking()) {
 				
-                // Set session cookie options
-				// httpOnly is set to true // this can help prevent identiy theft with XSS hacks
-                session_set_cookie_params($limit, $path, $domain, $https, true);
-                session_start();
-				
-                // Make sure the session hasn't expired, and destroy it if it has
-                if(self::validateSession()) {
-				
-					// Check to see if the session is new or a hijacking attempt
-					if(!self::preventHijacking()) {
-					
-							// Reset session data and regenerate id
-							$_SESSION['finger'] = self::getFinger();
-							self::regenerateSession();
+						// Reset session data and regenerate id
+						$_SESSION['finger'] = self::getFinger();
+						self::regenerateSession();
 
-					// Give a 20% chance of the session id changing on any request
-					} elseif(mt_rand(1, 100) <= 20) {
-							self::regenerateSession();
-					}
-                } else {
-					// logout and send to home page
-					self::logout();
-					sendHome();
-                }
+				// Give a 20% chance of the session id changing on any request
+				} elseif(mt_rand(1, 100) <= 20) {
+						self::regenerateSession();
+				}
+			} else {
+				// logout and send to home page
+				self::logout();
+				sendHome();
+			}
 				
         } // end sesStart
 
@@ -55,28 +55,28 @@ class Session {
          */
         static function regenerateSession() {
 		
-                // If this session is obsolete it means there already is a new id
-                if(isset($_SESSION['OBSOLETE']) || $_SESSION['OBSOLETE'] == true)
-					return;
+			// If this session is obsolete it means there already is a new id
+			if(isset($_SESSION['OBSOLETE']) || $_SESSION['OBSOLETE'] == true)
+				return;
 
-                // Set current session to expire in 10 seconds
-                $_SESSION['OBSOLETE'] = true;
-                $_SESSION['EXPIRES'] = time() + 10;
+			// Set current session to expire in 10 seconds
+			$_SESSION['OBSOLETE'] = true;
+			$_SESSION['EXPIRES'] = time() + 10;
 
-                // Create new session without destroying the old one
-                session_regenerate_id(false);
+			// Create new session without destroying the old one
+			session_regenerate_id(false);
 
-                // Grab current session ID and close both sessions to allow other scripts to use them
-                $newSession = session_id();
-                session_write_close();
+			// Grab current session ID and close both sessions to allow other scripts to use them
+			$newSession = session_id();
+			session_write_close();
 
-                // Set session ID to the new one, and start it back up again
-                session_id($newSession);
-                session_start();
+			// Set session ID to the new one, and start it back up again
+			session_id($newSession);
+			session_start();
 
-                // Now we unset the obsolete and expiration values for the session we want to keep
-                unset($_SESSION['OBSOLETE']);
-                unset($_SESSION['EXPIRES']);
+			// Now we unset the obsolete and expiration values for the session we want to keep
+			unset($_SESSION['OBSOLETE']);
+			unset($_SESSION['EXPIRES']);
         }
 
         /**
@@ -86,13 +86,13 @@ class Session {
          */
         static protected function validateSession() {
 
-                if(isset($_SESSION['OBSOLETE']) && !isset($_SESSION['EXPIRES']))
-					return false;
+			if(isset($_SESSION['OBSOLETE']) && !isset($_SESSION['EXPIRES']))
+				return false;
 
-                if(isset($_SESSION['EXPIRES']) && $_SESSION['EXPIRES'] < time())
-					return false;
+			if(isset($_SESSION['EXPIRES']) && $_SESSION['EXPIRES'] < time())
+				return false;
 
-                return true;
+			return true;
         }
 
         /**
@@ -103,13 +103,13 @@ class Session {
          */
         static protected function preventHijacking() {
 	
-                if(!isset($_SESSION['finger']))
-                	return false;
+			if(!isset($_SESSION['finger']))
+				return false;
 
-                if($_SESSION['finger'] != self::getFinger())
-                	return false;
+			if($_SESSION['finger'] != self::getFinger())
+				return false;
 
-                return true;
+			return true;
         }
 		
 		/**

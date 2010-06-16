@@ -1,7 +1,15 @@
 <?php
 $page = "sa";
 $page_title = "Site Adminisration";
-$auth_name = 'siteadmin';
+
+if(isset($_GET['t'])) {
+	if($_GET['t'] == 'perms' OR $_GET['t'] == 'perms-group' OR $_GET['t'] == 'perms-add')
+		$auth_name = 'edit_perms';
+} else {
+	$auth_name = 'siteadmin';
+	
+}
+
 ## Require the inc files and start up class ##
 require 'inc.php';
 
@@ -85,14 +93,22 @@ endif;
 if($_GET['t'] == 'perms-group') :
 	
 	$group_id = cleanvar($_GET['id']);
+	$group_id = (int) $group_id;
 	$is_perms_group = true; // helper var
 	
-	$group_info = $dbl->getGroupInfo($id);
+	$group_info = $dbl->getGroupInfo($group_id);
+
 	$group_name = $group_info[0];
 	$group_perms = $group_info[1];
 	$page = "perms";
 	$page_title = $group_name." Group";
 	
+
+endif;
+
+if($_GET['t'] == 'perms-add') :
+
+	$is_perms_group_add = true;
 
 endif;
 
@@ -211,42 +227,151 @@ EOD;
 	
 <?php elseif($is_perms_group) : ?>
 
-	<h3><?php echo $group_name; ?></h3>
-	
+	<a href="sa.php?t=perms" title="Go back to permissions management homepage" class="float-left">&laquo; Permissions</a><br />
+
 	<fieldset>
-		<legend>Permissions</legend>
+		<legend>Permissions for the <?php echo $group_name; ?> Group</legend>
 		
+		<form action="actions/perms-edit.php?gid=<?php echo $group_id; ?>" method="post">
+		
+		<table id="perms">
+		<tbody>
 		<?php
+			$perms_token = genFormToken('perm-group-edit');
+		
 			$perms = $dbl->getPermissions(); // gets a comprehensive list of Echelon groups
 		
 			$perms_list = array();
 			$perms_list = explode(",", $group_perms);
-
-			foreach($perms as $perm) :
-				$p_id = $perm['id'];
-				$p_name = $perm['name'];
-				$p_desc = $perm['desc'];
+			
+			$perms_count = count($perms);
+			$rows = ceil($perms_count/5) + 1;
+			$ir = 1;
+			$in = 0;
+			
+			while($ir < $rows) :
+			
+				echo '<tr>';
+			
+				$i = 1;
+			
+				while($i <= 5) :
 				
-				if(in_array($p_id, $perms_list)) {
-					$checked = 'checked="checked" ';
-				} else {
-					$checked =  NULL;
-				}
+					$p_id = $perms[$in]['id'];
+					$p_name = $perms[$in]['name'];
+					$p_desc = $perms[$in]['desc'];
+					
+					if(in_array($p_id, $perms_list))
+						$checked = 'checked="checked" ';
+					else
+						$checked =  NULL;
+					
+					if($p_name != 'pbss') {
+						$p_name_read = preg_replace('#_#', ' ', $p_name);
+						$p_name_read = ucwords($p_name_read);
+					} else
+						$p_name_read = 'PBSS';
+					
+					if($p_id != "") :
+						echo '<td class="perm-td"><label for="'. $p_name .'">' . $p_name_read . '</label><input id="'.$p_name.'" type="checkbox" name="' . $p_name . '" ' . $checked . ' />'; 
+						tooltip($p_desc);
+						echo '</td>';						
+					endif;
+					
+					$in++;
+					$i++;
 				
-				if($p_name != 'pbss') {
-					$p_name_read = preg_replace('#_#', ' ', $p_name);
-					$p_name_read = ucwords($p_name_read);
-				} else
-					$p_name_read = 'PBSS';
+				endwhile;
 				
-				echo '<span class="perm-check"><label>' . $p_name_read . '</label><input type="checkbox" name="' . $p_name . '" ' . $checked . '/>'; 
-				tooltip($p_desc);
-				echo '</span>';
+				echo '</tr>';
 				
-			endforeach;
+				$ir++;
+				
+			endwhile;
 		?>
+		</tbody>
+		</table>
+		
+			<br />
+			<input type="hidden" name="token" value="<?php echo $perms_token; ?>" />
+			<input type="submit" value="Save Changes" />
+		
+		</form>
 		
 	</fieldset>	
+	
+<?php elseif($is_perms_group_add) : ?>
+	
+	<fieldset>
+	
+	<legend>Add Echelon Group</legend>
+	
+	<form action="actions/perms-edit.php?t=add" method="post">
+	
+		<label for="g-name">Name of Group:</label><input type="text" name="name" id="g-name" />
+		
+		<fieldset class="none" id="perms-fs">
+		
+		<legend>Group Premissions</legend>
+		
+		<table id="perms">
+		<tbody>
+		<?php
+		
+			$perms = $dbl->getPermissions(); // gets a comprehensive list of Echelon groups
+			
+			$perms_count = count($perms);
+			$rows = ceil($perms_count/5) + 1;
+			$ir = 1;
+			$in = 0;
+			
+			while($ir < $rows) :
+			
+				echo '<tr>';
+			
+				$i = 1;
+			
+				while($i <= 5) :
+				
+					$p_id = $perms[$in]['id'];
+					$p_name = $perms[$in]['name'];
+					$p_desc = $perms[$in]['desc'];
+					
+					if($p_name != 'pbss') {
+						$p_name_read = preg_replace('#_#', ' ', $p_name);
+						$p_name_read = ucwords($p_name_read);
+					} else
+						$p_name_read = 'PBSS';
+					
+					if($p_id != "") :
+						echo '<td class="perm-td"><label for="'. $p_name .'">' . $p_name_read . '</label><input id="'.$p_name.'" type="checkbox" name="' . $p_name . '" />'; 
+						tooltip($p_desc);
+						echo '</td>';						
+					endif;
+					
+					$in++;
+					$i++;
+				
+				endwhile;
+				
+				echo '</tr>';
+				
+				$ir++;
+				
+			endwhile;
+		
+		?>
+		</tbody>
+		</table>
+		
+		</fieldset>
+		
+		<br />
+		<input type="submit" value="Add Group" />
+	
+	</form>
+	
+	</fieldset>
 	
 <?php else : ?>
 <a href="sa.php?t=perms" title="Manage Echelon User Permissions" class="float-right">User Permissions &raquo;</a><br />
@@ -389,7 +514,7 @@ EOD;
 	<?php
 		$rowcolor = 0;
 		$counter = 1;
-		$keys_data = $dbl->getKeys($time_expire);
+		$keys_data = $dbl->getKeys($key_expire);
 		
 		$num_rows = count($keys_data);
 		
@@ -478,7 +603,8 @@ EOD;
 	<?php
 		$bl_data = $dbl->getBL();
 		$num_rows = count($bl_data);
-		if($num_rows > 1) :
+		
+		if($num_rows > 0) :
 		
 			foreach($bl_data as $bl): // get data from query and loop
 				$id = $bl['id'];			

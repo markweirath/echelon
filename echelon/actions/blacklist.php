@@ -57,7 +57,7 @@ if($_POST['deact']) { // if this is a deactivation request
 	} // end foreach
 	
 	## Query Section ##
-	$bl = $dbl->addBlBan($ip, $reason, $mem->id);
+	$bl = $dbl->blacklist($ip, $reason, $mem->id);
 	if($bl == false) // if false
 		sendBack('That IP was not added to the blacklist was not added');
 	

@@ -5,6 +5,9 @@ $b3_conn = false;
 $page = 'login'; // do not remove needed to keep the toke in the session array and not be moved into the $tokens array
 require 'inc.php';
 
+if(!$mem->loggedIn()) // if not logged in
+	checkBL(); // check the blacklist for the users IP
+	
 ##### start script #####
 
 if($mem->loggedIn()) { ## if logged in users may skip this page
@@ -12,10 +15,10 @@ if($mem->loggedIn()) { ## if logged in users may skip this page
 	
 } elseif ($_POST['f-name']) { ## if this is a log in request 
 
-	// if over the maxium amount of wrong attempts, if on BL
-	// or if hack attempts detected, BL and remove user
+	// if over the maxium amount of wrong attempts,
+	// or if hack attempts detected, BL user IP and remove user
 	locked();
-	
+
 	// set sent vars
 	$username = cleanvar($_POST['f-name']); // strip and remove spaces from vars
 	$pw = cleanvar($_POST['f-pw']);
@@ -25,19 +28,19 @@ if($mem->loggedIn()) { ## if logged in users may skip this page
 	emptyInput($username, 'username');
 	emptyInput($pw, 'password');
 	
-	if(verifyFormTokenLogin('login') == false) { // verify token
+	if(!verifyFormTokenLogin('login')) : // verify token
 		wrong(1); // plus 1 to wrong counter
 		hack(1); // plus 1 to hack counter
 		writeLog('Login - Bad Token'); // make note in log
 		sendBack('Login Failed - Stop! Attack detected!!!');
 		exit;
-	}
+	endif;
 
 	// Building a whitelist array with keys which will send through the form, no others would be accepted later on
 	$whitelist = array('token','f-name','f-pw', 'f-game');
 
 	// Building an array with the $_POST-superglobal 
-	foreach ($_POST as $key=>$item) {
+	foreach ($_POST as $key=>$item) :
 		if(!in_array($key, $whitelist)) {
 			wrong(1); // plus 1 to wrong counter
 			hack(1); // plus 1 to hack counter
@@ -45,7 +48,7 @@ if($mem->loggedIn()) { ## if logged in users may skip this page
 			sendBack('Login Failed - Stop! Attack detected');
 			exit;
 		}
-	} // end foreach
+	endforeach;
 	
 		
 	if(!is_numeric($game_input) && !$no_games) {
@@ -73,13 +76,12 @@ if($mem->loggedIn()) { ## if logged in users may skip this page
 	$hash_pw = genPW($pw, $salt); // hash the inputted pw with the returned salt
 
 	## Check login info off db records ##
-	$results = $dbl->login($username, $hash_pw); // send login info
-	if(is_array($results)) { // if true // for true is returned in an array
-		$login_success = true;
-	} else {
-		$login_success = false;
-	}
+	$results = $dbl->login($username, $hash_pw); // check recieved information off the DB records
 	
+	if(is_array($results)) // if true // for true is returned in an array
+		$login_success = true;
+	else
+		$login_success = false;	
 	
 	if(!$login_success) { // send back if user login failed
 		wrong(1); // add one to wrong counter

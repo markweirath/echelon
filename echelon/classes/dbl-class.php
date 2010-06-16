@@ -4,7 +4,7 @@ if (!empty($_SERVER['SCRIPT_FILENAME']) && 'dbl-class.php' == basename($_SERVER[
 
 /**
  * class DBL
- * desc: File to deal with all connections/queries to the Echelon Database 
+ * desc: File to deal with the connection and all queries to the Echelon Database 
  */ 
 
 class DbL {
@@ -28,11 +28,10 @@ class DbL {
 			
 		} catch (Exception $e) {
 		
-			if($this->install) { // if this is an install test return message
+			if($this->install) // if this is an install test return message
 				$this->install_error = $e->getMessage();
-			} else {
+			else
 				die($e->getMessage());
-			} 
 			
 		} // end try/catch
 		
@@ -67,7 +66,8 @@ class DbL {
 
 			throw new Exception ($error_msg);
 		endif;
-    }
+		
+    } // end connect
 	
 	/**
      * __destruct : Destructor for class, closes the MySQL connection
@@ -416,16 +416,33 @@ class DbL {
 	 *
 	 * @return array
 	 */
-	function getPermissions() {
-		$query = "SELECT * FROM ech_permissions ORDER BY id DESC";
+	function getPermissions($get_desc = true) {
+	
+		if($get_desc)
+			$query = "SELECT * FROM ech_permissions";
+		else
+			$query = "SELECT id, name FROM ech_permissions";
+			
+		$query .= " ORDER BY id ASC";
+			
 		$results = $this->mysql->query($query);
 		
-		while($row = $results->fetch_object()) : // get results		
-			$perms[] = array(
-				'id' => $row->id,
-				'name' => $row->name,
-				'desc' => $row->description
-			);
+		while($row = $results->fetch_object()) : // get results
+		
+			if($get_desc) : // if get desc then return desc in results
+				$perms[] = array(
+					'id' => $row->id,
+					'name' => $row->name,
+					'desc' => $row->description
+				);
+				
+			else : // else dont return the desc of the perm
+				$perms[] = array(
+					'id' => $row->id,
+					'name' => $row->name,
+				);
+			endif;
+			
 		endwhile;
 		return $perms;
 	}
@@ -485,24 +502,15 @@ class DbL {
 	 */
 	function checkBlacklist($ip) {
 
-		$query = "SELECT ip FROM ech_blacklist WHERE ip = ? AND active = 1";
+		$query = "SELECT id FROM ech_blacklist WHERE ip = ? AND active = 1 LIMIT 1";
 		$stmt = $this->mysql->prepare($query) or die('Database error');
 		$stmt->bind_param('s', $ip);
 		$stmt->execute();
+
+		$stmt->store_result();
 		
-		$stmt->store_result(); // store results
-		$stmt->bind_result($bl_ip); // store results
-		
-		if($stmt->num_rows): // if there is a blacklist
-		
-			while($stmt->fetch()) :
-				if($ip == $bl_ip) // if ip mathces one on BL return true
-					return true; // IP NOT on BL
-			endwhile; // end loop through list
-			
-		else: // if no ban list just return false
-			return false; // theres no blacklist so no one can be on it	
-		endif;
+		if($stmt->num_rows > 0)
+			return true;
 		
 		$stmt->free_result();
 		$stmt->close();
@@ -515,13 +523,15 @@ class DbL {
 	 *
 	 * @param string $ip - IP address you wish to ban
 	 * @param string $comment [optional] - Comment about reason for ban
+	 * @param int $admin - id of the admin who added the ban (0 if auto added)
 	 */
-	function blacklist($ip, $comment = 'Auto Added Ban') { // add an Ip to the blacklist
+	function blacklist($ip, $comment = 'Auto Added Ban', $admin = 0) { // add an Ip to the blacklist
 		$comment = cleanvar($comment);
+		$time = time();
 		// id, ip, active, reason, time_add, admin_id
-		$query = "INSERT INTO ech_blacklist VALUES(NULL, ?, 1, ?, UNIX_TIMESTAMP(), 0)";
+		$query = "INSERT INTO ech_blacklist VALUES(NULL, ?, 1, ?, ?, ?)";
 		$stmt = $this->mysql->prepare($query) or die('Database error');
-		$stmt->bind_param('ss', $ip, $comment);
+		$stmt->bind_param('ssii', $ip, $comment, $time, $admin);
 		$stmt->execute(); // run query
 		
 		$stmt->close();
@@ -556,29 +566,6 @@ class DbL {
 		$stmt->close();
 		return $bls;
 		
-	}
-	
-	/**
-	 * This function adds a new ban to the BL thats is added by a user
-	 *
-	 * @param string $ip - IP address to ban
-	 * @param string $reason - reason to ban user
-	 * @param int $admin - id of the admin who banned the user
-	 * @return true/false
-	 */
-	function addBlBan($ip, $reason, $admin) {
-		$time = time();
-							// id, ip, active, reason, time_add, admin_id
-		$query = "INSERT INTO ech_blacklist VALUES(NULL, ?, 1, ?, ?, ?)";
-		$stmt = $this->mysql->prepare($query) or die('Database Error');
-		$stmt->bind_param('ssii', $ip, $reason, $time, $admin);
-		$stmt->execute(); // run query
-		if($stmt->affected_rows)
-			return true;
-		else
-			return false;
-		
-		$stmt->close(); // close connection
 	}
 	
 	/**
@@ -1107,18 +1094,18 @@ class DbL {
 	
 	}
 	
-	function getGroupInfo($id) {
+	function getGroupInfo($group_id) {
 		$query = "SELECT display, premissions FROM ech_groups WHERE id = ? LIMIT 1";
-		$stmt = $this->mysql->prepare($query);
-		$stmt->bind_param('i', $id);
+		$stmt = $this->mysql->prepare($query) or die('DB Error');
+		$stmt->bind_param('i', $group_id);
 		$stmt->execute();
 		
 		$stmt->bind_result($display, $perms);
-		
-		$info = array($display, $perms);
+		$stmt->fetch();
+		$result = array($display, $perms);
 		
 		$stmt->close();
-		return $info;
+		return $result;
 	}
 	
 	function getEchLogs($client_id) {
@@ -1153,7 +1140,7 @@ class DbL {
 		$stmt->bind_param('ssii', $type, $comment, $cid, $user_id);
 		$stmt->execute();
 		
-		if($stmt->affected_rows )
+		if($stmt->affected_rows)
 			return true;
 		else
 			return false;
@@ -1172,6 +1159,19 @@ class DbL {
 			);
 		endwhile;
 		return $links;
+	
+	}
+	
+	function setGroupPerms($group_id, $perms) {
+		$query = "UPDATE ech_groups SET premissions = ? WHERE id = ? LIMIT 1";
+		$stmt = $this->mysql->prepare($query) or die('DB Error');
+		$stmt->bind_param('si', $perms, $group_id);
+		$stmt->execute();
+		
+		if($stmt->affected_rows)
+			return true;
+		else
+			return false;
 	
 	}
 

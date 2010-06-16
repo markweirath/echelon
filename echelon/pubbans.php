@@ -7,14 +7,14 @@ $pagination = true; // this page requires the pagination part of the footer
 $query_normal = true;
 require 'inc.php';
 
+checkBL(); // check the blacklist for the users IP (this is needed because this is a public page)
+
 ##########################
 ######## Varibles ########
 
 ## Default Vars ##
 $orderby = "time_add";
 $order = "desc";
-
-//$limit_rows = 75; // limit_rows can be set by the DB settings // uncomment this line to manually overide the number of table rows per page
 
 ## Sorts requests vars ##
 if($_GET['ob'])
@@ -55,114 +55,116 @@ require 'inc/header.php';
 if(!$db->error) :
 ?>
 
-	<table summary="A list of <?php echo $limit_rows; ?> active tempbans/bans">
-		<caption>Public Ban List<small>There are <strong><?php echo $total_rows; ?></strong> active bans/tempbans for 
-				<form action="pubbans.php" method="get" id="pubbans-form" class="sm-f-select">
-					<select name="game" onchange="this.form.submit()">
-						<?php
-							$games_list = $dbl->getGamesList();
-							$i = 0;
-							$count = count($games_list);
-							$count--; // minus 1
-							while($i <= $count) :
-								
-								if($game == $games_list[$i]['id'])
-									$selected = 'selected="selected"';
-								else
-									$selected = NULL;
-								
-								echo '<option value="'. $games_list[$i]['id'] .'" '. $selected .'>'. $games_list[$i]['name'] .'</option>';
-								
-								$i++;
-							endwhile;
-						?>
-					</select>
-				</form>
-			</small>
-		</caption>
-	<thead>
-		<tr>
-			<th>Client
-				<?php linkSort('name', 'Name'); ?>
-			</th>
-			<th>Ban-id</th>
-			<th>Type</th>
-			<th>Added
-				<?php linkSort('time_add', 'time the penalty was added'); ?>
-			</th>
-			<th>Duration</th>
-			<th>Expires
-				<?php linkSort('time_expire', 'time the penalty expires'); ?>
-			</th>
-			<th>Reason</th>
-		</tr>
-	</thead>
-	<tfoot>
-		<tr>
-			<th colspan="7"></th>
-		</tr>
-	</tfoot>
-	<tbody>
-	<?php
-	$rowcolor = 0;
-
-	 if($num_rows > 0) { // query contains stuff
-
-		foreach($data_set as $pen): // get data from query and loop
-			$ban_id = $pen['ban_id'];
-			$type = $pen['type'];
-			$time_add = $pen['time_add'];
-			$time_expire = $pen['time_expire'];
-			$reason = tableClean($pen['reason']);
-			$client_id = $pen['client_id'];
-			$client_name = tableClean($pen['name']);
-			$duration = $pen['duration'];
-
-			## Tidt data to make more human friendly
-			if($time_expire != '-1')
-				$duration_read = time_duration($duration*60); // all penalty durations are stored in minutes, so multiple by 60 in order to get seconds
-			else
-				$duration_read = '';
-
-			$time_expire_read = timeExpirePen($time_expire);
-			$time_add_read = date($tformat, $time_add);
-			$reason_read = removeColorCode($reason);
-			
-			if($mem->loggedIn())
-				$client_name_read = clientLink($client_name, $client_id);
-			else
-				$client_name_read = $client_name;
+<table summary="A list of <?php echo $limit_rows; ?> active tempbans/bans">
+	<caption>Public Ban List<small>There are <strong><?php echo $total_rows; ?></strong> active bans/tempbans for 
+		<form action="pubbans.php" method="get" id="pubbans-form" class="sm-f-select">
+			<select name="game" onchange="this.form.submit()">
+				<?php
 				
-			## Row color
-			$rowcolor = 1 - $rowcolor;	
-			if($rowcolor == 0)
-				$odd_even = "odd";
-			else 
-				$odd_even = "even";
+				$games_list = $dbl->getGamesList();
+				$i = 0;
+				$count = count($games_list);
+				$count--; // minus 1
+				while($i <= $count) :
+					
+					if($game == $games_list[$i]['id'])
+						$selected = 'selected="selected"';
+					else
+						$selected = NULL;
+					
+					echo '<option value="'. $games_list[$i]['id'] .'" '. $selected .'>'. $games_list[$i]['name'] .'</option>';
+					
+					$i++;
+				endwhile;
+				
+				?>
+			</select>
+		</form>
+		</small>
+	</caption>
+<thead>
+	<tr>
+		<th>Client
+			<?php linkSort('name', 'Name'); ?>
+		</th>
+		<th>Ban-id</th>
+		<th>Type</th>
+		<th>Added
+			<?php linkSort('time_add', 'time the penalty was added'); ?>
+		</th>
+		<th>Duration</th>
+		<th>Expires
+			<?php linkSort('time_expire', 'time the penalty expires'); ?>
+		</th>
+		<th>Reason</th>
+	</tr>
+</thead>
+<tfoot>
+	<tr>
+		<th colspan="7"></th>
+	</tr>
+</tfoot>
+<tbody>
+<?php
+$rowcolor = 0;
 
-			// setup heredoc (table data)			
-			$data = <<<EOD
-			<tr class="$odd_even">
-				<td><strong>$client_name_read</strong></td>
-				<td>$ban_id</td>
-				<td>$type</td>
-				<td>$time_add_read</td>
-				<td>$duration_read</td>
-				<td>$time_expire_read</td>
-				<td>$reason_read</td>
-			</tr>
+ if($num_rows > 0) { // query contains stuff
+
+	foreach($data_set as $pen): // get data from query and loop
+		$ban_id = $pen['ban_id'];
+		$type = $pen['type'];
+		$time_add = $pen['time_add'];
+		$time_expire = $pen['time_expire'];
+		$reason = tableClean($pen['reason']);
+		$client_id = $pen['client_id'];
+		$client_name = tableClean($pen['name']);
+		$duration = $pen['duration'];
+
+		## Tidt data to make more human friendly
+		if($time_expire != '-1')
+			$duration_read = time_duration($duration*60); // all penalty durations are stored in minutes, so multiple by 60 in order to get seconds
+		else
+			$duration_read = '';
+
+		$time_expire_read = timeExpirePen($time_expire);
+		$time_add_read = date($tformat, $time_add);
+		$reason_read = removeColorCode($reason);
+		
+		if($mem->loggedIn())
+			$client_name_read = clientLink($client_name, $client_id);
+		else
+			$client_name_read = $client_name;
+			
+		## Row color
+		$rowcolor = 1 - $rowcolor;	
+		if($rowcolor == 0)
+			$odd_even = "odd";
+		else 
+			$odd_even = "even";
+
+		// setup heredoc (table data)			
+		$data = <<<EOD
+		<tr class="$odd_even">
+			<td><strong>$client_name_read</strong></td>
+			<td>$ban_id</td>
+			<td>$type</td>
+			<td>$time_add_read</td>
+			<td>$duration_read</td>
+			<td>$time_expire_read</td>
+			<td>$reason_read</td>
+		</tr>
 EOD;
 
-			echo $data;
-		endforeach;
-		
-		$no_data = false;
-	} else {
-		$no_data = true;
-		echo '<tr class="odd"><td colspan="7">There no active bans in the B3 Database</td></tr>';
-	} // end if query contains
-	?>
-	</tbody>
+		echo $data;
+	endforeach;
+	
+	$no_data = false;
+} else {
+	$no_data = true;
+	echo '<tr class="odd"><td colspan="7">There no active bans in the B3 Database</td></tr>';
+} // end if query contains
+?>
+</tbody>
 </table>
 
 <?php 
