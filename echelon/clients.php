@@ -79,11 +79,10 @@ else : // IF NOT SEARCH
 endif; // end if search request
 
 ## Append this section to all queries since it is the same for all ##
-if($order == "DESC") {
+if($order == "DESC")
 	$query .= " DESC"; // set to desc 
-} else {
+else
 	$query .= " ASC"; // default to ASC if nothing adds up
-}
 
 $query_limit = sprintf("%s LIMIT %s, %s", $query, $start_row, $limit_rows); // add limit section
 
@@ -165,9 +164,7 @@ if(!$db->error) :
 	</tfoot>
 	<tbody>
 	<?php
-	$rowcolor = 0;
-
-	 if($num_rows > 0) { // query contains stuff
+	if($num_rows > 0) : // query contains stuff
 	 
 		foreach($data_set as $client): // get data from query and loop
 			$cid = $client['id'];
@@ -179,19 +176,15 @@ if(!$db->error) :
 			
 			$time_add = date($tformat, $time_add);
 			$time_edit = date($tformat, $time_edit);
-			$rowcolor = 1 - $rowcolor;
 			
-			if($rowcolor == 0)
-				$odd_even = "odd";
-			else 
-				$odd_even = "even";
+			$alter = alter();
 				
 			$client = clientLink($name, $cid);
 			
 			
 			// setup heredoc (table data)			
 			$data = <<<EOD
-			<tr class="$odd_even">
+			<tr class="$alter">
 				<td><strong>$client</strong></td>
 				<td>@$cid</td>
 				<td>$level</td>
@@ -203,7 +196,7 @@ EOD;
 
 		echo $data;
 		endforeach;
-	} else {
+	else :
 		$no_data = true;
 	
 		echo '<tr class="odd"><td colspan="6">';
@@ -212,7 +205,7 @@ EOD;
 		else
 			echo 'Your search for <strong>'.$search_string.'</strong> has returned no results.';
 		echo '</td></tr>';
-	} // end if query contains
+	endif; // no records
 	?>
 	</tbody>
 </table>

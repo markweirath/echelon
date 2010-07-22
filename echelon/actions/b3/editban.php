@@ -41,6 +41,9 @@ if($pb_ban == 'on') {
 // check for empty reason
 emptyInput($reason, 'ban reason');
 
+if( (!isID($ban_id) OR (!isID($cid) )
+	sendBack('Some of the information sent by you is invalid, the ban was not edited');
+
 ## Query Section ##
 $query = "UPDATE penalties SET type = ?, duration = ?, time_edit = UNIX_TIMESTAMP(), time_expire = ?, reason = ? WHERE id = ? LIMIT 1";
 $stmt = $db->mysql->prepare($query) or die('DB Error');
@@ -78,7 +81,7 @@ if($type == 'Ban') :
 
 endif;
 
-// set common vars	
+// set comment for the edit ban action
 $comment = 'A ban for this user was edited';
 
 ## Query ##

@@ -35,7 +35,7 @@ emptyInput($old_level, 'data not sent');
 emptyInput($password, 'current password');
 
 ## Check if the client_id is numeric ##
-if(!is_numeric($client_id))
+if(!isID($client_id))
 	sendBack('Invalid data sent, greeting not changed');
 
 ## Do some mojo with the B3 group information ##
@@ -62,11 +62,10 @@ endif;
 $level_name = $b3_groups_name[$level];
 $old_level_name = $b3_groups_name[$old_level];
 
-if(!$is_mask) {
+if(!$is_mask)
 	$comment = 'User level changed from '. $old_level_name .' to '. $level_name;
-} else {
+else
 	$comment = 'Mask level changed from '. $old_level_name .' to '. $level_name;
-}
 
 $dbl->addEchLog('Level Change', $comment, $client_id, $mem->id);
 
@@ -75,6 +74,7 @@ if(!$is_mask)
 	$query = "UPDATE clients SET group_bits = ? WHERE id = ? LIMIT 1";
 else
 	$query = "UPDATE clients SET mask_level = ? WHERE id = ? LIMIT 1";
+	
 $stmt = $db->mysql->prepare($query) or die('Database Error: '.$db->mysql->error);
 $stmt->bind_param('ii', $level, $client_id);
 $stmt->execute();

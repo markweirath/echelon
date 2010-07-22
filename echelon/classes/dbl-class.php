@@ -1108,20 +1108,30 @@ class DbL {
 		return $result;
 	}
 	
-	function getEchLogs($client_id) {
-		$query = "SELECT log.id, log.type, log.msg, log.user_id, u.display, log.time_add FROM ech_logs log LEFT JOIN ech_users u ON log.user_id = u.id WHERE client_id = ? ORDER BY log.time_add DESC";
+	function getEchLogs($id, $type = 'client') {
+		$query = "SELECT log.id, log.type, log.msg, log.client_id, log.user_id, u.display, log.time_add 
+				  FROM ech_logs log LEFT JOIN ech_users u ON log.user_id = u.id ";
+		
+		if($type == 'admin')
+			$query .= "WHERE user_id = ?";
+		else
+			$query .= "WHERE client_id = ?";
+			
+		$query .= " ORDER BY log.time_add DESC";
+			
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
-		$stmt->bind_param('i', $client_id);
+		$stmt->bind_param('i', $id);
 		$stmt->execute();
 		
 		$stmt->store_result();
-		$stmt->bind_result($id, $type, $msg, $user_id, $user_name, $time_add);
+		$stmt->bind_result($id, $type, $msg, $client_id, $user_id, $user_name, $time_add);
 		
 		while($stmt->fetch()) :
 			$ech_logs[] = array(
 				'id' => $id,
 				'type' => $type,
 				'msg' => $msg,
+				'client_id' => $client_id,
 				'user_id' => $user_id,
 				'user_name' => $user_name,
 				'time_add' => $time_add

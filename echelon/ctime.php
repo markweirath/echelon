@@ -100,8 +100,6 @@ if(!$db->error) :
 	</tfoot>
 	<tbody>
 	<?php
-	$rowcolor = 0;
-
 	if($num_rows > 0) { // query contains stuff
 	
 		$i = $start_row+1; // counter is the start row
@@ -117,17 +115,13 @@ if(!$db->error) :
 			$czas = time_duration($czas, 'yMwdhm');
 			
 			## Row color
-			$rowcolor = 1 - $rowcolor;	
-			if($rowcolor == 0)
-				$odd_even = "odd";
-			else 
-				$odd_even = "even";
+			$alter = alter();
 				
 			$client = clientLink($name, $cid);
 	
 			// setup heredoc (table data)			
 			$data = <<<EOD
-			<tr class="$odd_even">
+			<tr class="$alter">
 				<td>$i</td>
 				<td>$czas</td>
 				<td><strong>$client</strong></td>

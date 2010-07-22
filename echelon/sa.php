@@ -5,6 +5,10 @@ $page_title = "Site Adminisration";
 if(isset($_GET['t'])) {
 	if($_GET['t'] == 'perms' OR $_GET['t'] == 'perms-group' OR $_GET['t'] == 'perms-add')
 		$auth_name = 'edit_perms';
+		
+	elseif($_GET['t'] == 'user')
+		$auth_name = 'siteadmin';
+		
 } else {
 	$auth_name = 'siteadmin';
 	
@@ -16,7 +20,7 @@ require 'inc.php';
 // If this is a view a user in more detail page
 if($_GET['t'] == 'user') :
 	$id = $_GET['id'];
-	if(!is_numeric($id)) {
+	if(!isID($id)) {
 		set_error('Invalid data sent. Request aborted.');
 		send('sa.php');
 	}
@@ -24,7 +28,7 @@ if($_GET['t'] == 'user') :
 	## Get a users details
 	$result = $dbl->getUserDetails($id);
 	if(!$result) { // there was no user matching the sent id // throw error and sedn to SA page
-		set_error('No user matches that id.');
+		set_error("That user doesn't exist, please select a real user");
 		send('sa.php');
 		exit;
 	} else {
@@ -39,11 +43,8 @@ if($_GET['t'] == 'user') :
 		$last_seen = $result[7];
 		$admin_name = $result[8];
 	}
-
-	if($admin_name == '') { // if the admin_id matches no user then set name as unknown
-		$admin_name = 'Unknown';
-		$admin_id = 0;	
-	}
+	
+	$ech_logs = $dbl->getEchLogs($admin_id, 'admin'); // get the echelon logs created by this user
 
 	$is_view_user = true;
 endif; // end 
@@ -51,7 +52,7 @@ endif; // end
 // if this is an edit user page
 if($_GET['t'] == 'edituser') :
 	$uid = $_GET['id'];
-	if(!is_numeric($uid)) {
+	if(!isID($uid)) {
 		set_error('Invalid data sent. Request aborted.');
 		send('sa.php');
 	}
@@ -93,7 +94,7 @@ endif;
 if($_GET['t'] == 'perms-group') :
 	
 	$group_id = cleanvar($_GET['id']);
-	$group_id = (int) $group_id;
+	$group_id = (int)$group_id;
 	$is_perms_group = true; // helper var
 	
 	$group_info = $dbl->getGroupInfo($group_id);
@@ -152,17 +153,54 @@ if($is_edit_user) : ?>
 
 <?php elseif($is_view_user) : ?>
 	<a href="sa.php" title="Go back to the site admin page">&laquo; Go Back</a>
-	<a href="sa.php?t=edituser&amp;id=<?php echo $id; ?>" title="Go back to the site admin page" class="float-right">Edit this user &raquo;</a>
-	<fieldset>
-		<legend>User: <?php echo $display; ?></legend>
-			<p>Username: <?php echo $username; ?></p>
-			<p>Display Name: <?php echo $display; ?></p>
-			<p>Email: <?php echo emailLink($email, $display); ?></p>
-			<p>IP Address: <?php echo ipLink($ip); ?></p>
-			<p>First Seen: <?php echo date($tformat, $first_seen); ?></p>
-			<p>Last Seen: <?php echo date($tformat, $last_seen); ?></p>
-			<p>Creator: <?php echo echUserLink($admin_id, $admin_name); ?></p>
-	</fieldset>
+	<span class="float-right"><span class="float-left"><?php echo delUserLink($id, $token_del)?></span><?php echo editUserLink($id, $name); ?></span>
+	
+	<table class="user-table">
+		<caption><img src="images/cd-page-icon.png" width="32" height="32" alt="" /><?php echo $display; ?><small>Everything Echelon knows about <?php echo $display; ?></small></caption>
+		<tbody>
+			<tr>
+				<th>Name</th>
+					<td><?php echo  tableClean($username); ?></td>
+				<th>Display Name</th>
+					<td><?php echo $display; ?></td>
+			</tr>
+			<tr>
+				<th>Email</th>
+					<td><?php echo emailLink($email, $display); ?></td>
+				<th>IP Address</th>
+					<td><?php echo ipLink($ip); ?></td>
+			</tr>
+			<tr>
+				<th>First Seen</th>
+					<td><?php echo date($tformat, $first_seen); ?></td>
+				<th>Last Seen</th>
+					<td><?php echo date($tformat, $last_seen); ?></td>
+			</tr>
+			<tr>
+				<th>Creator</th>
+					<td colspan="3"><?php echo echUserLink($admin_id, $admin_name); ?></td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<table>
+		<caption>Echelon Logs<small>created by <?php echo $display; ?></caption>
+		<thead>
+			<tr>
+				<th>id</th>
+				<th>Type</th>
+				<th>Message</th>
+				<th>Time Added</th>
+				<th>Client</th>
+			</tr>
+		</thead>
+		<tfoot>
+			<tr><th colspan="5"></th></tr>
+		</tfoot>
+		<tbody>
+			<?php displayEchLog($ech_logs, 'admin'); ?>
+		</tbody>
+	</table>
 	
 <?php elseif($is_permissions) : ?>
 	
@@ -196,17 +234,12 @@ if($is_edit_user) : ?>
 						$id = $group['id'];
 						$name = $group['display'];
 						
-						$rowcolor = 1 - $rowcolor;
-						if($rowcolor == 0)
-							$odd_even = "odd";
-						else 
-							$odd_even = "even";
-							
+						$alter = alter();
 						$name_link = echGroupLink($id, $name);
 						
 						// setup heredoc (table data)			
 						$data = <<<EOD
-						<tr class="$odd_even">
+						<tr class="$alter">
 							<td>$id</td>
 							<td><strong>$name_link</strong></td>
 							<td></td>
@@ -403,7 +436,6 @@ EOD;
 	</tfoot>
 	<tbody>
 	<?php
-		$rowcolor = 0;
 		$users_data = $dbl->getUsers();
 		foreach($users_data as $users): // get data from query and loop
 			$id = $users['id'];
@@ -423,20 +455,16 @@ EOD;
 			if(GRAVATAR) // if use gravatar
 				$grav = '<td>'.$mem->getGravatar($email).'</td>';
 			
-			$rowcolor = 1 - $rowcolor;
-			
-			if($rowcolor == 0)
-				$odd_even = "odd";
-			else 
-				$odd_even = "even";
-			
+			$alter = alter();
 			$token_del = genFormToken('del'.$id);
-			
 			$name_link = echUserLink($id, $name);
+			$user_img_link = echUserLink($id, '<img src="images/user_view.png" alt="view" />', $name);
+			$user_edit_link = editUserLink($id, $name);
+			$user_del_link = delUserLink($id, $token_del);
 			
 			// setup heredoc (table data)			
 			$data = <<<EOD
-			<tr class="$odd_even">
+			<tr class="$alter">
 				$grav
 				<td>$id</td>
 				<td><strong>$name_link</strong></td>
@@ -446,14 +474,9 @@ EOD;
 				<td><em>$time_add</em></td>
 				<td><em>$time_edit</em></td>
 				<td class="actions">
-					<form action="actions/user-edit.php" method="post" id="user-del">
-						<input type="hidden" value="$token_del" name="token" />
-						<input type="hidden" value="$id" name="id" />
-						<input type="hidden" value="del" name="t" />
-						<input class="harddel" type="image" src="images/user_del.png" alt="Delete" title="Delete this user forever" />
-					</form>
-					<a href="sa.php?t=edituser&amp;id=$id" title="Edit $name"><img src="images/user_edit.png" alt="edit" /></a>
-					<a href="sa.php?t=user&amp;id=$id" title="View $name in more detail"><img src="images/user_view.png" alt="view" /></a>
+					$user_del_link
+					$user_edit_link
+					$user_img_link
 				</td>
 			</tr>
 EOD;
@@ -512,7 +535,6 @@ EOD;
 	</tfoot>
 	<tbody>
 	<?php
-		$rowcolor = 0;
 		$counter = 1;
 		$keys_data = $dbl->getKeys($key_expire);
 		
@@ -531,12 +553,7 @@ EOD;
 				$time_add = date($tformat, $time_add);
 				$email = emailLink($email, '');
 				$admin_link = echUserLink($admin_id, $admin);
-				$rowcolor = 1 - $rowcolor;
-				
-				if($rowcolor == 0)
-					$odd_even = "odd";
-				else 
-					$odd_even = "even";
+				$alter = alter();
 				
 				$token_keydel = genFormToken('keydel'.$reg_key);
 				
@@ -547,7 +564,7 @@ EOD;
 				
 				// setup heredoc (table data)			
 				$data = <<<EOD
-				<tr class="$odd_even">
+				<tr class="$alter">
 					<td class="key">$reg_key</td>
 					<td>$email</td>
 					<td>$admin_link</td>
@@ -617,11 +634,7 @@ EOD;
 				$time_add = date($tformat, $time_add);
 				$ip = ipLink($ip);		
 					
-				$rowcolor = 1 - $rowcolor;
-				if($rowcolor == 0)
-					$odd_even = "odd";
-				else 
-					$odd_even = "even";
+				$alter = alter();
 					
 				$token = genFormToken('act'.$id);
 
@@ -634,7 +647,7 @@ EOD;
 						</form>';
 				} else {
 					$active = 'No';
-					$odd_even .= " inact";
+					$alter .= " inact";
 					$actions = '<form action="actions/blacklist.php" method="post">
 						<input type="hidden" name="id" value="'.$id.'" />
 						<input type="hidden" name="token" value="'.$token.'" />
@@ -649,7 +662,7 @@ EOD;
 				
 				// setup heredoc (table data)			
 				$data = <<<EOD
-				<tr class="$odd_even">
+				<tr class="$alter">
 					<td>$id</td>
 					<td><strong>$ip</strong></td>
 					<td>$active</td>

@@ -340,6 +340,11 @@ label.uname:hover { color: #bbb; }
 
 .perm-check  { padding: 0 20px 0 0; }
 
+.user-table { margin-bottom: 25px; border: none; }
+.user-table tbody tr { border-bottom: 1px solid #F4F4F4; }
+.user-table tbody tr th { width: 15%; background: none; border: none; text-align: right; }
+.user-table tbody tr td { width: 35%; border: none; }
+
 /* Error Styling */
 .error-msg { margin: 70px 20px; width: 46%; font-size: 18px; float: right; padding: 20px; border: 2px solid #ae2525; -moz-border-radius: 5px; -webkit-border-radius: 5px; }
 

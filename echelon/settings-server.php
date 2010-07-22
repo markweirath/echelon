@@ -212,8 +212,6 @@ if($page_type == 'add') : ?>
 	</tfoot>
 	<tbody>
 		<?php
-		$rowcolor = 0;
-
 		if($num_rows > 0) : // query contains stuff
 		 
 			foreach($servers as $server): // get data from query and spit it out
@@ -225,11 +223,7 @@ if($page_type == 'add') : ?>
 				$game_name = $server['game_name'];
 				
 				## row color
-				$rowcolor = 1 - $rowcolor;	
-				if($rowcolor == 0)
-					$odd_even = "odd";
-				else 
-					$odd_even = "even";
+				$alter = alter();
 				
 				## Make it human readable
 				if($pb_active == 1)
@@ -246,7 +240,7 @@ if($page_type == 'add') : ?>
 					$warn = '';
 			
 				$table = <<<EOD
-				<tr class="$odd_even">
+				<tr class="$alter">
 					<td>$id</td>
 					<td><strong><a href="settings-server.php?t=srv&amp;id=$id">$name</a></strong></td>
 					<td>$ip_read</td>

@@ -87,9 +87,8 @@ if(!$db->error) :
 	</tfoot>
 	<tbody>
 	<?php
-	$rowcolor = 0;
-
-	 if($num_rows > 0) { // query contains stuff
+	
+	if($num_rows > 0) : // query contains stuff
 	 
 		foreach($data_set as $data): // get data from query and loop
 			$cid = $data['id'];
@@ -100,18 +99,15 @@ if(!$db->error) :
 			
 			## Change to human readable		
 			$time_edit_read = date($tformat, $time_edit); // this must be after the time_diff
+			$client_link = clientLink($name, $cid);
 			
 			## row color
-			$rowcolor = 1 - $rowcolor;	
-			if($rowcolor == 0)
-				$odd_even = "odd";
-			else 
-				$odd_even = "even";
+			$alter = alter();
 	
 			// setup heredoc (table data)			
 			$data = <<<EOD
-			<tr class="$odd_even">
-				<td><strong><a href="clientdetails.php?id=$cid" title="View everything B3 knows about $name">$name</a></strong></td>
+			<tr class="$alter">
+				<td><strong>$client_link</strong></td>
 				<td>$level</td>
 				<td>@$cid</td>
 				<td>$connections</td>
@@ -123,10 +119,10 @@ EOD;
 		endforeach;
 		
 		$no_data = false;
-	} else {
+	else:
 		$no_data = true;
 		echo '<tr class="odd"><td colspan="5">There are no registered admins</td></tr>';
-	} // end if query contains
+	endif; // no records
 	?>
 	</tbody>
 </table>

@@ -79,9 +79,7 @@ if(!$db->error) :
 	</tfoot>
 	<tbody>
 	<?php
-	$rowcolor = 0;
-
-	 if($num_rows > 0) { // query contains stuff
+	if($num_rows > 0) : // query contains stuff
 
 		foreach($data_set as $data): // get data from query and loop
 			$time_add = $data['time_add'];
@@ -99,30 +97,28 @@ if(!$db->error) :
 
 			$time_add_read = date($tformat, $time_add);
 			$reason_read = removeColorCode($reason);
-
+			$client_link = clientLink($client_name, $client_id);
+			$admin_link = clientLink($admin_name, $admin_id);
+			
 			## Row color
-			$rowcolor = 1 - $rowcolor;	
-			if($rowcolor == 0)
-				$odd_even = "odd";
-			else 
-				$odd_even = "even";
+			$alter = alter();
 
 			// setup heredoc (table data)			
 			$data = <<<EOD
-			<tr class="$odd_even">
-				<td><strong><a href="clientdetails.php?id=$client_id" title="View more information on $client_name">$client_name</a></strong></td>
+			<tr class="$alter">
+				<td><strong>$client_link</strong></td>
 				<td>$time_add_read</td>
 				<td>$reason_read</td>
-				<td><strong><a href="clientdetails.php?id=$admin_id" title="View more information on $admin_name">$admin_name</a></strong></td>
+				<td><strong>$admin_link</strong></td>
 			</tr>
 EOD;
 
 		echo $data;
 		endforeach;
-	} else {
+	else:
 		$no_data = true;
 		echo '<tr class="odd"><td colspan="4">There are no kicks in the database</td></tr>';
-	} // end if query contains
+	endif; // no records
 	?>
 	</tbody>
 </table>

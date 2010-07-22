@@ -21,7 +21,7 @@ emptyInput($comment, 'comment');
 emptyInput($cid, 'client id not sent');
 
 ## Check sent client_id is a number ##
-if(!is_numeric($cid))
+if(!isID($cid))
 	sendBack('Invalid data sent, ban not added');
 
 ## Query ##

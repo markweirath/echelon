@@ -15,7 +15,7 @@ if($_POST['greeting-sub']) : // if the form is submitted
 	// NOTE: allow for an empty comment. An empty comment means no comment
 	emptyInput($client_id, 'data not sent');
 
-	if(!is_numeric($client_id))
+	if(!isID($client_id))
 		sendBack('Invalid data sent, greeting not changed');
 	
 	## Add Log Message ##

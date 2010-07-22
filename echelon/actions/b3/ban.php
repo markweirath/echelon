@@ -34,7 +34,7 @@ $c_ip = cleanvar($_POST['c-ip']);
 emptyInput($reason, 'ban reason');
 
 ## Check sent client_id is a number ##
-if(!is_numeric($client_id))
+if(!isID($client_id))
 	sendBack('Invalid data sent, ban not added');
 	
 ## Sort out some ban information

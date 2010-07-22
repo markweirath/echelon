@@ -106,9 +106,7 @@ endif;
 	</tfoot>
 	<tbody>
 	<?php
-	$rowcolor = 0;
-
-	 if($num_rows > 0) { // query contains stuff
+	if($num_rows > 0) { // query contains stuff
 
 		foreach($data_set as $data): // get data from query and loop
 			$type = $data['type'];
@@ -135,24 +133,19 @@ endif;
 			$time_add_read = date($tformat, $time_add);
 			$reason_read = removeColorCode($reason);
 			
-			if($type_admin) { // admin cell only needed for admin type
+			if($type_admin) // admin cell only needed for admin type
 				$admin = '<td><strong>'. clientLink($admin_name, $admin_id) .'</strong></td>';
-			} else {
+			else
 				$admin = NULL;
-			}
 
 			## Row color
-			$rowcolor = 1 - $rowcolor;	
-			if($rowcolor == 0)
-				$odd_even = "odd";
-			else 
-				$odd_even = "even";
+			$alter = alter();
 				
 			$client = clientLink($client_name, $client_id);
 
 			// setup heredoc (table data)			
 			$data = <<<EOD
-			<tr class="$odd_even">
+			<tr class="$alter">
 				<td><strong>$client</strong></td>
 				<td>$type</td>
 				<td>$time_add_read</td>

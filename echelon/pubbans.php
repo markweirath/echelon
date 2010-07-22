@@ -106,9 +106,7 @@ if(!$db->error) :
 </tfoot>
 <tbody>
 <?php
-$rowcolor = 0;
-
- if($num_rows > 0) { // query contains stuff
+if($num_rows > 0) : // query contains stuff
 
 	foreach($data_set as $pen): // get data from query and loop
 		$ban_id = $pen['ban_id'];
@@ -136,15 +134,11 @@ $rowcolor = 0;
 			$client_name_read = $client_name;
 			
 		## Row color
-		$rowcolor = 1 - $rowcolor;	
-		if($rowcolor == 0)
-			$odd_even = "odd";
-		else 
-			$odd_even = "even";
+		$alter = alter();
 
 		// setup heredoc (table data)			
 		$data = <<<EOD
-		<tr class="$odd_even">
+		<tr class="$alter">
 			<td><strong>$client_name_read</strong></td>
 			<td>$ban_id</td>
 			<td>$type</td>
@@ -159,10 +153,10 @@ EOD;
 	endforeach;
 	
 	$no_data = false;
-} else {
+else:
 	$no_data = true;
 	echo '<tr class="odd"><td colspan="7">There no active bans in the B3 Database</td></tr>';
-} // end if query contains
+endif;
 ?>
 </tbody>
 </table>

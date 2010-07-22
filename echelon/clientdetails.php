@@ -7,19 +7,19 @@ $pagination = false; // this page requires the pagination part of the footer
 require 'inc.php';
 
 ## Do Stuff ##
-$cid = 0;
 if($_GET['id'])
 	$cid = $_GET['id'];
-	
-if(!is_numeric($cid))
-	die('Invalid data sent');
+
+if(!isID($cid)) :
+	set_error('The client id that you have supplied is invalid. Please supply a valid client id.');
+	send('clients.php');
+	exit;
+endif;
 	
 if($cid == '') {
 	set_error('No user specified, please select one');
 	send('index.php');
 }
-
-$cid = (int)$cid;
 
 ## Get Client information ##
 $query = "SELECT c.ip, c.connections, c.guid, c.name, c.mask_level, c.greeting, c.time_add, c.time_edit, c.group_bits, g.name
@@ -34,7 +34,7 @@ $stmt->close();
 if($plugin_xlrstats_enabled == true) :
 	## Get information for xlrstats ##
 	$query_xlr = "SELECT id, kills, deaths, ratio, skill, rounds, hide, fixed_name FROM xlr_playerstats WHERE client_id = ? LIMIT 1";
-	$stmt = $db->mysql->prepare($query_xlr) or die('2 - MySQL Error: #'.$db->mysql->errno.' '.$db->mysql->error);
+	$stmt = $db->mysql->prepare($query_xlr) or die('Database Error '. $db->mysql->error);
 	$stmt->bind_param('i', $cid);
 	$stmt->execute();
 	$stmt->store_result();
@@ -376,26 +376,19 @@ if($is_xlrstats_user && $plugin_xlrstats_enabled) : // if the user has xlrstats 
 		$stmt->store_result(); // needed for the $stmt->num_rows call
 
 		if($stmt->num_rows) :
-		
-			$rowcolor = 0;
 			
 			while($stmt->fetch()) :
 	
 				$time_add = date($tformat, $time_add);
 				$time_edit = date($tformat, $time_edit);
 				
-				$rowcolor = 1 - $rowcolor;
-				
-				if($rowcolor == 0)
-					$odd_even = "odd";
-				else 
-					$odd_even = "even";
+				$alter = alter();
 				
 				$token_del = genFormToken('del'.$id);		
 				
 				// setup heredoc (table data)			
 				$data = <<<EOD
-				<tr class="$odd_even">
+				<tr class="$alter">
 					<td><strong>$alias</strong></td>
 					<td>$num_used</td>
 					<td><em>$time_add</em></td>
@@ -408,7 +401,7 @@ EOD;
 		
 		else : // if there are no aliases connected with this user then put out a small and short message
 		
-			echo '<tr><td colspan="4">'.$name.' goes by no other names.</td></tr>';
+			echo '<tr><td colspan="4">'.$name.' has no aliaises.</td></tr>';
 		
 		endif;
 	?>
@@ -424,58 +417,24 @@ EOD;
 	$count = count($ech_logs);
 	if($count > 0) : // if there are records
 ?>
-<h3 class="cd-h">Echelon Logs</h3>
-<table>
-	<thead>
-		<tr>
-			<th>id</th>
-			<th>Type</th>
-			<th>Message</th>
-			<th>Time Added</th>
-			<th>Admin</th>
-		</tr>
-	</thead>
-	<tfoot>
-		<tr><th colspan="5"></th></tr>
-	</tfoot>
-	<tbody>
-		<?php
-		$rowcolor = 0;
-
-		foreach($ech_logs as $ech_log) :
-		
-			$id = $ech_log['id'];
-			$type = $ech_log['type'];
-			$msg = tableClean($ech_log['msg']);
-			$user_id = $ech_log['user_id'];
-			$user_name = tableClean($ech_log['user_name']);
-			$time_add = $ech_log['time_add'];
-			
-			## Row Color ##
-			$rowcolor = 1 - $rowcolor;
-			if($rowcolor == 0)
-				$odd_even = "odd";
-			else 
-				$odd_even = "even";
-			
-			## Tidy things up ##
-			$time_add_read = date($tformat, $time_add);
-			
-			$table = <<<EOD
-			<tr class="$odd_even">
-				<td>$id</td>
-				<td>$type</td>
-				<td>$msg</td>
-				<td><em>$time_add_read</em></td>
-				<td>$user_name</td>
+	<h3 class="cd-h">Echelon Logs</h3>
+	<table>
+		<thead>
+			<tr>
+				<th>id</th>
+				<th>Type</th>
+				<th>Message</th>
+				<th>Time Added</th>
+				<th>Admin</th>
 			</tr>
-EOD;
-			echo $table;
-				
-		endforeach;
-		?>
-	</tbody>
-</table>
+		</thead>
+		<tfoot>
+			<tr><th colspan="5"></th></tr>
+		</tfoot>
+		<tbody>
+			<?php displayEchLog($ech_logs, 'client'); ?>
+		</tbody>
+	</table>
 <?php
 	endif; // end hide is no records
 ?>

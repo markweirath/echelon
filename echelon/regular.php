@@ -102,9 +102,7 @@ if(!$db->error) :
 	</tfoot>
 	<tbody>
 	<?php
-	$rowcolor = 0;
-
-	 if($num_rows > 0) { // query contains stuff so spit it out
+	if($num_rows > 0) : // query contains stuff so spit it out
 	 
 		foreach($data_set as $clients): // get data from query and loop
 			$cid = $clients['id'];
@@ -117,17 +115,13 @@ if(!$db->error) :
 			$time_edit_read = date($tformat, $time_edit); // this must be after the time_diff
 			
 			## row color ##
-			$rowcolor = 1 - $rowcolor;	
-			if($rowcolor == 0)
-				$odd_even = "odd";
-			else 
-				$odd_even = "even";
+			$alter = alter();
 	
 			$client = clientLink($name, $cid);
 	
 			// setup heredoc (table data)			
 			$data = <<<EOD
-			<tr class="$odd_even">
+			<tr class="$alter">
 				<td><strong>$client</td>
 				<td>$connections</td>
 				<td>@$cid</td>
@@ -139,10 +133,11 @@ EOD;
 			echo $data;
 		endforeach;
 		$no_data = false;
-	} else {
+		
+	else:
 		$no_data = true;
 		echo '<tr class="odd"><td colspan="5">There are no people who have had a total mininium of '.$connections_limit.' and been seen in the last '.$lenght.' days.</td></tr>';
-	} // end if query contains information
+	endif; // no records
 	?>
 	</tbody>
 </table>

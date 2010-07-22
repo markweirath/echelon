@@ -22,7 +22,7 @@ emptyInput($type, 'data not sent');
 emptyInput($ban_id, 'data not sent');
 
 ## Check ban_id is a number ##
-if(!is_numeric($ban_id))
+if(!isID($ban_id))
 	sendBack('Invalid data sent, ban not added');
 
 ## Send query ##

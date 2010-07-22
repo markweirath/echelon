@@ -23,10 +23,10 @@ else
 	$hide = 0;
 
 
-// NOTE: empty fixed name means acts as disabling it, so do not check for an empty input
+// NOTE: when the user supplies an empty fixed name, the db will be updated with a blank/NULL field, in effect disabling the feature
 
 ## Check sent client_id is a number ##
-if(!is_numeric($cid))
+if(!isID($cid))
 	sendBack('Invalid data sent, ban not added');
 
 ## LOG Query ##

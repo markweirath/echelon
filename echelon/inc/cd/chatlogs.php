@@ -116,7 +116,6 @@
 					</tfoot>
 			
 					<?php // nested while loop for content
-						$rowcolor = 0;
 					
 					if($num_rows_{$i_srv} > 0) :
 					
@@ -132,15 +131,11 @@
 								$msg = '<span class="chat-cmd">'. $msg ."</span>"; 
 							
 							## Row color
-							$rowcolor = 1 - $rowcolor;	
-							if($rowcolor == 0)
-								$odd_even = "odd";
-							else 
-								$odd_even = "even";
+							$alter = alter();
 							
 							## preapre heredoc
 							$data = <<<EOD
-							<tr class="$odd_even">
+							<tr class="$alter">
 								<td>$id</td>
 								<td>$type</td>
 								<td>$msg</td>

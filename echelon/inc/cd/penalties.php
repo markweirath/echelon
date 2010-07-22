@@ -29,8 +29,7 @@ $stmt->store_result(); // store the result - needed for the num_rows check
 
 if($stmt->num_rows) : // if results exist
 	$stmt->bind_result($pid, $type, $time_add, $time_expire, $reason, $data, $inactive, $duration, $admin_id, $admin_name);
-	
-	$rowcolor = 0;
+
 	while($stmt->fetch()) : // fetcht the results and store in an array
 			
 		// Change into readable times
@@ -47,11 +46,7 @@ if($stmt->num_rows) : // if results exist
 			$duration = '';
 		
 		// Row odd/even colouring
-		$rowcolor = 1 - $rowcolor;
-		if($rowcolor == 0)
-			$odd_even = "odd";
-		else 
-			$odd_even = "even";
+		$alter = alter();
 			
 		if($admin_id != 1) // if admin is not B3 show clientdetails link else show just the name
 			$admin_link = '<a href="clientdetails.php?id='.$admin_id.'" title="View the admin\'s client page">'.$admin_name.'</a>';
@@ -69,7 +64,7 @@ if($stmt->num_rows) : // if results exist
 			$edit_ban = '';
 		
 		$row = <<<EOD
-		<tr class="$odd_even">
+		<tr class="$alter">
 			<td>$pid<br /> $unban $edit_ban</td>
 			<td>$type</td>
 			<td>$time_add</td>

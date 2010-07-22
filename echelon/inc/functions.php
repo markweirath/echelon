@@ -4,6 +4,116 @@
 ## This page is included on all pages in this project ##
 
 /**
+ * Checks that the supplied id matches the required criteria 
+ *
+ * @param string $id - the id to check. The id is MySQL auto_increment id check
+ * @return bool
+ */
+function isID($id) {
+
+	// not empty
+	if(empty($id))
+		return false;
+	
+	// stops first number of id being a zero
+	$fc = substr($id, 0, 1);
+	if($fc == 0)
+		return false;
+		
+	if(!is_numeric($id))
+		return false;
+		
+	return true;
+
+}
+
+function delUserLink($id, $token) {
+
+	if($_SESSION['user_id'] == $id) // user cannot delete themselves
+		return NULL;
+	else
+		return '<form action="actions/user-edit.php" method="post" class="user-del">
+				<input type="hidden" value="$token" name="token" />
+				<input type="hidden" value="$id" name="id" />
+				<input type="hidden" value="del" name="t" />
+				<input class="harddel" type="image" src="images/user_del.png" alt="Delete" title="Delete this user forever" />
+			</form>';
+
+}
+
+function editUserLink($id, $name) {
+
+	return '<a href="sa.php?t=edituser&amp;id=$id" title="Edit '. $name .'"><img src="images/user_edit.png" alt="edit" /></a>';
+	
+}
+
+function displayEchLog($array, $style = 'client') {
+
+	global $tformat; // import the time format varible for use in this function
+
+	foreach($array as $ech_log) :
+	
+		## get vars
+		$id = $ech_log['id'];
+		$type = $ech_log['type'];
+		$msg = tableClean($ech_log['msg']);
+		$time_add = $ech_log['time_add'];
+		$time_add_read = date($tformat, $time_add);
+		
+		## Page row color alternate
+		$alter = alter();
+		
+		if($style == 'admin') :
+		
+			$cid = $ech_log['client_id'];
+			$client_link = clientLink($cid, $cid);
+			
+			$table = <<<EOD
+			<tr class="$alter">
+				<td>$id</td>
+				<td>$type</td>
+				<td>$msg</td>
+				<td><em>$time_add_read</em></td>
+				<td>$client_link</td>
+			</tr>
+EOD;
+
+		else: // if client
+		
+			$user_name = tableClean($ech_log['user_name']);
+			$user_link = echUserLink($ech_log['user_id'], $user_name);
+		
+			$table = <<<EOD
+			<tr class="$alter">
+				<td>$id</td>
+				<td>$type</td>
+				<td>$msg</td>
+				<td><em>$time_add_read</em></td>
+				<td>$user_link</td>
+			</tr>
+EOD;
+		endif;
+		
+		echo $table; // echo out the formated data
+			
+	endforeach;
+
+}
+
+function alter() {
+
+	static $alt = false;
+	
+	$alt = !$alt;
+	
+	if($alt)
+		return 'odd';
+	else
+		return 'even';
+
+}
+
+/**
  * Sends an rcon comand to a server
  *
  * @param string $rcon_ip - IP for rcon connections
@@ -423,8 +533,12 @@ function emailLink($email, $name) {
  * @param string $name - name of the person
  * @return string $msg - the link to user
  */
-function echUserLink($id, $name) {
-	$msg = '<a href="sa.php?t=user&amp;id='.$id.'" title="View '.$name.' in more detail">'.$name.'</a>';
+function echUserLink($id, $name, $name_title = NULL) {
+
+	if($name_title == NULL)
+		$name_title = $name;
+
+	$msg = '<a href="sa.php?t=user&amp;id='.$id.'" title="View '.$name_title.' in more detail">'.$name.'</a>';
 	return $msg;
 }
 

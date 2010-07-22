@@ -113,8 +113,6 @@ if(!$db->error) :
 	</tfoot>
 	<tbody>
 	<?php
-	$rowcolor = 0;
-
 	if($num_rows > 0) { // query contains stuff
 	 
 		foreach($data_set as $info): // get data from query and loop
@@ -127,18 +125,14 @@ if(!$db->error) :
 			## Change to human readable		
 			$time_diff = time_duration($time - $time_edit, 'yMwd');		
 			$time_edit = date($tformat, $time_edit); // this must be after the time_diff
-			
-			## Row color
-			$rowcolor = 1 - $rowcolor;	
-			if($rowcolor == 0)
-				$odd_even = "odd";
-			else 
-				$odd_even = "even";
+			$client_link = clientLink($name, $cid);
+
+			$alter = alter();
 	
 			// setup heredoc (table data)			
 			$data = <<<EOD
-			<tr class="$odd_even">
-				<td><strong><a href="clientdetails.php?id=$cid">$name</a></strong></td>
+			<tr class="$alter">
+				<td><strong>$client_link</strong></td>
 				<td>@$cid</td>
 				<td>$level</td>
 				<td>$connections</td>

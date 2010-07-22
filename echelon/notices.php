@@ -79,9 +79,7 @@ if(!$db->error) :
 	</tfoot>
 	<tbody>
 	<?php
-	$rowcolor = 0;
-
-	if($num_rows > 0) { // query contains stuff
+	if($num_rows > 0) :
 	 
 		foreach($data_set as $notice): // get data from query and loop
 			$cname = tableClean($notice['client_name']);
@@ -95,18 +93,14 @@ if(!$db->error) :
 			$time_add = date($tformat, $time_add);
 			
 			## Row color
-			$rowcolor = 1 - $rowcolor;	
-			if($rowcolor == 0)
-				$odd_even = "odd";
-			else 
-				$odd_even = "even";
+			$alter = alter();
 				
 			$client = clientLink($cname, $cid);
 			$admin = clientLink($aname, $aid);
 	
 			// setup heredoc (table data)			
 			$data = <<<EOD
-			<tr class="$odd_even">
+			<tr class="$alter">
 				<td><strong>$client</strong></td>
 				<td>@$cid</td>
 				<td><em>$time_add</em></td>
@@ -119,10 +113,10 @@ EOD;
 		endforeach;
 		
 		$no_data = false;
-	} else {
+	else:
 		$no_data = true;
 		echo '<tr class="odd"><td colspan="5">There are no notices in the database.</td></tr>';
-	}
+	endif; // no records
 	?>
 	</tbody>
 </table>
