@@ -28,6 +28,9 @@ endif;
 
 	<title><?php echo $site_name; ?> Echelon - <?php echo $page_title; ?></title>
 
+	<!-- favicon -->
+	<link rel="shortcut icon" href="favicon.ico" >
+	
 	<!-- Load CSS Stylesheet -->
 	<link href="<?php echo PATH; ?>css/style.css" rel="stylesheet" media="screen" type="text/css" />
 
@@ -60,8 +63,11 @@ endif;
 
 <div id="header">
 	<a name="t"></a>
+	
+	<img src="images/logo.png" alt="logo" id="h-img" />
 	<h1 id="title"><a href="<?php echo PATH; ?>" title="Go to the home page">Echelon</a></h1>
 	<h2 id="subtitle">B3 repository and investigation tool</h2>		
+	
 </div><!-- end #header -->
 	
 <div id="mc">

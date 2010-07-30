@@ -13,22 +13,22 @@ if (!empty($_SERVER['SCRIPT_FILENAME']) && 'mysql-class.php' == basename($_SERVE
 */  
 
 class DB_B3 {
-	
+
 	## Settings ##
 	public $mysql = NULL; // object var (if connection exists this will not be NULL)
 	public $error = FALSE; // was there a DB query error
 	public $query_error_pub = NULL;
 	public $error_msg;
-	
+
 	private $error_sec = 'We are having some database problems, please check back later.'; // message to show the public if the DB query/connect fails
 	private $error_on = false; // are detailed error reports on (default, can be overidden)
-	
+
 	## Connection Vars ##
 	private $host; // B3 DB MySQL Host
 	private $user; // B3 DB MySQL User
 	private $pass; // B3 DB MySQL Password
 	private $name; // B3 DB MySQL Database Name
-	
+
 	/**
 	 * Auto Load in sent vars and make connection to the B3 DB
 	 */
@@ -38,7 +38,7 @@ class DB_B3 {
 		$this->pass = $pass;
 		$this->name = $name;
 		$this->error_on = $error_on;
-		
+
 		try { // try to connect to the DB or die with an error
 			$this->connectDB();
 				

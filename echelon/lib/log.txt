@@ -478,3 +478,19 @@ Table 'b3.groupss' doesn't exist
 [2010-05-28 23:51:32]MYSQL CONNECTION ERROR - Code: 1045 - Message: B3 Database Connection Error: (#1045) Access denied for user 'SYSTEM'@'localhost' (using password: NO)
 -------
 [2010-05-28 23:54:44]MYSQL CONNECTION ERROR - Code: 1045 - Message: B3 Database Connection Error: (#1045) Access denied for user 'SYSTEM'@'localhost' (using password: NO)
+-------
+[2010-07-23 20:26:35]MYSQL CONNECTION ERROR - Code: 1045 - Message: B3 Database Connection Error: (#1045) Access denied for user 'SYSTEM'@'localhost' (using password: NO)
+-------
+[2010-07-23 20:26:40]MYSQL CONNECTION ERROR - Code: 1045 - Message: B3 Database Connection Error: (#1045) Access denied for user 'SYSTEM'@'localhost' (using password: NO)
+-------
+[2010-07-30 17:01:40]MYSQL ERROR - Code: 1054 - Message: Unknown column 'fdfsdfdf' in 'order clause'
+#Trace: 
+#0 F:\wamp\www\echelon\inc\header.php(4): DB_B3->query('SELECT c.id, c....')
+#1 F:\wamp\www\echelon\clients.php(90): require('F:\wamp\www\ech...')
+#2 {main}
+-------
+[2010-07-30 17:01:53]MYSQL ERROR - Code: 1054 - Message: Unknown column 'sdsd' in 'order clause'
+#Trace: 
+#0 F:\wamp\www\echelon\inc\header.php(4): DB_B3->query('SELECT c.id, c....')
+#1 F:\wamp\www\echelon\clients.php(90): require('F:\wamp\www\ech...')
+#2 {main}

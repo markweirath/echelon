@@ -1,6 +1,6 @@
 <?php
 /**
- * Originially Author: Anubis
+ * Originial Author: Anubis
  * Adapted to 2.0: Eire.32
  */
 $page = "ctime";

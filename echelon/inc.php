@@ -9,7 +9,7 @@ if(INSTALLED != 'yes') // if echelon is not install (a constant is added to the 
 
 require_once 'inc/functions.php'; // require all the basic functions used in this site
 require 'classes/dbl-class.php'; // class to preform all DB related actions
-$dbl = new DBL(); // start connection to the local Echelon DB
+$dbl = DBL::getInstance(); // start connection to the local Echelon DB
 
 require 'inc/setup.php'; // class to preform all DB related actions
 require 'classes/session-class.php'; // class to deal with the management of sesssions

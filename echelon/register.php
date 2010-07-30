@@ -4,21 +4,6 @@ $auth_user_here = false;
 $pagination = false;
 require 'inc.php';
 
-/*
-error_reporting(E_ALL ^ E_NOTICE);
-require 'inc/functions.php';
-require 'inc/config.php'; // load the config file
-require 'classes/session-class.php'; // class to deal with the management of sesssions
-require 'classes/members-class.php';
-require 'classes/dbl-class.php'; // DBL
-$dbl = new DBL(); // start up dbl class (connection to echelon DB class)
-require 'inc/setup.php';
-
-$ses = new Session(); // create Session Object
-$ses->sesStart(); // start session
-
-$mem = new member();*/
-
 if($mem->loggedIn()) { // if logged don't allow the user to register
 	set_error('Logged in users cannot register');
 	sendHome(); // send to the index/home page

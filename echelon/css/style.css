@@ -157,7 +157,8 @@ fieldset.wide input { display: inline; margin-right: 10px; }
 /* Page Stlying */
 body { color: black; font: 17px; background: url(../images/body-bg.jpg) repeat; }
 
-#header { height: 160px; }
+#header { height: 170px; }
+	#h-img { margin: 10px 0 0 40px; }
 	#title { color: #fff; font-size: 66px; position: absolute; top: 20px; left: 185px; }
 		#title a { color: #fff; }
 		#title a:hover { color: #fff; text-decoration: none; }

@@ -36,7 +36,7 @@ function setEmail($email) {
  * @return bool
  */
 function loggedIn() { // are they logged in
-	if($_SESSION['auth'] == true) // if authorised allow access
+	if($_SESSION['auth']) // if authorised allow access
 		return true;
 	else
 		return false; // if not authorised
@@ -50,7 +50,7 @@ function loggedIn() { // are they logged in
 function auth($name) {
 	locked(); // stop blocked people from acessing	
 	if(!$this->loggedIn()) { // if not authorised/logged in
-		set_error('You must log in');
+		set_error('Please login to Echelon');
 		sendLogin();
 		exit;
 	}

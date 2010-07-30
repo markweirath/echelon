@@ -105,7 +105,7 @@ if(!$db->error) :
 		</div>
 		
 		<select name="t">
-			<option value="all" <?php if($search_type == "all") echo 'selected="selected"' ?>>All</option>
+			<option value="all" <?php if($search_type == "all") echo 'selected="selected"' ?>>All Records</option>
 			<option value="alias" <?php if($search_type == "names") echo 'selected="selected"' ?>>Name</option>
 			<option value="pbid" <?php if($search_type == "pbid") echo 'selected="selected"' ?>>PBID</option>
 			<option value="ip" <?php if($search_type == "ip") echo 'selected="selected"' ?>>IP Address</option>

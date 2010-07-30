@@ -12,7 +12,7 @@ if(empty($name)) {
 	exit;
 }
 
-$dbl = new DBl(); // create DBL (echelon DB link)
+$dbl = DBL::getInstance(); // create DBL (echelon DB link)
 
 $result = $dbl->checkUsername($name); // check to see if the name is already in use // return bool
 if($result)

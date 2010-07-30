@@ -69,78 +69,60 @@ if($num_games == 0) {
 	//die('Massive Error');
 }
 
-## Get the games Information ##
-$games = $dbl->getGamesInfo();
-
-## Append the games unto the the config array ##
-$config['games'] = $games;
+## Get the games Information for the current game ##
+$config['game'] = $dbl->getGameInfo($game);
 
 ## Get and setup the servers information into the array ##
 $servers = $dbl->getServers($game);
 
-$config['games'][$game]['servers'] = array(); // create array
+$config['game']['servers'] = array(); // create array
 
-if($config['games'][$game]['num_srvs'] > 1) : // if the current game has only ONE server then NO loop is needed
+## add server information to config array##
+$i = 1; // start counter ("i") at 1
+
+foreach($servers as $server) : // loop thro the list of servers for current game
 	
-	define("MULTI_SERVER", true); // there is more than one server so a loop is needed
+	$config['game']['servers'][$i] = array();
+	$config['game']['servers'][$i]['name'] = $server['name'];
+	$config['game']['servers'][$i]['ip'] = $server['ip'];
+	$config['game']['servers'][$i]['pb_active'] = $server['pb_active'];
+	$config['game']['servers'][$i]['rcon_pass'] = $server['rcon_pass'];
+	$config['game']['servers'][$i]['rcon_ip'] = $server['rcon_ip'];
+	$config['game']['servers'][$i]['rcon_port'] = $server['rcon_port'];
+	
+	$i++; // increment counter
+endforeach;
+
+if($config['game']['num_srvs'] > 1) :
+	define("MULTI_SERVER", true); 
 	define("NO_SERVER", false);
 	
-	$i = 1; // restart i to 1
-	foreach($servers as $server) : // loop thro the list of servers
-		
-		$config['games'][$game]['servers'][$i] = array();
-		$config['games'][$game]['servers'][$i]['name'] = $server['name'];
-		$config['games'][$game]['servers'][$i]['ip'] = $server['ip'];
-		$config['games'][$game]['servers'][$i]['pb_active'] = $server['pb_active'];
-		$config['games'][$game]['servers'][$i]['rcon_pass'] = $server['rcon_pass'];
-		$config['games'][$game]['servers'][$i]['rcon_ip'] = $server['rcon_ip'];
-		$config['games'][$game]['servers'][$i]['rcon_port'] = $server['rcon_port'];
-		
-		$i++; // increment counter
-	endforeach;
-
-elseif($config['games'][$game]['num_srvs'] == 1): // there is more than one server connected with this game
-
+elseif($config['game']['num_srvs'] == 1) : 
 	define("MULTI_SERVER", false);
 	define("NO_SERVER", false);
-	
-	$config['games'][$game]['servers'][1] = array();
-	$config['games'][$game]['servers'][1]['name'] = $servers[0]['name'];
-	$config['games'][$game]['servers'][1]['ip'] = $servers[0]['ip'];
-	$config['games'][$game]['servers'][1]['pb_active'] = $servers[0]['pb_active'];
-	$config['games'][$game]['servers'][1]['rcon_pass'] = $servers[0]['rcon_pass'];
-	$config['games'][$game]['servers'][1]['rcon_ip'] = $servers[0]['rcon_ip'];
-	$config['games'][$game]['servers'][1]['rcon_port'] = $servers[0]['rcon_port'];
 
 else :	// equal to no servers
-	
 	define("MULTI_SERVER", false);
 	define("NO_SERVER", true);
-	
-	$config['games'][$game]['servers'] = array();
-	
+
 endif;
 
 ## Get plguin Information ##
-$config['games'][$game]['plugins'] = $dbl->getPlugins($game);
+$config['game']['plugins'] = $dbl->getPlugins($game);
 
 ## Handy's ##
-if($config['games'][$game]['plugins']['xlrstats']['enabled'] == 1)
+if($config['game']['plugins']['xlrstats']['enabled'] == 1)
 	$plugin_xlrstats_enabled = true;
 
 ## Setup some handy easy to access information for the CURRENT GAME only ##
 
-$game_name = $config['games'][$game]['name'];
-$game_name_short = $config['games'][$game]['name_short'];
-$game_num_srvs = $config['games'][$game]['num_srvs'];
-$game_db_host = $config['games'][$game]['db_host'];
-$game_db_user = $config['games'][$game]['db_user'];
-$game_db_pw = $config['games'][$game]['db_pw'];
-$game_db_name = $config['games'][$game]['db_name'];
+$game_name = $config['game']['name'];
+$game_name_short = $config['game']['name_short'];
+$game_num_srvs = $config['game']['num_srvs'];
+$game_db_host = $config['game']['db_host'];
+$game_db_user = $config['game']['db_user'];
+$game_db_pw = $config['game']['db_pw'];
+$game_db_name = $config['game']['db_name'];
 
 ## setup default page number so this doesn't have to be in every file ##
 $page_no = 0;
-
-## Check plugin is enabled ##
-if($config['games'][$game]['plugins']['ctime']['enabled'] == 0 && $page == 'ctime')
-	sendHome();

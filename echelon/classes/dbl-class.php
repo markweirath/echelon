@@ -5,20 +5,31 @@ if (!empty($_SERVER['SCRIPT_FILENAME']) && 'dbl-class.php' == basename($_SERVER[
 /**
  * class DBL
  * desc: File to deal with the connection and all queries to the Echelon Database 
+ * note: this is a singleton type class
  */ 
 
 class DbL {
 
 	private $mysql = NULL;
 	private $install = false;
+	private static $instance;
 	
 	public $install_erorr = NULL;
 	public $dbl_error = false;
 	
+	public static function getInstance($install = false) 
+    {
+        if (!(self::$instance instanceof self)) {
+            self::$instance = new self($install);
+        }
+ 
+        return self::$instance;
+    }
+	
 	/**
      * Auto run on creation of instance: attempts to connect to the Echelon DB or dies with the mysql error
      */
-	public function __construct($install = false) {
+	private function __construct($install) {
 	
 		if(isset($install))
 			$this->install = $install;
@@ -36,12 +47,15 @@ class DbL {
 		} // end try/catch
 		
 	} // end construct
+	
+	// Do not allow the clone operation
+    private function __clone() { }
 
 	/**
      * Makes the connection to the DB or throws error
      */
     private function connectDB () {
-		if($this->mysql != NULL) // if it is set/created (defalt starts at NULL)
+		if($this->mysql != NULL) // if it is set/created (default starts at NULL)
 			@$this->mysql->close();
 
         $this->mysql = @new mysqli(DBL_HOSTNAME, DBL_USERNAME, DBL_PASSWORD, DBL_DB); // block any error on connect, it will be cuahgt in the next line and handled properly
@@ -77,6 +91,14 @@ class DbL {
             @$this->mysql->close(); // close the connection
     }
 	
+	
+	/***************************
+	
+		Start Query Functions
+	
+	****************************/
+	
+	
 	/**
 	 * Gets an array of data for the settings form
 	 *
@@ -102,30 +124,29 @@ class DbL {
         return $settings;
     }
 	
-	function getGamesInfo() {
+	function getGameInfo($game) {
 	
-		$query = "SELECT * FROM ech_games ORDER BY id ASC";
-		$results = $this->mysql->query($query) or die('Database Error');
-        
-		$games = array();
+		$query = "SELECT id, game, name, name_short, num_srvs, db_host, db_user, db_pw, db_name FROM ech_games WHERE id = ?";
+		$stmt = $this->mysql->prepare($query) or die('Database Error');
+		$stmt->bind_param('i', $game);
+		$stmt->execute();
 		
-		$i = 1;
-        while($row = $results->fetch_object()) : // get results		
-			$games[$i] = array(
-				'id' => $row->id,
-				'game' => $row->game,
-				'name' => $row->name,
-				'name_short' => $row->name_short,
-				'num_srvs' => $row->num_srvs,
-				'db_host' => $row->db_host,
-				'db_user' => $row->db_user,
-				'db_pw' => $row->db_pw,
-				'db_name' => $row->db_name
-			);
-			$i++; // increment counter
-		endwhile;
+		$stmt->bind_result($id, $game, $name, $name_short, $num_srvs, $db_host, $db_user, $db_pw, $db_name);
+        $stmt->fetch(); // get results		
 		
-		return $games;
+		$game = array(
+			'id' => $id,
+			'game' => $game,
+			'name' => $name,
+			'name_short' => $name_short,
+			'num_srvs' => $num_srvs,
+			'db_host' => $db_host,
+			'db_user' => $db_user,
+			'db_pw' => $db_pw,
+			'db_name' => $db_name
+		);
+		
+		return $game;
 	}
     
 	/**

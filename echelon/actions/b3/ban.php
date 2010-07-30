@@ -66,9 +66,9 @@ if($is_pb_ban == true) :
 
 		if($config['games'][$game]['servers'][$i]['pb_active'] == '1') {
 			// get the rcon information from the massive config array
-			$rcon_pass = $config['games'][$game]['servers'][$i]['rcon_pass'];
-			$rcon_ip = $config['games'][$game]['servers'][$i]['rcon_ip'];
-			$rcon_port = $config['games'][$game]['servers'][$i]['rcon_port'];
+			$rcon_pass = $config['game']['servers'][$i]['rcon_pass'];
+			$rcon_ip = $config['game']['servers'][$i]['rcon_ip'];
+			$rcon_port = $config['game']['servers'][$i]['rcon_port'];
 			$c_ip = trim($c_ip);
 		
 			// PB_SV_BanGuid [guid] [player_name] [IP_Address] [reason]

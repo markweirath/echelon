@@ -273,10 +273,8 @@ function locked() {
 	if($_SESSION['wrong'] >= 3 || $_SESSION['hack'] >= 3) : // if the user has three wrongs or three hack attempts 
 		// logout the user, then add the IP of the user to the Blacklist
 	
-		if(!$dbl)
-			$dbl = new DBL();
-		if(!$mem)
-			$mem = new member(); 
+		global $dbl;
+		global $mem;
 		
 		if($mem->loggedIn())
 			session::logout(); // if they are logged in log them out
@@ -293,9 +291,7 @@ function locked() {
  * Checks Blacklist for the users IP address and if banned send to locked
  */
 function checkBL() {
-	if(!isset($dbl)){ // if no Db object
-		$dbl = new DBl(); // create DB
-	}
+	global $dbl;
 	$ip = getRealIp(); // find real IP
 	$result = $dbl->checkBlacklist($ip); // query db and check if ip is on list
 	
@@ -374,13 +370,13 @@ function css_file($name) {
  * @return string $ip - IP address of the user
  */
 function getRealIp() {
-	if(!empty($_SERVER['HTTP_CLIENT_IP'])) {  // check ip from share internet
+	if(!empty($_SERVER['HTTP_CLIENT_IP']))  // check ip from share internet
 		$ip = $_SERVER['HTTP_CLIENT_IP'];
-	} elseif(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {  // to check ip is pass from proxy
+	elseif(!empty($_SERVER['HTTP_X_FORWARDED_FOR']))  // to check ip is pass from proxy
 		$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-	} else {
+	else
 		$ip = $_SERVER['REMOTE_ADDR'];
-	}
+
 	return $ip;
 }
 
@@ -684,19 +680,18 @@ function timeExpirePen($time_expire) {
  */
 function penDuration($time, $duration) {
 
-	if($time == 'h') { // if time is in hours
+	if($time == 'h') // if time is in hours
 		$duration = $duration*60;
-	} elseif($time == 'd') { // time in days
+	elseif($time == 'd') // time in days
 		$duration = $duration*60*24;
-	} elseif($time == 'w') { // time in weeks
+	elseif($time == 'w') // time in weeks
 		$duration = $duration*60*24*7;
-	} elseif($time == 'mn') { // time in months (lets just say 30 days to a month)
+	elseif($time == 'mn') // time in months (lets just say 30 days to a month)
 		$duration = $duration*60*24*30;
-	} elseif($time == 'y') { // time in years
+	elseif($time == 'y') // time in years
 		$duration = $duration*60*24*365;
-	} else { // default time to mintues
+	else // default time to mintues
 		$duration = $duration;
-	}
 	
 	return $duration;
 
