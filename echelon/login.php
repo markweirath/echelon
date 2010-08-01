@@ -21,7 +21,7 @@ if($mem->loggedIn()) { ## if logged in users may skip this page
 
 	// set sent vars
 	$username = cleanvar($_POST['f-name']); // strip and remove spaces from vars
-	$pw = cleanvar($_POST['f-pw']);
+	$pw = $_POST['f-pw'];
 	$game_input = cleanvar($_POST['f-game']);
 
 	// are they empty values
@@ -208,10 +208,13 @@ if($mem->loggedIn()) { ## if logged in users may skip this page
 		ifTokenBad('Lost Password'); // if bad log and send error
 	
 	// get and clean vars
-	$pw1 = cleanvar($_POST['pw2']);
-	$pw2 = cleanvar($_POST['pw1']);
+	$pw1 = $_POST['pw2'];
+	$pw2 = $_POST['pw1'];
 	$key = cleanvar($_POST['key']);
 	$email = cleanvar($_POST['email']);
+	
+	if(!testPW($pass1)) // test for unwanted characters
+		sendBack('Your new password contains illegal characters: = \' " or space');
 	
 	// check both passwords are the same
 	if($pw1 != $pw2)
@@ -240,9 +243,9 @@ if($mem->loggedIn()) { ## if logged in users may skip this page
 		
 	
 	// generate and reset password in this whole function
-	$result = genAndSetNewPW($pw1, $id_with_key, $dbl);
-	if(!$result) { // if non key
-		sendBack('There was a problem updating your password');
+	$result = $mem->genAndSetNewPW($pw1, $id_with_key, $min_pw_len);
+	if($result != true) { // result is either a boolean (true) or an error string
+		sendBack($result);
 		exit;
 	}
 	

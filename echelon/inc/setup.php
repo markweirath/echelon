@@ -66,7 +66,6 @@ if($num_games == 0) {
 	set_error('That game doesn\'t exist');
 	if($page != 'error')
 		sendError();
-	//die('Massive Error');
 }
 
 ## Get the games Information for the current game ##
@@ -80,18 +79,22 @@ $config['game']['servers'] = array(); // create array
 ## add server information to config array##
 $i = 1; // start counter ("i") at 1
 
-foreach($servers as $server) : // loop thro the list of servers for current game
-	
-	$config['game']['servers'][$i] = array();
-	$config['game']['servers'][$i]['name'] = $server['name'];
-	$config['game']['servers'][$i]['ip'] = $server['ip'];
-	$config['game']['servers'][$i]['pb_active'] = $server['pb_active'];
-	$config['game']['servers'][$i]['rcon_pass'] = $server['rcon_pass'];
-	$config['game']['servers'][$i]['rcon_ip'] = $server['rcon_ip'];
-	$config['game']['servers'][$i]['rcon_port'] = $server['rcon_port'];
-	
-	$i++; // increment counter
-endforeach;
+if(!empty($servers)) :
+
+	foreach($servers as $server) : // loop thro the list of servers for current game
+		
+		$config['game']['servers'][$i] = array();
+		$config['game']['servers'][$i]['name'] = $server['name'];
+		$config['game']['servers'][$i]['ip'] = $server['ip'];
+		$config['game']['servers'][$i]['pb_active'] = $server['pb_active'];
+		$config['game']['servers'][$i]['rcon_pass'] = $server['rcon_pass'];
+		$config['game']['servers'][$i]['rcon_ip'] = $server['rcon_ip'];
+		$config['game']['servers'][$i]['rcon_port'] = $server['rcon_port'];
+		
+		$i++; // increment counter
+	endforeach;
+
+endif;
 
 if($config['game']['num_srvs'] > 1) :
 	define("MULTI_SERVER", true); 

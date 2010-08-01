@@ -67,7 +67,7 @@ require 'inc/header.php';
 	
 	<br class="clear" />
 
-	<p class="last-seen">You were last seen with this <?php $ip = ipLink($_SESSION['last_ip']); echo $ip; ?> IP address,<br />
+	<p class="last-seen"><?php if($_SESSION['last_ip'] != '') { ?>You were last seen with this <?php $ip = ipLink($_SESSION['last_ip']); echo $ip; ?> IP address,<br /><?php } ?>
 		<?php $mem->lastSeen('l, jS F Y (H:i)'); ?>
 	</p>
 	

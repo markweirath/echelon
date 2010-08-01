@@ -4,6 +4,33 @@
 ## This page is included on all pages in this project ##
 
 /**
+ * Checks if a password contains any unwanted characters
+ *
+ * @param string $pw - password string
+ * @return bool
+ */
+function testPW($pw) {
+
+	// no space
+	if(preg_match('# #', $pw))
+		return false;
+
+	// no dbl quote
+	if(preg_match('#"#', $pw))
+		return false;
+	
+	// no single quote
+	if(preg_match("#'#", $pw))
+		return false;
+	
+	// no equals signs
+	if(preg_match("#=#", $pw))
+		return false;
+	
+	return true;
+}
+
+/**
  * Checks that the supplied id matches the required criteria 
  *
  * @param string $id - the id to check. The id is MySQL auto_increment id check
@@ -236,7 +263,9 @@ function randPass($count) {
 
 	$pass = str_shuffle('abcefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890@#%$*'); //shuffle
 	
-	return substr($pass,3,$count); //returns the password  
+	$rand_num = mt_rand(0,5); // get rand num for the rand start of substr
+	
+	return substr($pass, $rand_num, $count); //returns the password  
 }
 
 /**

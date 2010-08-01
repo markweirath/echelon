@@ -82,7 +82,7 @@
 							fclose($fw);
 	
 						else:
-							die("Couldn't write the config file");
+							die("Couldn't write to the config file");
 						
 						endif;
 					
@@ -96,13 +96,13 @@
 				fclose($fr);
 				
 				if(!rename($file_write, '../inc/config.php'))
-					sendBack('Failed to move file');
+					sendBack('Failed to move config file');
 				
 			} else
-				die('File is not readable or writeable');
+				die('Config file is not readable or writeable');
 			
 		else:
-			die('File does not exist');
+			die('Config file does not exist');
 		endif;
 		
 		
@@ -137,7 +137,7 @@
 
 		// send email
 		if(!mail($email, $subject, $body, $headers))
-			sendback('There was a problem sending the email.');
+			sendback('There was a problem sending the user login information email.');
 		
 		## Done ##
 		send('index.php?t=done'); // send to a thankyou done page that explains what next

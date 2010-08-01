@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `ech_config` (
 
 INSERT INTO `ech_config` (`id`, `name`, `value`) VALUES
 (1, 'name', 'Development!'),
-(2, 'num_games', '2'),
+(2, 'num_games', '0'),
 (3, 'limit_rows', '50'),
 (4, 'min_pw_len', '8'),
 (5, 'user_key_expire', '14'),

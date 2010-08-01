@@ -32,7 +32,7 @@ endif;
 	<link rel="shortcut icon" href="favicon.ico" >
 	
 	<!-- Load CSS Stylesheet -->
-	<link href="<?php echo PATH; ?>css/style.css" rel="stylesheet" media="screen" type="text/css" />
+	<link href="<?php echo PATH; ?>css/style.min.css" rel="stylesheet" media="screen" type="text/css" />
 
 	<?php 
 	## Include CSS For pages ##

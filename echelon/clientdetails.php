@@ -18,7 +18,7 @@ endif;
 	
 if($cid == '') {
 	set_error('No user specified, please select one');
-	send('index.php');
+	send('clients.php');
 }
 
 ## Get Client information ##
@@ -55,7 +55,7 @@ if($plugin_xlrstats_enabled == true) :
 endif; // endif xlrstats is enabled
 
 ## Require Header ##
-$page_title .= ' '.$name;
+$page_title .= ' '.$name; // add the clinets name to the end of the title
 
 require 'inc/header.php';
 ?>
