@@ -17,8 +17,7 @@ class DbL {
 	public $install_erorr = NULL;
 	public $dbl_error = false;
 	
-	public static function getInstance($install = false) 
-    {
+	public static function getInstance($install = false) {
         if (!(self::$instance instanceof self)) {
             self::$instance = new self($install);
         }
@@ -362,8 +361,8 @@ class DbL {
 	 * After adding a server we need to update the games table to add 1 to num_srvs
 	 */
 	function addServerUpdateGames($game_id) {
-		$query = "UPDATE ech_games SET num_srvs = (num_srvs + 1) WHERE game_id = ? LIMIT 1";
-		$stmt = $this->mysql->prepare($query) or die('Database Error');;
+		$query = "UPDATE ech_games SET num_srvs = (num_srvs + 1) WHERE id = ? LIMIT 1";
+		$stmt = $this->mysql->prepare($query) or die('Database Error:'. $this->mysql->error);;
 		$stmt->bind_param('i', $game_id);
 		$stmt->execute();
 	}
