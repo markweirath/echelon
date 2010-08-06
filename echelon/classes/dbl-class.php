@@ -6,6 +6,12 @@ if (!empty($_SERVER['SCRIPT_FILENAME']) && 'dbl-class.php' == basename($_SERVER[
  * class DBL
  * desc: File to deal with the connection and all queries to the Echelon Database 
  * note: this is a singleton type class
+ *
+ * @var $mysql - the var that stores the connection to the mysql DB
+ * @var $instance - the pointer to the instance of the class
+ * @var $dbl_error - holds the db errors if any
+ * @var $install_error - holds any installation test connection errors
+ * @var $install - is this instance to be a install test connection or a full connection
  */ 
 
 class DbL {
@@ -17,6 +23,12 @@ class DbL {
 	public $install_erorr = NULL;
 	public $dbl_error = false;
 	
+	/**
+	 * Gets the current instance of the class, there can only be one instance (this make the class a singleton class)
+	 * 
+	 * @param bool $install - weather or not this is an install test connection
+	 * @return object $instance - the current instance of the class
+	 */
 	public static function getInstance($install = false) {
         if (!(self::$instance instanceof self)) {
             self::$instance = new self($install);
@@ -85,11 +97,84 @@ class DbL {
 	/**
      * __destruct : Destructor for class, closes the MySQL connection
      */
-    function __destruct() {
+    public function __destruct() {
         if ($this->mysql != NULL) // if it is set/created (defalt starts at NULL)
             @$this->mysql->close(); // close the connection
     }
 	
+	/**
+	 * Handy Query function
+	 *
+	 * @param string $sql - the SQL query to execute
+	 * @param bool $fetch - fetch the data rows or not
+	 * @param string $type - typpe of query this is 
+	 */
+	private function query($sql, $fetch = true, $type = 'select') {
+
+		if($mysql = NULL || $this->error)
+			return false;
+		
+		try {
+		
+			if($stmt = $this->mysql->prepare($sql))
+				$stmt->execute();
+			else
+				throw new Exception('');
+
+		} catch (Exception $e) {
+		
+			$this->error = true; // there is an error
+			if($this->error_on) // if detailed errors work
+				$this->error_msg = "MySQL Query Error (#". $this->mysql->errno ."): ". $this->mysql->error;
+			else
+				$this->error_msg = $this->error_sec;
+
+			return;
+		}
+		
+		## setup results array
+		$results = array();
+		$results['data'] = array();
+		
+		## do certain things depending on type of query
+		switch($type) { 
+			case 'select': // if type is a select query
+				$stmt->store_result();
+				$results['num_rows'] = $stmt->num_rows(); // find the number of rows retrieved
+			break;
+			
+			case 'update':
+			case 'insert': // if insert or update find the number of rows affected by the query
+				$results['affected_rows'] = $stmt->affected_rows(); 
+			break;
+		}
+		
+		## fetch the results
+		if($fetch) : // only fetch data if we need it
+		
+			$meta = $stmt->result_metadata();
+
+			while ($field = $meta->fetch_field()) :
+				$parameters[] = &$row[$field->name];
+			endwhile;
+
+			call_user_func_array(array($stmt, 'bind_result'), $parameters);
+
+			while ($stmt->fetch()) :
+				foreach($row as $key => $val) {
+					$x[$key] = $val;
+				}
+				$results['data'][] = $x;
+			endwhile;
+
+		endif;
+		
+		## return and close off connections
+		return $results;
+		$results->close();
+		$stmt->close();
+		
+	} // end query()
 	
 	/***************************
 	
@@ -167,7 +252,6 @@ class DbL {
 			return true;
 		else
 			return false;
-		
     }
 	
 	/**
@@ -195,7 +279,6 @@ class DbL {
 			return true;
 		else
 			return false;
-		
     }
 	
 	/**
@@ -221,7 +304,6 @@ class DbL {
 			return true;
 		else
 			return false;
-			
 	}
 	
 	function addGameCount() {
@@ -359,6 +441,8 @@ class DbL {
 	
 	/**
 	 * After adding a server we need to update the games table to add 1 to num_srvs
+	 *
+	 * @param int $game_id - the id of the game that is to be updated
 	 */
 	function addServerUpdateGames($game_id) {
 		$query = "UPDATE ech_games SET num_srvs = (num_srvs + 1) WHERE id = ? LIMIT 1";
@@ -387,7 +471,6 @@ class DbL {
 		
 		$stmt->close();
 		return $plugins;
-	
 	}
 	
 	function getGamesList() {
@@ -428,7 +511,6 @@ class DbL {
 		
 		$stmt->free_result();
 		$stmt->close();
-		
 	}
 	
 	/**
@@ -494,7 +576,6 @@ class DbL {
 		
 		$stmt->free_result();
 		$stmt->close();
-			
 	}
 	
 	/**
@@ -511,7 +592,6 @@ class DbL {
 		$stmt->bind_param('sii', $ip, $time, $id);
 		$stmt->execute(); // run query
 		$stmt->close(); // close connection
-		
 	}
 	
 	/**
@@ -566,26 +646,11 @@ class DbL {
 
 		$query = "SELECT bl.id, bl.ip, bl.active, bl.reason, bl.time_add, u.display 
 					FROM ech_blacklist bl LEFT JOIN ech_users u ON bl.admin_id = u.id 
-					ORDER BY active ASC";
-		$stmt = $this->mysql->prepare($query) or die('Database Error');
-		$stmt->execute();
-
-		$stmt->bind_result($id, $ip, $active, $reason, $time_add, $admin_name); // store results
+					ORDER BY active ASC";	
 		
-		while($stmt->fetch()) : // get results		
-			$bls[] = array(
-				'id' => $id,
-				'ip' => $ip,
-				'reason' => $reason,
-				'active' => $active,
-				'time_add' => $time_add,
-				'admin' => $admin_name	
-			);
-		endwhile;
-
-		$stmt->close();
-		return $bls;
+		$results = $this->query($query);
 		
+		return $results;
 	}
 	
 	/**
@@ -616,27 +681,11 @@ class DbL {
 	 */
 	function getUsers() { // gets an array of all the users basic info
 
-		$query = "SELECT u.id, u.display, u.email, u.ip, u.first_seen, u.last_seen, g.display FROM ech_users u LEFT JOIN ech_groups g ON u.ech_group = g.id ORDER BY id ASC";
-		$stmt = $this->mysql->prepare($query) or die('Database Error');
-		$stmt->execute();
-		$stmt->bind_result($id, $display, $email, $ip, $first_seen, $last_seen, $group); // store results
+		$query = "SELECT u.id, u.display, u.email, u.ip, u.first_seen, u.last_seen, g.namep FROM ech_users u LEFT JOIN ech_groups g ON u.ech_group = g.id ORDER BY id ASC";
 		
-		while($stmt->fetch()) : // get results
-			$users[] = array(
-				'id' => $id,
-				'display' => $display,
-				'email' => $email,
-				'ip' => $ip,
-				'first_seen' => $first_seen,
-				'last_seen' => $last_seen,
-				'group' => $group
-			); 		
-		endwhile;
+		$users = $this->query($query);
 		
-		$stmt->free_result();
-		$stmt->close();
 		return $users;
-		
 	}
 	
 	/**
@@ -652,27 +701,10 @@ class DbL {
 		$query = "SELECT k.reg_key, k.email, k.comment, k.time_add, k.admin_id, u.display 
 				  FROM ech_user_keys k LEFT JOIN ech_users u ON k.admin_id = u.id
 				  WHERE k.active = 1  AND k.time_add < ? AND comment != 'PW' ORDER BY time_add ASC";
-		$stmt = $this->mysql->prepare($query) or die('Database Error');
-		$stmt->bind_param('i', $expires);
-		$stmt->execute();
-		
-		$stmt->bind_result($key, $email, $comment, $time_add, $admin_id, $admin); // store results
-		
-		while($stmt->fetch()) : // get results
-			$reg_keys[] = array(
-				'reg_key' => $key,		
-				'email' => $email,
-				'comment' => $comment,
-				'time_add' => $time_add,
-				'admin_id' => $admin_id,
-				'admin' => $admin
-			); 		
-		endwhile;
-		
-		$stmt->free_result();
-		$stmt->close();
-		return $reg_keys;
 
+		$reg_keys = $this->query($query);
+		
+		return $reg_keys;
 	}
 	
 	/**
@@ -722,7 +754,6 @@ class DbL {
 		
 		$stmt->free_result();
 		$stmt->close();
-		
 	}
 	
 	/**
@@ -743,7 +774,9 @@ class DbL {
 			return true; // the person exists
 		else
 			return false; // person does not exist
-	
+			
+		$stmt->free_result();
+		$stmt->close();
 	}
 	
 	/**
@@ -788,7 +821,6 @@ class DbL {
 			return true;
 
 		$stmt->close();
-	
 	}
 	
 	/**
@@ -859,7 +891,6 @@ class DbL {
 			return false;
 			
 		$stmt->close();
-		
 	}
 	
 	/**
@@ -889,7 +920,6 @@ class DbL {
 		
 		$stmt->free_result();
 		$stmt->close();
-	
 	}
 	
 	/**
@@ -910,7 +940,6 @@ class DbL {
 		$stmt->free_result();
 		$stmt->close();
 		return $result;
-		
 	}
 	
 	function getIdWithKey($key) {
@@ -1011,7 +1040,6 @@ class DbL {
 			return false;
 			
 		$stmt->close();
-	
 	}
 	
 	/**
@@ -1040,7 +1068,6 @@ class DbL {
 		
 		$stmt->free_result();
 		$stmt->close();
-	
 	}
 	
 	function getUserDetailsEdit($id) {
@@ -1062,7 +1089,6 @@ class DbL {
 		
 		$stmt->free_result();
 		$stmt->close();
-	
 	}
 	
 	/**
@@ -1097,7 +1123,7 @@ class DbL {
 	 * @return array
 	 */
 	function getGroups() {
-		$query = "SELECT id, display FROM ech_groups ORDER BY id ASC";
+		$query = "SELECT id, namep FROM ech_groups ORDER BY id ASC";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->execute();
 		$stmt->bind_result($id, $display);
@@ -1111,11 +1137,10 @@ class DbL {
 		
 		$stmt->close();
 		return $groups;	
-	
 	}
 	
 	function getGroupInfo($group_id) {
-		$query = "SELECT display, premissions FROM ech_groups WHERE id = ? LIMIT 1";
+		$query = "SELECT namep, premissions FROM ech_groups WHERE id = ? LIMIT 1";
 		$stmt = $this->mysql->prepare($query) or die('DB Error');
 		$stmt->bind_param('i', $group_id);
 		$stmt->execute();
@@ -1129,7 +1154,7 @@ class DbL {
 	}
 	
 	function getEchLogs($id, $type = 'client') {
-		$query = "SELECT log.id, log.type, log.msg, log.client_id, log.user_id, u.display, log.time_add 
+		$query = "SELECT log.id, log.type, log.msg, log.client_id, log.user_id, log.time_add, u.display 
 				  FROM ech_logs log LEFT JOIN ech_users u ON log.user_id = u.id ";
 		
 		if($type == 'admin')
@@ -1144,7 +1169,7 @@ class DbL {
 		$stmt->execute();
 		
 		$stmt->store_result();
-		$stmt->bind_result($id, $type, $msg, $client_id, $user_id, $user_name, $time_add);
+		$stmt->bind_result($id, $type, $msg, $client_id, $user_id, $time_add, $user_name);
 		
 		while($stmt->fetch()) :
 			$ech_logs[] = array(
@@ -1160,7 +1185,6 @@ class DbL {
 		
 		$stmt->close();
 		return $ech_logs;
-	
 	}
 	
 	function addEchLog($type, $comment, $cid, $user_id) {
@@ -1174,22 +1198,17 @@ class DbL {
 			return true;
 		else
 			return false;
-	
 	}
 	
+	/**
+	 * Gets an array of the external links from the db
+	 */
 	function getLinks() {
 		$query = "SELECT * FROM ech_links";
-		$result = $this->mysql->query($query);
 		
-		while($row = $result->fetch_object()) :	
-			$links[] = array(
-				'url' => $row->url,
-				'name' => $row->name,
-				'title' => $row->title
-			);
-		endwhile;
+		$links = $this->query($query);
+		
 		return $links;
-	
 	}
 	
 	function setGroupPerms($group_id, $perms) {
@@ -1198,11 +1217,10 @@ class DbL {
 		$stmt->bind_param('si', $perms, $group_id);
 		$stmt->execute();
 		
-		if($stmt->affected_rows)
+		if($stmt->affected_rows > 0)
 			return true;
 		else
 			return false;
-	
 	}
 
 } // end class

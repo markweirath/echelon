@@ -183,6 +183,7 @@ if($is_edit_user) : ?>
 		</tbody>
 	</table>
 	
+
 	<table>
 		<caption>Echelon Logs<small>created by <?php echo $display; ?></caption>
 		<thead>
@@ -437,19 +438,16 @@ EOD;
 	<tbody>
 	<?php
 		$users_data = $dbl->getUsers();
-		foreach($users_data as $users): // get data from query and loop
+		
+		foreach($users_data['data'] as $users): // get data from query and loop
 			$id = $users['id'];
 			$name = $users['display'];
+			$group = $users['namep'];
 			$email = $users['email'];
-			$ip = $users['ip'];
-			$time_add = $users['first_seen'];
-			$time_edit = $users['last_seen'];
-			$group = $users['group'];
 			
-			
-			$time_add = date($tformat, $time_add);
-			$time_edit = date($tformat, $time_edit);
-			$ip = ipLink($ip);
+			$time_add = date($tformat, $users['first_seen']);
+			$time_edit = date($tformat, $users['last_seen']);
+			$ip = ipLink($users['ip']);
 			$email_link = emailLink($email, $name);
 			
 			if(GRAVATAR) // if use gravatar
@@ -538,52 +536,49 @@ EOD;
 		$counter = 1;
 		$keys_data = $dbl->getKeys($key_expire);
 		
-		$num_rows = count($keys_data);
+		$num_rows = $keys_data['num_rows'];
 		
 		if($num_rows > 0) :
 		
-			foreach($keys_data as $reg_keys): // get data from query and loop
-				$reg_key = $reg_keys['reg_key']; // the reg key
-				$email = $reg_keys['email']; // email assoc with key
-				$comment = $reg_keys['comment']; // comment about key
-				$time_add = $reg_keys['time_add']; // time key was added
-				$admin_id = $reg_keys['admin_id']; // id of admin who added key
-				$admin = $reg_keys['admin']; // display name of admin who added key
-				
-				$time_add = date($tformat, $time_add);
-				$email = emailLink($email, '');
-				$admin_link = echUserLink($admin_id, $admin);
-				$alter = alter();
-				
-				$token_keydel = genFormToken('keydel'.$reg_key);
-				
-				if($mem->id == $admin_id) // if the current user is the person who create the key allow the user to edit the key's comment
-					$edit_comment = '<img src="" alt="[Edit]" title="Edit this comment" class="edit-key-comment" />';
-				else
-					$edit_comment = '';
-				
-				// setup heredoc (table data)			
-				$data = <<<EOD
-				<tr class="$alter">
-					<td class="key">$reg_key</td>
-					<td>$email</td>
-					<td>$admin_link</td>
-					<td><span class="comment">$comment</span> $edit_comment</td>
-					<td><em>$time_add</em></td>
-					<td class="actions">
-						<form action="actions/key-edit.php" method="post" id="regkey-del-$counter">
-							<input type="hidden" value="$token_keydel" name="token" />
-							<input type="hidden" value="$reg_key" name="key" />
-							<input type="hidden" value="del" name="t" />
-							<input type="submit" name="keydel" value="Delete" class="action del harddel" title="Delete this registraion key" />
-						</form>
-					</td>
-				</tr>
+		foreach($keys_data['data'] as $reg_keys): // get data from query and loop
+		
+			$reg_key = $reg_keys['reg_key']; // the reg key
+			$comment = cleanvar($reg_keys['comment']); // comment about key
+			$time_add = date($tformat, $reg_keys['time_add']);
+			$email = emailLink($reg_keys['email'], '');
+			$admin_link = echUserLink($reg_keys['admin_id'], $reg_keys['admin']);
+			
+			$alter = alter();
+			
+			$token_keydel = genFormToken('keydel'.$reg_key);
+			
+			if($mem->id == $admin_id) // if the current user is the person who create the key allow the user to edit the key's comment
+				$edit_comment = '<img src="" alt="[Edit]" title="Edit this comment" class="edit-key-comment" />';
+			else
+				$edit_comment = '';
+			
+			// setup heredoc (table data)			
+			$data = <<<EOD
+			<tr class="$alter">
+				<td class="key">$reg_key</td>
+				<td>$email</td>
+				<td>$admin_link</td>
+				<td><span class="comment">$comment</span> $edit_comment</td>
+				<td><em>$time_add</em></td>
+				<td class="actions">
+					<form action="actions/key-edit.php" method="post" id="regkey-del-$counter">
+						<input type="hidden" value="$token_keydel" name="token" />
+						<input type="hidden" value="$reg_key" name="key" />
+						<input type="hidden" value="del" name="t" />
+						<input type="submit" name="keydel" value="Delete" class="action del harddel" title="Delete this registraion key" />
+					</form>
+				</td>
+			</tr>
 EOD;
 
 			echo $data;
 			$counter++;
-			endforeach;
+		endforeach;
 		
 		else:
 		
@@ -619,11 +614,11 @@ EOD;
 	<tbody>
 	<?php
 		$bl_data = $dbl->getBL();
-		$num_rows = count($bl_data);
+		$num_rows = $bl_data['num_rows'];
 		
 		if($num_rows > 0) :
 		
-			foreach($bl_data as $bl): // get data from query and loop
+			foreach($bl_data['data'] as $bl): // get data from query and loop
 				$id = $bl['id'];			
 				$ip = $bl['ip'];
 				$active = $bl['active'];

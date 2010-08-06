@@ -84,10 +84,10 @@ if($page_type == 'add') : ?>
 				<input type="text" name="name" id="name"  />
 
 			<label for="ip">IP Address:</label>
-				<input type="text" name="ip" id="ip" />
+				<input type="text" name="ip" id="ip" /><?php tooltip('The public IP address of the server'); ?>
 
 			<br /><label for="pb">Punkbuster&trade; Active?</label>
-				<input type="checkbox" name="pb" id="pb" />
+				<input type="checkbox" name="pb" id="pb" /><?php tooltip('Is punkbuster running on this server?'); ?>
 				
 			<label for="game-id">Game:</label>
 				<select name="game-id" id="game-id">
@@ -102,13 +102,13 @@ if($page_type == 'add') : ?>
 						$i++;
 					endwhile;
 					?>
-				</select>
+				</select><?php tooltip('What game is this server to be connected with?'); ?>
 		</fieldset>
 			
 		<fieldset class="none">
 			<legend>Rcon Info</legend>
 				
-			<label for="rcon-ip">Rcon IP:</label>
+			<label for="rcon-ip">Rcon IP:</label><?php tooltip('The IP used to connect to Rcon of this server'); ?>
 				<input type="text" name="rcon-ip" id="rcon-ip" />
 
 			<label for="rcon-port">Rcon Port:</label>

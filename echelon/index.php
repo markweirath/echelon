@@ -32,14 +32,15 @@ require 'inc/header.php';
 		<h3>Changelog <?php echo ECH_VER; ?></h3>
 		
 		<ul>
-			<li>Better user management, allowing more flexible permissions for Echelon users and managers</li>
-			<li>IP Blacklist, allows troublesome people to be banned from accessing the Echelon site</li>
-			<li>Editable settings lets Echelon managers keep things simple</li>
-			<li>Regular visitors page shows a list of people who are not clan members and who connect regularly.</li>
-			<li>In-active admins page shows a list of admins who have not connected to the servers in a while</li>
-			<li>Multi server for a single DB support. This allows you to associate mutliple servers to one DB. This gives people who use this technique when setting up B3 more flexibility for chat logs and banning and the like</li>
-			<li>Ability to change a client's mask, greeting, login details, edit a ban deatils</li>
-			<li>Security: Anti-session hijacking and fixation, tokens to stop CSRF attacks, prepared statments to prevent SQL injection. Making your Echelon expirence more secure allowing you to protect both you and your clients</li>
+			<li>A new look: Echelon has gotten a face lift; giving a much cleaner interface for the end user.</li>
+			<li>Easy Management: Echelon admins can now edit the majority of all Echelon settings from the Echelon control panel, no more shall admins need to hand out ftp/file access permissions so that admin can edit a setting or add a new game to expand Echelon.</li>
+			<li>Multiverse: Echelon now supports multi everything. Many B3 users run multiple B3 instances off the same DB. You can access multiple games or multiple servers from one Echelon.</li>
+			<li>New Pages: we have added some more pages to the default Echelon install: Active Admins, see what admins haven’t logged on in a while; Regular Users see what users frequent your servers regularly and recently; Admin List, just like the clients page but only for admins.</li>
+			<li>IP Blacklist: easily and simply ban people from accessing your Echelon.</li>
+			<li>More Things to Do: Admins now have the ability to change a client's mask information, greeting, and edit ban details shortening or lengthening a ban or change the reason.</li>
+			<li>Security: anti-session hijacking and fixation, tokens to stop CSRF attacks, prepared statements to prevent SQL injection. Making your Echelon experience more secure allowing you to protect both you and your users.</li>
+			<li>Granular Permissions: from the permissions page you can now decide what people can perform what actions.</li>
+			<li>Gravatars: select a profile picture for your user with the Gravatar system (Globally Recognised Avatar)</li>
 		</ul>
 	</div>
 	
@@ -47,13 +48,15 @@ require 'inc/header.php';
 		## External Links Section ##
 		$links = $dbl->getLinks();
 		
-		if(!empty($links)) :
+		$num_links = $links['num_rows'];
+		
+		if($num_links > 0) :
 			
 			echo '<div id="links-table" class="index-block">
 					<h3>External Links</h3>
 					<ul class="links-list">';
 		
-				foreach($links as $link) :
+				foreach($links['data'] as $link) :
 				
 					echo '<li><a href="'. $link['url'] .'" class="external" title="'. $link['title'] .'">' . $link['name'] . '</a></li>';
 				

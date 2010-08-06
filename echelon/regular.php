@@ -14,8 +14,6 @@ require 'inc.php';
 $orderby = "time_edit";
 $order = "ASC"; // either ASC or DESC
 
-//$limit_rows = 75; // limit_rows can be set by the DB settings // uncomment this line to manually overide the number of table rows per page
-
 $time = 1250237292;
 $lenght = 7; // default lenght (in days) that the client must have connected to the server(s) on in order to be on the list
 $connections_limit = 50; // default number of connections that the player must have (in total) to be on the list

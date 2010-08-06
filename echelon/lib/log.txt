@@ -509,3 +509,5 @@ Table 'b3.groupss' doesn't exist
 	IP-Adress: 127.0.0.1
 	Host of Attacker: localhost
 	Point of Attack: Locked out automatically.
+-------
+[2010-08-05 01:04:15]MYSQL CONNECTION ERROR - Code: 1045 - Message: B3 Database Connection Error: (#1045) Access denied for user 'SYSTEM'@'localhost' (using password: NO)

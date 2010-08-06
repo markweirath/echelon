@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS `ech_games` (
 CREATE TABLE IF NOT EXISTS `ech_groups` (
   `id` smallint(4) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(32) NOT NULL,
-  `display` varchar(255) DEFAULT NULL,
+  `namep` varchar(255) DEFAULT NULL,
   `premissions` varchar(512) NOT NULL,
   PRIMARY KEY (`id`,`name`),
   KEY `i_name` (`name`,`display`)
