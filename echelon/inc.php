@@ -25,7 +25,36 @@ $mem = new member($_SESSION['user_id'], $_SESSION['name'], $_SESSION['email']);
 ## Is B3 needed on this page ##
 if($b3_conn) : // This is to stop connecting to the B3 Db for non B3 Db connection pages eg. Home, Site Admin, My Account
 	require 'classes/mysql-class.php'; // class to preform all B3 DB related actions
-	$db = new DB_B3($game_db_host, $game_db_user, $game_db_pw, $game_db_name, DB_B3_ERROR_ON); // create connection to the B3 DB
+	$db = DB_B3::getInstance($game_db_host, $game_db_user, $game_db_pw, $game_db_name, DB_B3_ERROR_ON); // create connection to the B3 DB
+
+	unset($game_db_host);
+	unset($game_db_user);
+	unset($game_db_pw);
+	unset($game_db_name);
+	
+endif;
+
+## Plugins Setup ##
+if(count($config['game']['plugins']) > 0) : // if there are any registered plugins with this game
+	require 'classes/plugins-class.php'; // require the plugins base class
+	
+	$plugins = new plugins($plugin); // create a new instance of the base plugin class
+	
+	foreach($config['game']['plugins'] as $plugin) : // foreach plugin there is 
+
+		$file = 'lib/plugins/'.$plugin.'/class.php';
+		
+		if(file_exists($file))
+			include $file;
+		else
+			die('Unable to include the plugin file for the plugin '. $plugin .'<br /> In the directory: '. $file);
+			
+		$plugins_class["$plugin"] = $plugin::getInstance(); // create a new instance of the plugin (whatever, eg. xlrstats) plugin
+		
+	endforeach;
+	
+	plugins::setPluginsClass($plugins_class);
+	
 endif;
 
 ## If auth needed on this page ##

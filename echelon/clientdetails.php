@@ -31,29 +31,6 @@ $stmt->bind_result($ip, $connections, $guid, $name, $mask_level, $greeting, $tim
 $stmt->fetch();
 $stmt->close();
 
-if($plugin_xlrstats_enabled == true) :
-	## Get information for xlrstats ##
-	$query_xlr = "SELECT id, kills, deaths, ratio, skill, rounds, hide, fixed_name FROM xlr_playerstats WHERE client_id = ? LIMIT 1";
-	$stmt = $db->mysql->prepare($query_xlr) or die('Database Error '. $db->mysql->error);
-	$stmt->bind_param('i', $cid);
-	$stmt->execute();
-	$stmt->store_result();
-
-	if($stmt->num_rows) {
-		
-		$is_xlrstats_user = true;	
-		$stmt->bind_result($xlr_id, $kills, $deaths, $ratio, $skill, $rounds, $xlr_hide, $fixed_name);
-		$stmt->fetch();
-		
-	} else {
-		$is_xlrstats_user = false;
-	}
-
-	$stmt->free_result();
-	$stmt->close();
-	
-endif; // endif xlrstats is enabled
-
 ## Require Header ##
 $page_title .= ' '.$name; // add the clinets name to the end of the title
 
@@ -138,37 +115,12 @@ require 'inc/header.php';
 </table>
 
 <?php 
-if($is_xlrstats_user && $plugin_xlrstats_enabled) : // if the user has xlrstats information and the XLRStats plugin is enabled
+## Plugins Client Bio Area ##
+
+	$plugins->displayCDBio();
+
+##############################
 ?>
-<table class="cd-table" id="xlrstats-table">
-	<tbody>
-	<tr>
-		<th>Kills</th>
-			<td><?php echo $kills; ?></td>
-		<th>Deaths</th>
-			<td><?php echo $deaths; ?></td>
-	</tr>
-	<tr>
-		<th>Ratio</th>
-			<td><?php echo number_format($ratio, 2, '.', ''); ?></td>
-		<th>Skill</th>
-			<td><?php echo number_format($skill, 2, '.', ''); ?></td>
-	</tr>
-	<tr>
-		<th>Rank</th>
-			<td>(Not Working)</td>
-		<th>XLRStats id</th>
-			<td><?php echo $xlr_id; ?></td>
-	</tr>
-	<tr>
-		<th>Fixed Name</th>
-			<td><?php if($fixed_name == "") { echo "Non Set"; } else { echo tableClean($fixed_name); } ?></td>
-		<th>Hidden</th>
-			<td><?php if($xlr_hide == 1) { echo "Yes"; } else { echo "No"; } ?></td>
-	</tr>
-	</tbody>
-</table>
-<?php endif; /* endif xlr enabled and are records */ ?>
 
 <!-- Start Echelon Actions Panel -->
 
@@ -180,7 +132,7 @@ if($is_xlrstats_user && $plugin_xlrstats_enabled) : // if the user has xlrstats 
 		<?php if($mem->reqLevel('ban')) { ?><li><a href="#tabs" title="Add Ban/Tempban to this user" rel="cd-act-ban" class="cd-tab">Ban</a></li><?php } ?>
 		<?php if($mem->reqLevel('edit_client_level')) { ?><li><a href="#tabs" title="Change this user's user level" rel="cd-act-lvl" class="cd-tab">Change Level</a></li><?php } ?>
 		<?php if($mem->reqLevel('edit_mask')) { ?><li><a href="#tabs" title="Change this user's mask level" rel="cd-act-mask" class="cd-tab">Mask Level</a></li><?php } ?>
-		<?php if($mem->reqLevel('edit_xlrstats')) { ?><li><a href="#tabs" title="Edit some XLRStats information" rel="cd-act-xlrstats" class="cd-tab">XLRStats</a></li><?php } ?>
+		<?php $plugins->displayCDFormTab(); ?>
 	</ul>
 	<div id="actions-box">
 		<?php
@@ -325,27 +277,12 @@ if($is_xlrstats_user && $plugin_xlrstats_enabled) : // if the user has xlrstats 
 			</form>
 		</div>
 		<?php 
-			endif; 
-			if($mem->reqLevel('edit_xlrstats')) :
-			$xlr_token = genFormToken('xlrstats');
-		?>
-		<div id="cd-act-xlrstats" class="act-slide">
-			<form action="actions/b3/xlrstats.php" method="post">
+			endif;
 			
-				<label for="xlr-name">Fixed Name:</label>
-					<input type="text" name="fixed-name" value="<?php echo $fixed_name; ?>" id="xlr-name" /><br />
-				
-				<label for="xlr-hid">Hide Stats:</label>
-					<input type="checkbox" name="hidden" id="xlr-hid"<?php if($xlr_hide == '1') echo ' checked="checked"'; ?> />
-					
-				<div class="xlr"></div>
-				
-				<input type="hidden" name="cid" value="<?php echo $cid; ?>" />
-				<input type="hidden" name="token" value="<?php echo $xlr_token; ?>" />
-				<input type="submit" name="xlrstats-sub" value="Save Changes" />
-			</form>
-		</div>
-		<?php endif; ?>
+			## Plugins CD Form ##
+			$plugins->displayCDForm($cid)
+			
+		?>
 	</div><!-- end #actions-box -->
 </div><!-- end #actions -->
 
@@ -442,8 +379,8 @@ EOD;
 <!-- Client Penalties -->
 
 <div id="penalties">
-	<h3 class="cd-h" id="cd-h-pen" rel="pen">Penalties <img class="cd-open" src="images/add.png" alt="Open" /></h3>
-	<table class="cd-table-fold" id="cd-table-pen" rel="<?php echo $cid; ?>">
+	<h3 class="cd-h cd-slide" id="cd-pen">Penalties <img class="cd-open" src="images/add.png" alt="Open" /></h3>
+	<table id="cd-pen-table" class="slide-panel">
 		<thead>
 			<tr>
 				<th></th>
@@ -459,7 +396,10 @@ EOD;
 			<tr><td colspan="7"></td></tr>
 		</tfoot>
 		<tbody id="contain-pen">
-			<tr id="cd-tr-load-pen"><td colspan="7"><img class="load-large" id="load-pen" src="images/indicator-large.gif" alt="Loading....." title="Loading penalty data for <?php echo $name; ?>" /></td></tr>
+			<?php 
+				$type_inc = 'client';
+				include 'inc/cd/penalties.php'; 
+			?>
 		</tbody>
 	</table>
 </div>
@@ -467,8 +407,8 @@ EOD;
 <!-- Admin History -->
 
 <div id="admin">
-	<h3 class="cd-h" id="cd-h-admin" rel="admin">Admin Actions <img class="cd-open" src="images/add.png" alt="Open" /></h3>
-	<table class="cd-table-fold" id="cd-table-admin" rel="<?php echo $cid; ?>">
+	<h3 class="cd-h cd-slide" id="cd-admin">Admin Actions <img class="cd-open" src="images/add.png" alt="Open" /></h3>
+	<table id="cd-admin-table" class="slide-panel">
 		<thead>
 			<tr>
 				<th></th>
@@ -484,16 +424,17 @@ EOD;
 			<tr><td colspan="7"></td></tr>
 		</tfoot>
 		<tbody id="contain-admin">
-			<tr id="cd-tr-load-pen"><td colspan="7"><img class="load-large" id="load-pen" src="images/indicator-large.gif" alt="Loading....." title="Loading penalty data for <?php echo $name; ?>" /></td></tr>
+			<?php 
+				$type_inc = 'admin';
+				include 'inc/cd/penalties.php'; 
+			?>
 		</tbody>
 	</table>
 </div>
 
 <?php
-## Chat Logger ##
-// If the chat logger plugin is enabled then include the chat log code onto this page
-if($config['games'][$game]['plugins']['chatlog']['enabled'] == 1)
-	include 'inc/cd/chatlogs.php';
+## Plugins Log Include Area ##
+$plugins->displayCDlogs($cid);
 
 // Close page off with the footer
 require 'inc/footer.php'; 

@@ -21,6 +21,10 @@ require 'inc/header.php';
 		} elseif($_GET['t'] == 'ie') {
 			echo '<h3>Internet Explorer Banned!</h3><p>Microsoft Internet Explorer is banned from this site due to secuirty concerns. Please choose a modern browser,
 					such as Mozilla Firefox, Google Chrome, Apple Safari, or Opera. Thank-you.</p>';
+		} elseif($_GET['t'] == 'plug') {
+			echo '<h3>Plugin Page Failure</h3><p>The last page you requested requires that a plugin name be sent in the request. You did not sent one.</p>';
+		} elseif($_GET['t'] == 'plugpage') {
+			echo '<h3>Plugin Page Failure</h3><p>That plugin does not have a stand-alone page.';
 		} elseif($_GET['t'] == 'ssl') {
 			echo '<h3>SSL Connection Required</h3><p>An SSL connection is required for this site, and you did not seem to have one.</p>';
 		} else {

@@ -70,7 +70,7 @@ endif;
 
 
 ## Check that the DB information supplied will make a connection to the B3 database.
-$db_test = new DB_B3($db_host, $db_user, $db_pw, $db_name, true); // the last argument is hard coded because any error report needs to be the full error message, not just the failed connection line; this will only be seen by people who can add/edit settings
+$db_test = DB_B3::getInstance($db_host, $db_user, $db_pw, $db_name, true); // the last argument is hard coded because any error report needs to be the full error message, not just the failed connection line; this will only be seen by people who can add/edit settings
 
 if($db_test->error)
 	sendBack($db_test->error_msg); // send back with a failed connection message

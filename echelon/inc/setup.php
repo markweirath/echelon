@@ -71,6 +71,9 @@ if($num_games == 0) {
 ## Get the games Information for the current game ##
 $config['game'] = $dbl->getGameInfo($game);
 
+## setup the plugins into an array
+$config['game']['plugins'] = explode(",", $config['game']['plugins']);
+
 ## Get and setup the servers information into the array ##
 $servers = $dbl->getServers($game);
 
@@ -109,13 +112,6 @@ else :	// equal to no servers
 	define("NO_SERVER", true);
 
 endif;
-
-## Get plguin Information ##
-$config['game']['plugins'] = $dbl->getPlugins($game);
-
-## Handy's ##
-if($config['game']['plugins']['xlrstats']['enabled'] == 1)
-	$plugin_xlrstats_enabled = true;
 
 ## Setup some handy easy to access information for the CURRENT GAME only ##
 

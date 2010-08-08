@@ -21,12 +21,11 @@ ul.cd-tabs li a:hover { color: #666; text-decoration: none; cursor: pointer; }
 #chats-box { background: #f3f3f3; padding: 15px; border: 1px solid #CCC; -moz-border-radius: 7px; -webkit-border-radius: 7px; }
 .chat-content { display: none; }
 #chat-tab-1 { display: block; }
-.chat-cmd { color: blue; font-weight: bold; }
 
 .xlr { height: 7px; }
 
 .cd-h { margin: 20px 0 4px; border-bottom: 1px solid #efefef; padding-bottom: 3px; }
-.cd-open-close:hover, #cd-h-admin:hover, #cd-h-pen:hover { cursor: pointer; }
+.cd-open-close:hover, .cd-slide, #cd-h-admin:hover, #cd-h-pen:hover { cursor: pointer; }
 img.cd-open { float: right; padding: 3px; margin: 8px; }
 
 .cd-table-fold { display: none; }

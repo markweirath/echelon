@@ -14,11 +14,14 @@ require 'inc.php';
 $orderby = "time_edit";
 $order = "ASC"; // either ASC or DESC
 
-$time = 1250237292;
+//$time = 1250237292;
+$time = time();
 $lenght = 7; // default lenght (in days) that the client must have connected to the server(s) on in order to be on the list
 $connections_limit = 50; // default number of connections that the player must have (in total) to be on the list
 
-$clan_tags = array("=(e)=","=(eG)=","=(eGO)=","=(eGO)=","{ROC}","*{PotW}*","{DP}","=KND=","{KGB}");
+$clan_tags = $config['cosmos']['reg_clan_tags']; // use the clan tags stored in the DB conifg table
+
+$clan_tags = explode(',', $clan_tags);
 
 ## Sorts requests vars ##
 if($_GET['ob'])
@@ -67,10 +70,6 @@ require 'inc/header.php';
 
 if(!$db->error) :
 ?>
-
-<div style="float: none; margin: 15px; width: 90%; padding: 5px;" class="error-msg error">
-	<p><strong>Faked Time:</strong> <?php echo date($tformat, $time); ?></p>
-</div>
 
 <table summary="A list of players who are regular server go'ers o your servers.">
 	<caption>Regulars<small>A list of players who are regular server go'ers o your servers. Must have more than <strong><?php echo $connections_limit; ?></strong> connections and been seen in the last <strong><?php echo $lenght; ?></strong> days.</small></caption>

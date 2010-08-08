@@ -584,23 +584,22 @@ function recordNumber($start_row, $max_rows, $total_rows) {
 
 function queryStringPage() {
 
-	if (!empty($_SERVER['QUERY_STRING'])) {
+	if (!empty($_SERVER['QUERY_STRING'])) :
 	
 		$params = explode("&", $_SERVER['QUERY_STRING']);
 		$newParams = array();
 		
 		foreach ($params as $param) {
-			if (stristr($param, "p") == false) {
+			if (stristr($param, "p") == false)
 				array_push($newParams, $param);
-			}
-		}
-		if (count($newParams) != 0) {
-			$query_string_page = "&" . implode("&", $newParams);
 		}
 		
-	}
+		if (count($newParams) != 0)
+			$query_string = "&" . implode("&", $newParams);
+		
+	endif;
 	
-	return $query_string_page;
+	return $query_string;
 }
 
 function linkSort($keyword, $title) {

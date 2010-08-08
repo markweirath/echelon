@@ -1,19 +1,11 @@
 <?php
-$auth_name = 'clients'; // this page is add user, so that if you can add keys you should be able to remove them
-$b3_conn = true; // this page requries access to the B3 DB
-require '../../inc.php';
+if (!empty($_SERVER['SCRIPT_FILENAME']) && 'penalties.php' == basename($_SERVER['SCRIPT_FILENAME']))
+  		die ('Please do not load this page directly. Thanks!');
 
-$cid = $_GET['id']; 
-if($cid == '')
-	echo '<tr class="table-error"><td colspan="7"><span>No user selected, please send a client id</span></td></tr>'; // return message of no id sent
+if(empty($type_inc))
+	$type_inc = 'client';
 
-$type = 'client';
-if($_GET['type'] == 'admin')
-	$type = 'admin';
-else
-	$type = 'client';
-
-if($type == 'client')
+if($type_inc == 'client')
 	$query = "SELECT p.id, p.type, p.time_add, p.time_expire, p.reason, p.data, p.inactive, p.duration, 
 	COALESCE(c.id,'1') as admin_id, COALESCE(c.name, 'B3') as admin_name 
 	FROM penalties p LEFT JOIN clients c ON c.id = p.admin_id WHERE p.client_id = ? ORDER BY id DESC";
@@ -40,7 +32,7 @@ if($stmt->num_rows) : // if results exist
 		$data = tableClean($data);
 		$admin_name = tableClean($admin_name);
 		
-		if($type != 'Kick' && $type != 'Notice' && $time_expire != '-1')
+		if($type_inc!= 'Kick' && $type_inc!= 'Notice' && $time_expire != '-1')
 			$duration = time_duration($duration*60, 'yMwdhm'); // all penalty durations are stored in minutes, so multiple by 60 in order to get seconds
 		else
 			$duration = '';
@@ -81,7 +73,7 @@ EOD;
 	
 else : // if no results
 	
-	if($type == 'client')
+	if($type_inc == 'client')
 		echo '<tr class="table-good"><td colspan="7"><span>This user has no recorded penalties!</span></td></tr>';
 	else 
 		echo '<tr class="table-good"><td colspan="7"><span>This user has no recorded admin actions!</span></td></tr>';

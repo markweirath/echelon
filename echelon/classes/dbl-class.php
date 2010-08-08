@@ -210,12 +210,12 @@ class DbL {
 	
 	function getGameInfo($game) {
 	
-		$query = "SELECT id, game, name, name_short, num_srvs, db_host, db_user, db_pw, db_name FROM ech_games WHERE id = ?";
+		$query = "SELECT id, game, name, name_short, num_srvs, db_host, db_user, db_pw, db_name, plugins FROM ech_games WHERE id = ?";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('i', $game);
 		$stmt->execute();
 		
-		$stmt->bind_result($id, $game, $name, $name_short, $num_srvs, $db_host, $db_user, $db_pw, $db_name);
+		$stmt->bind_result($id, $game, $name, $name_short, $num_srvs, $db_host, $db_user, $db_pw, $db_name, $plugins);
         $stmt->fetch(); // get results		
 		
 		$game = array(
@@ -227,7 +227,8 @@ class DbL {
 			'db_host' => $db_host,
 			'db_user' => $db_user,
 			'db_pw' => $db_pw,
-			'db_name' => $db_name
+			'db_name' => $db_name,
+			'plugins' => $plugins
 		);
 		
 		return $game;
@@ -449,28 +450,6 @@ class DbL {
 		$stmt = $this->mysql->prepare($query) or die('Database Error:'. $this->mysql->error);;
 		$stmt->bind_param('i', $game_id);
 		$stmt->execute();
-	}
-	
-	function getPlugins($game) {
-	
-		$query = "SELECT id, name, title, info FROM ech_plugins WHERE game_id = ? AND enabled = 1";
-		$stmt = $this->mysql->prepare($query) or die('Database Error');
-		$stmt->bind_param('i', $game);
-		$stmt->execute();
-		
-		$stmt->bind_result($id, $name, $title, $info);
-		
-		while($stmt->fetch()) :
-			$plugins[$name] = array(
-				'id' => $id,
-				'title' => $title,
-				'info' => $info,
-				'enabled' => 1 // it must be enabled because the query said so
-			);
-		endwhile;
-		
-		$stmt->close();
-		return $plugins;
 	}
 	
 	function getGamesList() {

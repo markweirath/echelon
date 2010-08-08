@@ -22,6 +22,8 @@ class DB_B3 {
 
 	private $error_sec = 'We are having some database problems, please check back later.'; // message to show the public if the DB query/connect fails
 	private $error_on = false; // are detailed error reports on (default, can be overidden)
+	
+	private static $instance;
 
 	## Connection Vars ##
 	private $host; // B3 DB MySQL Host
@@ -30,9 +32,28 @@ class DB_B3 {
 	private $name; // B3 DB MySQL Database Name
 
 	/**
+	 * Gets the current instance of the class, there can only be one instance (this make the class a singleton class)
+	 * 
+	 * @return object $instance - the current instance of the class
+	 */
+	public static function getInstance($host, $user, $pass, $name, $error_on = false) {
+        if (!(self::$instance instanceof self)) {
+            self::$instance = new self($host, $user, $pass, $name, $error_on);
+        }
+ 
+        return self::$instance;
+    }
+	
+	public static function getPointer() {
+	
+		return self::$instance;
+	
+	}
+	
+	/**
 	 * Auto Load in sent vars and make connection to the B3 DB
 	 */
-	public function __construct($host, $user, $pass, $name, $error_on) {
+	private function __construct($host, $user, $pass, $name, $error_on) {
 		$this->host = $host;
 		$this->user = $user;
 		$this->pass = $pass;
@@ -57,6 +78,9 @@ class DB_B3 {
 		} // end catch
 		
 	} // end constructor function
+	
+	// Do not allow the clone operation
+    private function __clone() { }
 	
 	/**
 	 * If access to a protected or private function is called

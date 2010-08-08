@@ -368,3 +368,4 @@ label.uname:hover { color: #bbb; }
 .perm-td:last-child { border: none !important; }
 .perm-td  .tooltip { float: right; }
 #perms-fs { width: auto; float: none; padding: 10px; margin: 3px; }
+.chat-cmd { color: blue; font-weight: bold; }
