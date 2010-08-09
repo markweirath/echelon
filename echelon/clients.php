@@ -57,21 +57,21 @@ $query = "SELECT c.id, c.name, c.connections, c.time_edit, c.time_add, c.group_b
 			ON c.group_bits = g.id WHERE c.id > 1 ";
 
 if($is_search == true) : // IF SEARCH
-	if($search_type == 'name') { // ALIAS
-		$query .= sprintf("AND c.name LIKE '%%s%%' ORDER BY %s", $search_string, $orderby);
+	if($search_type == 'alias') { // ALIAS
+		$query .= sprintf("AND c.name LIKE '$search_string' ORDER BY %s", $orderby);
 		
 	} elseif($search_type == 'id') { // ID
-		$query .= sprintf("AND c.id LIKE '%%s%%' ORDER BY %s", $search_string, $orderby);
+		$query .= sprintf("AND c.id LIKE '$search_string' ORDER BY %s", $orderby);
 		
 	} elseif($search_type == 'pbid') { // PBID
-		$query .= sprintf("AND c.pbid LIKE '%%s%%' ORDER BY %s", $search_string, $orderby);
+		$query .= sprintf("AND c.pbid LIKE '$search_string' ORDER BY %s", $orderby);
 		
 	} elseif($search_type == 'ip') { // IP
-		$query .= sprintf("AND c.ip LIKE '%%s%%' ORDER BY %s", $search_string, $orderby);
+		$query .= sprintf("AND c.ip LIKE '$search_string' ORDER BY %s", $orderby);
 		
 	} else { // ALL
-		$query .= sprintf("AND c.name LIKE '%%s%%' OR c.pbid LIKE '%%s%%' OR c.ip LIKE '%%s%%' OR c.id LIKE '%%%s%%'
-			ORDER BY %s", $search_string, $search_string, $search_string, $search_string, $orderby);
+		$query .= sprintf("AND c.name LIKE '$search_string' OR c.pbid LIKE '$search_string' OR c.ip LIKE '$search_string' OR c.id LIKE '$search_string'
+			ORDER BY %s", $orderby);
 	}
 else : // IF NOT SEARCH
 	$query .= sprintf("ORDER BY %s ", $orderby);
@@ -106,7 +106,7 @@ if(!$db->error) :
 		
 		<select name="t">
 			<option value="all" <?php if($search_type == "all") echo 'selected="selected"' ?>>All Records</option>
-			<option value="alias" <?php if($search_type == "names") echo 'selected="selected"' ?>>Name</option>
+			<option value="alias" <?php if($search_type == "alias") echo 'selected="selected"' ?>>Name</option>
 			<option value="pbid" <?php if($search_type == "pbid") echo 'selected="selected"' ?>>PBID</option>
 			<option value="ip" <?php if($search_type == "ip") echo 'selected="selected"' ?>>IP Address</option>
 			<option value="id" <?php if($search_type == "id") echo 'selected="selected"' ?>>Player ID</option>

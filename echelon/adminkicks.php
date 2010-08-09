@@ -38,7 +38,7 @@ $start_row = $page_no * $limit_rows;
 ###########################
 ######### QUERIES #########
 
-$query = "SELECT p.time_add, p.reason, target.id as target_id, target.name as target_name, c.id as admin_id, c.name as admin_name FROM penalties p, clients c, clients as target WHERE admin_id != '0' AND p.type = 'Kick' AND inactive = 0 AND p.client_id = target.id AND p.admin_id = c.id";
+$query = "SELECT p.time_add, p.reason, target.id as target_id, target.name as target_name, c.id as admin_id, c.name as admins_name FROM penalties p, clients c, clients as target WHERE admin_id != '0' AND p.type = 'Kick' AND inactive = 0 AND p.client_id = target.id AND p.admin_id = c.id";
 
 $query .= sprintf(" ORDER BY %s ", $orderby);
 
@@ -87,7 +87,7 @@ if(!$db->error) :
 			$client_id = $data['target_id'];
 			$client_name = tableClean($data['target_name']);
 			$admin_id = $data['admin_id'];
-			$admin_name = tableClean($data['admin_name']);
+			$admin_name = tableClean($data['admins_name']);
 
 			## Tidt data to make more human friendly
 			if($time_expire != '-1')

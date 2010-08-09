@@ -536,3 +536,45 @@ Table 'b3.groupss' doesn't exist
 #1 C:\wamp\www\echelon\lib\plugins\chatlogs\class.php(182): chatlogs::pageLogic('1')
 #2 C:\wamp\www\echelon\plugin.php(30): chatlogs::returnPage('1')
 #3 {main}
+-------
+[2010-08-09 21:04:47]MYSQL ERROR - Code: 1054 - Message: Unknown column 'Eire.32' in 'order clause'
+#Trace: 
+#0 C:\wamp\www\echelon\inc\header.php(4): DB_B3->query('SELECT c.id, c....')
+#1 C:\wamp\www\echelon\clients.php(90): require('C:\wamp\www\ech...')
+#2 {main}
+-------
+[2010-08-09 21:05:35]MYSQL ERROR - Code: 1054 - Message: Unknown column 'Eire.32' in 'order clause'
+#Trace: 
+#0 C:\wamp\www\echelon\inc\header.php(4): DB_B3->query('SELECT c.id, c....')
+#1 C:\wamp\www\echelon\clients.php(90): require('C:\wamp\www\ech...')
+#2 {main}
+-------
+[2010-08-09 21:06:50]MYSQL ERROR - Code: 1054 - Message: Unknown column 'Eire.32' in 'order clause'
+#Trace: 
+#0 C:\wamp\www\echelon\inc\header.php(4): DB_B3->query('SELECT c.id, c....')
+#1 C:\wamp\www\echelon\clients.php(90): require('C:\wamp\www\ech...')
+#2 {main}
+-------
+[2010-08-09 21:06:52]MYSQL ERROR - Code: 1054 - Message: Unknown column 'Eire.32' in 'order clause'
+#Trace: 
+#0 C:\wamp\www\echelon\inc\header.php(4): DB_B3->query('SELECT c.id, c....')
+#1 C:\wamp\www\echelon\clients.php(90): require('C:\wamp\www\ech...')
+#2 {main}
+-------
+[2010-08-09 21:09:14]MYSQL ERROR - Code: 1054 - Message: Unknown column 'target_name' in 'order clause'
+#Trace: 
+#0 C:\wamp\www\echelon\inc\header.php(4): DB_B3->query('SELECT p.type, ...')
+#1 C:\wamp\www\echelon\bans.php(63): require('C:\wamp\www\ech...')
+#2 {main}
+-------
+[2010-08-09 21:10:22]MYSQL ERROR - Code: 1054 - Message: Unknown column 'admins_name' in 'order clause'
+#Trace: 
+#0 C:\wamp\www\echelon\inc\header.php(4): DB_B3->query('SELECT p.time_a...')
+#1 C:\wamp\www\echelon\adminkicks.php(54): require('C:\wamp\www\ech...')
+#2 {main}
+-------
+[2010-08-09 21:11:38]MYSQL ERROR - Code: 1054 - Message: Unknown column 'target_name' in 'order clause'
+#Trace: 
+#0 C:\wamp\www\echelon\inc\header.php(4): DB_B3->query('SELECT p.type, ...')
+#1 C:\wamp\www\echelon\bans.php(63): require('C:\wamp\www\ech...')
+#2 {main}

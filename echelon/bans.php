@@ -1,5 +1,10 @@
 <?php
-if($_GET['t'] == 'a') :
+if(!isset($_GET['t']))
+	$t = 'b';
+else
+	$t = $_GET['t'];
+	
+if($t == 'a') :
 	$page = "adminbans";
 	$page_title = "Admin Bans";
 	$type_admin = true;
@@ -30,7 +35,7 @@ if($_GET['o'])
 	$order = addslashes($_GET['o']);
 
 // allowed things to sort by
-$allowed_orderby = array('target_name', 'type', 'time_add', 'duration', 'time_expire');
+$allowed_orderby = array('client_name', 'type', 'time_add', 'duration', 'time_expire');
 if(!in_array($orderby, $allowed_orderby)) // Check if the sent varible is in the allowed array 
 	$orderby = 'time_add'; // if not just set to default id
 
@@ -76,19 +81,19 @@ endif;
 	<thead>
 		<tr>
 			<th>Target
-				<?php linkSort('target_name', 'Name'); ?>
+				<?php linkSortBan('client_name', 'Name', $t); ?>
 			</th>
 			<th>Type
-				<?php linkSort('type', 'penalty type'); ?>
+				<?php linkSortBan('type', 'penalty type', $t); ?>
 			</th>
 			<th>Added
-				<?php linkSort('time_add', 'time the penalty was added'); ?>
+				<?php linkSortBan('time_add', 'time the penalty was added', $t); ?>
 			</th>
 			<th>Duration
-				<?php linkSort('duration', 'duration of penalty'); ?>
+				<?php linkSortBan('duration', 'duration of penalty', $t); ?>
 			</th>
 			<th>Expires
-				<?php linkSort('time_expire', 'time the penalty expires'); ?>
+				<?php linkSortBan('time_expire', 'time the penalty expires', $t); ?>
 			</th>
 			<th>Reason</th>
 			<?php if($type_admin) echo '<th>Admin</th>'; // only the admin type needs this header line ?>

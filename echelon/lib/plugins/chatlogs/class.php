@@ -160,7 +160,7 @@ class chatlogs extends plugins {
 		$db = DB_B3::getPointer(); // get the db pointer
 		
 		$query = "SELECT id, msg_time, msg_type, client_id, client_name, client_team, msg 
-				  FROM ". $table_name ." ORDER BY msg_time DESC LIMIT 3, 75";
+				  FROM ". $table_name ." ORDER BY msg_time DESC LIMIT 100";
 				  
 		$results = $db->query($query); // run the query
 		
