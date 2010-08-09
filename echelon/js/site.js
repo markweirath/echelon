@@ -1,5 +1,7 @@
 $(document).ready(function() {
 	
+	tooltip();
+	
 	// Forces all textareas/inputs with a class /int to allow allow numbers in the field
 	$(".int").numeric();
 	
@@ -100,10 +102,6 @@ $(document).ready(function() {
 			var key = $("#key-input").val();
 			
 			var dataString = 'key=' + key + '&text=' + newText;
-			
-			// Troubleshooting
-			//alert(dataString);
-			//return false;
 			
 			$.post("actions/key-edit.php", { comment: newText, key: key}, function(data){
 																				 

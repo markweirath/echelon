@@ -27,6 +27,7 @@ if($b3_conn) : // This is to stop connecting to the B3 Db for non B3 Db connecti
 	require 'classes/mysql-class.php'; // class to preform all B3 DB related actions
 	$db = DB_B3::getInstance($game_db_host, $game_db_user, $game_db_pw, $game_db_name, DB_B3_ERROR_ON); // create connection to the B3 DB
 
+	// unset all the db info vars
 	unset($game_db_host);
 	unset($game_db_user);
 	unset($game_db_pw);
@@ -42,10 +43,11 @@ if(count($config['game']['plugins']) > 0) : // if there are any registered plugi
 	
 	foreach($config['game']['plugins'] as $plugin) : // foreach plugin there is 
 
-		$file = 'lib/plugins/'.$plugin.'/class.php';
+		// file = root to www path + echelon path + path to plugin from echelon path
+		$file = getenv("DOCUMENT_ROOT").PATH.'lib/plugins/'.$plugin.'/class.php'; // abolsute path - needed because this page is include in all levels of this site
 		
 		if(file_exists($file))
-			include $file;
+			require $file;
 		else
 			die('Unable to include the plugin file for the plugin '. $plugin .'<br /> In the directory: '. $file);
 			

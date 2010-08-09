@@ -1,6 +1,6 @@
 <?php
 if (!empty($_SERVER['SCRIPT_FILENAME']) && 'session-class.php' == basename($_SERVER['SCRIPT_FILENAME']))
-  		die ('Please do not load this page directly. Thanks!');
+  		die('Please do not load this page directly. Thanks!');
 
 class Session {
 

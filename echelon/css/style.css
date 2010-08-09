@@ -369,3 +369,5 @@ label.uname:hover { color: #bbb; }
 .perm-td  .tooltip { float: right; }
 #perms-fs { width: auto; float: none; padding: 10px; margin: 3px; }
 .chat-cmd { color: blue; font-weight: bold; }
+.chat-fh{display:block;width:50%;border-bottom:1px solid #ccc;margin:10px 0 3px;padding-bottom:2px;}
+.animate:hover{background-image:none;}

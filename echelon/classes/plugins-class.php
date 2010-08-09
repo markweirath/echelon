@@ -10,29 +10,44 @@ if (!empty($_SERVER['SCRIPT_FILENAME']) && 'plugins-class.php' == basename($_SER
 
 class plugins {
 
-	public $name; // name of the plugin
-	public $title; // pretty version of the name of the plugin
+	protected $name; // name of the plugin
+	protected $title; // pretty version of the name of the plugin
 	private $version = 1.0;
 	
-	public static $plugins_class = NULL;
+	protected static $plugins_class = NULL;
 	
-	function __construct($name) {
+	public function __construct($name) {
 		$this->name = $name;
 	}
 	
 	public function __destruct() {
 	}
 	
-	public function setTitle($title) {
+	protected function setTitle($title) {
 		$this->title = $title;
 	}
 	
-	public function setVersion($version) {
+	protected function setVersion($version) {
 		$this->version = $version;
 	}
 	
 	public static function setPluginsClass($value) {
 		self::$plugins_class = $value;
+	}
+	
+	protected function getTitle() {
+		return $this->title;
+	}
+	
+	protected function getName() {
+		return $this->name;
+	}
+	
+	/**
+	 * Internal function: in the case of fatal error die with plugin name and error message
+	 */
+	protected function error($msg) {
+		die($this->getName().' Plugin Error: '. $msg);
 	}
 	
 	/**
@@ -74,6 +89,9 @@ class plugins {
 		endforeach;
 	}
 	
+	/**
+	 * For each plugin check if they want to add a link
+	 */
 	function displayNav() {
 		foreach(self::$plugins_class as $plugin) :
 			$content = $plugin::returnNav();
@@ -81,6 +99,9 @@ class plugins {
 		endforeach;
 	}
 	
+	/**
+	 * For each plugin check if they want to append something to the end of the CD page
+	 */
 	function displayCDlogs($cid) {
 	
 		foreach(self::$plugins_class as $plugin) :
@@ -89,10 +110,26 @@ class plugins {
 		endforeach;
 	}
 	
+	/**
+	 * For each plugin check if they need to include a css file
+	 */
 	function getCSS() {
+		
+		foreach(self::$plugins_class as $plugin) :
+			$content = $plugin::returnCSS();
+			echo $content;
+		endforeach;
 	}
 	
+	/**
+	 * For each plugin check if they need to include a JS file
+	 */
 	function getJS() {
+	
+		foreach(self::$plugins_class as $plugin) :
+			$content = $plugin::returnJS();
+			echo $content;
+		endforeach;
 	}
 
 

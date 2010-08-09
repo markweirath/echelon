@@ -87,7 +87,7 @@
 	<script src="js/me.js" type="text/javascript" charset="utf-8"></script>
 <?php } ?>
 
-<?php if($page == 'clientdetails') { ?>
+<?php if($page == 'clientdetails') : ?>
 	
 	<script src="js/jquery.colorbox-min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/cd.js" type="text/javascript" charset="utf-8"></script>
@@ -106,10 +106,12 @@
 			}
 		});
 	</script>
-<?php } ?>
+<?php endif; ?>
 
 <!-- load main site js -->
 <script src="<?php echo $path; ?>js/site.js" type="text/javascript" charset="utf-8"></script>
+
+<?php $plugins->getJS(); ?>
 
 </body>
 </html>
