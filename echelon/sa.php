@@ -214,7 +214,7 @@ if($is_edit_user) : ?>
 		<thead>
 			<tr>
 				<th>id</th>
-				<th>Name</th>
+				<th>Group Name</th>
 				<th></th>
 			</tr>
 		</thead>
@@ -243,7 +243,7 @@ if($is_edit_user) : ?>
 						<tr class="$alter">
 							<td>$id</td>
 							<td><strong>$name_link</strong></td>
-							<td></td>
+							<td>&nbsp;</td>
 						</tr>
 EOD;
 
@@ -342,7 +342,8 @@ EOD;
 	
 	<form action="actions/perms-edit.php?t=add" method="post">
 	
-		<label for="g-name">Name of Group:</label><input type="text" name="name" id="g-name" />
+		<label for="g-name">Name of Group:</label>
+			<input type="text" name="g-name" id="g-name" />
 		
 		<fieldset class="none" id="perms-fs">
 		
@@ -351,6 +352,8 @@ EOD;
 		<table id="perms">
 		<tbody>
 		<?php
+		
+			$add_g_token = genFormToken('perm-group-add');
 		
 			$perms = $dbl->getPermissions(); // gets a comprehensive list of Echelon groups
 			
@@ -371,11 +374,8 @@ EOD;
 					$p_name = $perms[$in]['name'];
 					$p_desc = $perms[$in]['desc'];
 					
-					if($p_name != 'pbss') {
-						$p_name_read = preg_replace('#_#', ' ', $p_name);
-						$p_name_read = ucwords($p_name_read);
-					} else
-						$p_name_read = 'PBSS';
+					$p_name_read = preg_replace('#_#', ' ', $p_name);
+					$p_name_read = ucwords($p_name_read);
 					
 					if($p_id != "") :
 						echo '<td class="perm-td"><label for="'. $p_name .'">' . $p_name_read . '</label><input id="'.$p_name.'" type="checkbox" name="' . $p_name . '" />'; 
@@ -401,6 +401,7 @@ EOD;
 		</fieldset>
 		
 		<br />
+		<input type="hidden" name="token" value="<?php echo $add_g_token; ?>" />
 		<input type="submit" value="Add Group" />
 	
 	</form>

@@ -57,7 +57,6 @@ class xlrstats extends plugins {
 	 */
 	public static function returnClientLogs($cid) {}
 	public static function returnNav() {}
-	public static function returnSettings() {}
 	public static function returnCSS() {}
 	public static function returnJS() {}
 	
@@ -89,7 +88,7 @@ class xlrstats extends plugins {
 				$hide = 'checked="checked"';
 	
 			$data = '<div id="cd-act-xlrstats" class="act-slide">
-				<form action="actions/b3/xlrstats.php" method="post">
+				<form action="lib/plugins/'.__CLASS__.'/actions.php" method="post">
 				
 					<label for="xlr-name">Fixed Name:</label>
 						<input type="text" name="fixed-name" value="'. self::$xlr_fixed_name .'" id="xlr-name" /><br />

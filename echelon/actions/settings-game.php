@@ -21,8 +21,8 @@ else
 
 ## Check Token ##
 if($is_add) {
-	if(!verifyFormToken('addgame', $tokens)) // verify token
-		ifTokenBad('Add Game');
+	//if(!verifyFormToken('addgame', $tokens)) // verify token
+	//	ifTokenBad('Add Game');
 } else {
 	if(!verifyFormToken('gamesettings', $tokens)) // verify token
 		ifTokenBad('Game Settings Edit');

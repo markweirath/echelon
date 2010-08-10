@@ -9,7 +9,7 @@ if(!$_POST['ban-sub']) { // if the form not is submitted
 }
 
 ## check that the sent form token is corret
-if(verifyFormToken('ban', $tokens) == false) // verify token
+if(!verifyFormToken('ban', $tokens)) // verify token
 	ifTokenBad('Add ban');
 
 ## Type of ban and get and set vars ##
@@ -64,7 +64,7 @@ if($is_pb_ban == true) :
 	$i = 1;
 	while($i <= $game_num_srvs) :
 
-		if($config['games'][$game]['servers'][$i]['pb_active'] == '1') {
+		if($config['games'][$game]['servers'][$i]['pb_active'] == '1') :
 			// get the rcon information from the massive config array
 			$rcon_pass = $config['game']['servers'][$i]['rcon_pass'];
 			$rcon_ip = $config['game']['servers'][$i]['rcon_ip'];
@@ -77,7 +77,7 @@ if($is_pb_ban == true) :
 			sleep(1); // sleep for 1 sec in ordere to the give server some time
 			$command_upd = "pb_sv_updbanfile"; // we need to update the ban files
 			rcon($rcon_ip, $rcon_port, $rcon_pass, $command_upd); // send the ban file update command
-		}
+		endif;
 
 		$i++;
 	endwhile;

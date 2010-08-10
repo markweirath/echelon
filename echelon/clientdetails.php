@@ -117,7 +117,8 @@ require 'inc/header.php';
 <?php 
 ## Plugins Client Bio Area ##
 
-	$plugins->displayCDBio();
+	if(!$no_plugins_active)
+		$plugins->displayCDBio();
 
 ##############################
 ?>
@@ -132,7 +133,10 @@ require 'inc/header.php';
 		<?php if($mem->reqLevel('ban')) { ?><li><a href="#tabs" title="Add Ban/Tempban to this user" rel="cd-act-ban" class="cd-tab">Ban</a></li><?php } ?>
 		<?php if($mem->reqLevel('edit_client_level')) { ?><li><a href="#tabs" title="Change this user's user level" rel="cd-act-lvl" class="cd-tab">Change Level</a></li><?php } ?>
 		<?php if($mem->reqLevel('edit_mask')) { ?><li><a href="#tabs" title="Change this user's mask level" rel="cd-act-mask" class="cd-tab">Mask Level</a></li><?php } ?>
-		<?php $plugins->displayCDFormTab(); ?>
+		<?php 
+			if(!$no_plugins_active)
+				$plugins->displayCDFormTab();
+		?>
 	</ul>
 	<div id="actions-box">
 		<?php
@@ -280,7 +284,8 @@ require 'inc/header.php';
 			endif;
 			
 			## Plugins CD Form ##
-			$plugins->displayCDForm($cid)
+			if(!$no_plugins_active)
+				$plugins->displayCDForm($cid)
 			
 		?>
 	</div><!-- end #actions-box -->
@@ -434,7 +439,8 @@ EOD;
 
 <?php
 ## Plugins Log Include Area ##
-$plugins->displayCDlogs($cid);
+if(!$no_plugins_active)
+	$plugins->displayCDlogs($cid);
 
 // Close page off with the footer
 require 'inc/footer.php'; 

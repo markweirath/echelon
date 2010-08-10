@@ -58,7 +58,6 @@ class chatlogs extends plugins {
 	/**
 	 * Main Function - DO NOT REMOVE any of the below functions
 	 */
-	public static function returnSettings() {}
 	public static function returnClientFormTab() {}
 	public static function returnClientForm($cid) {}
 	public static function returnClientBio() {}
@@ -120,11 +119,11 @@ class chatlogs extends plugins {
 	
 		global $mem; // get pointer to the members class
 		
-		if($mem->reqLevel('chatlogs')) :
+		if($mem->reqLevel(__CLASS__)) :
 		
 			global $page; // bring in the current page var from main Echelon
 			
-			if($page == 'chat')
+			if($page == __CLASS__)
 				$data = '<li class="n-chat selected">';
 			else
 				$data = '<li class="n-chat">';

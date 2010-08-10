@@ -36,7 +36,8 @@ if($b3_conn) : // This is to stop connecting to the B3 Db for non B3 Db connecti
 endif;
 
 ## Plugins Setup ##
-if(count($config['game']['plugins']) > 0) : // if there are any registered plugins with this game
+if(!$no_plugins_active) : // if there are any registered plugins with this game
+	
 	require 'classes/plugins-class.php'; // require the plugins base class
 	
 	$plugins = new plugins($plugin); // create a new instance of the base plugin class
@@ -69,10 +70,16 @@ if($auth_user_here != false) // some pages do not need auth but include this fil
 ## remove tokens from 2 pages ago to stop build up
 if(!isLogin()) : // stop login page from using this and moving the vars
 	$tokens = array();
-	foreach($_SESSION['tokens'] as $key => $value) :
-		$tokens[$key] = $value;
-	endforeach;
-	$_SESSION['tokens'] = array();
+		
+	$num_tokens = count($_SESSION['tokens']);
+	
+	if($num_tokens > 0) :
+		foreach($_SESSION['tokens'] as $key => $value) :
+			$tokens[$key] = $value;
+		endforeach;
+		$_SESSION['tokens'] = array();
+	endif;
+	
 endif;
 
 ## if no time zone set display error ##

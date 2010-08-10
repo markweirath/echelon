@@ -578,3 +578,8 @@ Table 'b3.groupss' doesn't exist
 #0 C:\wamp\www\echelon\inc\header.php(4): DB_B3->query('SELECT p.type, ...')
 #1 C:\wamp\www\echelon\bans.php(63): require('C:\wamp\www\ech...')
 #2 {main}
+-------
+[2010-08-10 16:46:39]HACK ATTEMPT Message: 	There was a hacking attempt,.
+	IP-Adress: 127.0.0.1
+	Host of Attacker: localhost
+	Point of Attack: Locked out automatically.

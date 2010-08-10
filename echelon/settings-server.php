@@ -238,6 +238,8 @@ if($page_type == 'add') : ?>
 					$warn = 'game';
 				else
 					$warn = '';
+					
+				$del_token = genFormToken('del-server'.$id);
 			
 				$table = <<<EOD
 				<tr class="$alter">
@@ -246,7 +248,13 @@ if($page_type == 'add') : ?>
 					<td>$ip_read</td>
 					<td>$pb_active_read</td>
 					<td><a href="settings-games.php?game=$game_id&amp;w=$warn" title="Edit the settings for $game_name">$game_name</a></td>
-					<td></td>
+					<td>
+						<a href="settings-server.php?t=srv&amp;id=$id"><img src="images/edit.png" alt="[E]" /></a>
+						<form style="display: inline;" method="post" action="actions/settings-server.php?t=del&amp;id=$id">
+							<input type="hidden" name="token" value="$del_token" />
+							<input class="harddel" type="image" title="Delete this Server" src="images/delete.png" alt="[D]" />
+						</form>
+					</td>
 				</tr>
 EOD;
 

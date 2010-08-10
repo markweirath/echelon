@@ -72,7 +72,11 @@ if($num_games == 0) {
 $config['game'] = $dbl->getGameInfo($game);
 
 ## setup the plugins into an array
-$config['game']['plugins'] = explode(",", $config['game']['plugins']);
+if(!empty($config['game']['plugins'])) {
+	$config['game']['plugins'] = explode(",", $config['game']['plugins']);
+	$no_plugins_active = false;
+} else
+	$no_plugins_active = true;
 
 ## Get and setup the servers information into the array ##
 $servers = $dbl->getServers($game);

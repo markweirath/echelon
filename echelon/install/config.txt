@@ -7,7 +7,9 @@ define("PATH", $path);
 define("DBL_HOSTNAME", "%db_host%"); // hostname of where the server is located
 define("DBL_USERNAME", "%db_user%"); // username that can connect to that DB
 define("DBL_PASSWORD", "%db_pass%"); // Password for that user
-define("DBL_DB", "%db_name%"); // name of the database to connect to
+$ech_log_path = getenv("DOCUMENT_ROOT").PATH."lib/log.txt";
+define("ECH_LOG", $ech_log_path); // location of the Echelon Log file
+unset($ech_log_path);
 
 #############################
 ///// IGNORE BELOW HERE /////

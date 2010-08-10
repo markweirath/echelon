@@ -296,8 +296,8 @@ class DbL {
 	 */
 	function addGame($name, $game, $name_short, $db_host, $db_user, $db_pw, $db_name) {
 		// id, name, game, name_short, num_srvs, db_host, db_user, db_pw, db_name
-		$query = "INSERT INTO ech_games VALUES(NULL, ?, ?, ?, 0, ?, ?, ?, ?)";
-		$stmt = $this->mysql->prepare($query) or die('Database Error');
+		$query = "INSERT INTO ech_games (name, game, name_short, num_srvs, db_host, db_user, db_pw, db_name) VALUES(?, ?, ?, 0, ?, ?, ?, ?)";
+		$stmt = $this->mysql->prepare($query) or die('Database Error:'. $this->mysql->error);
 		$stmt->bind_param('sssssss', $name, $game, $name_short, $db_host, $db_user, $db_pw, $db_name);
 		$stmt->execute();
 		
@@ -915,9 +915,11 @@ class DbL {
 		$stmt->execute();
 		$stmt->bind_result($group, $admin_id); // store results	
 		$stmt->fetch();
+		
 		$result = array($group, $admin_id);
 		$stmt->free_result();
 		$stmt->close();
+		
 		return $result;
 	}
 	
@@ -951,12 +953,14 @@ class DbL {
 		$stmt->bind_param('s', $key);
 		$stmt->execute();
 		
-		if($stmt->affected_rows)
+		$affect = $stmt->affected_rows;
+		
+		$stmt->close();
+		
+		if($affect == 1)
 			return true;
 		else
 			return false;
-		
-		$stmt->close();
 	}
 	
 	/**
@@ -999,12 +1003,14 @@ class DbL {
 		$stmt->bind_param('i', $user_id);
 		$stmt->execute();
 		
-		if($stmt->affected_rows == 1)
+		$affect = $stmt->affected_rows;
+		
+		$stmt->close();
+		
+		if($affect == 1)
 			return true;
 		else
 			return false;
-	
-		$stmt->close();
 	}
 	
 	function editUser($id, $username, $display, $email, $ech_group) {
@@ -1173,7 +1179,11 @@ class DbL {
 		$stmt->bind_param('ssii', $type, $comment, $cid, $user_id);
 		$stmt->execute();
 		
-		if($stmt->affected_rows)
+		$affect = $stmt->affected_rows;
+		
+		$stmt->close();
+		
+		if($affect == 1)
 			return true;
 		else
 			return false;
@@ -1196,7 +1206,41 @@ class DbL {
 		$stmt->bind_param('si', $perms, $group_id);
 		$stmt->execute();
 		
-		if($stmt->affected_rows > 0)
+		$affect = $stmt->affected_rows;
+		
+		$stmt->close();
+		
+		if($affect == 1)
+			return true;
+		else
+			return false;
+	}
+	
+	function addGroup($name, $slug, $perms) {
+		$query = "INSERT INTO ech_groups VALUES(NULL, ?, ?, ?)";
+		$stmt = $this->mysql->prepare($query) or die('DB Error');
+		$stmt->bind_param('sss', $name, $slug, $perms);
+		$stmt->execute();
+		
+		$affect = $stmt->affected_rows;
+		$stmt->close();
+		
+		if($affect == 1)
+			return true;
+		else	
+			return false;
+	}
+	
+	function delServer($id) {
+		$query = "DELETE FROM ech_servers WHERE id = ? LIMIT 1";
+		$stmt = $this->mysql->prepare($query) or die('DB Error');
+		$stmt->bind_param('i', $id);
+		$stmt->execute();
+		
+		$affect = $stmt->affected_rows;
+		$stmt->close();
+		
+		if($affect == 1)
 			return true;
 		else
 			return false;

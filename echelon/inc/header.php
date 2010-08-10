@@ -52,6 +52,10 @@ endif;
 	## Header JS for Map Page ##
 	if(isMap())
 		echo $map_js;
+		
+	// return any plugin CSS files
+	if(!$no_plugins_active)
+		$plugins->getCSS();
 
 	?>
 
@@ -140,7 +144,10 @@ endif;
 				<li class="n-notices<?php if($page == 'notices') echo ' selected'; ?>">
 					<a href="<?php echo PATH; ?>notices.php" title="In-game Notices">Notices</a>
 				</li>
-				<?php $plugins->displayNav(); ?>
+				<?php 
+					if(!$no_plugins_active)
+						$plugins->displayNav(); 
+				?>
 			</ul>
 		</li>
 

@@ -2,6 +2,30 @@
 $auth_name = 'manage_settings';
 require '../inc.php';
 
+## delete server
+if($_GET['t'] == 'del') :
+
+	// get and check the id sent
+	if(isset($_GET['id']) || isID($_GET['id']))
+		$sid = $_GET['id'];
+	else
+		sendBack('Vital information needed to delete the server was not sent');
+	
+	## check that the form token is corret
+	if(!verifyFormToken('del-server'.$sid, $tokens)) // verify token
+		ifTokenBad('Deleting a server');
+		
+	$result = $dbl->delServer($sid);
+		
+	if(!$result)
+		sendBack('There was a problem with deleting the server');
+	else
+		sendGood('The server has been deleted');
+	
+	exit; // stop - no need to load the rest of the page
+
+endif;
+
 ## Check that the form was posted and that the user did not just stumble here ##
 if(!isset($_POST['server-settings-sub'])) :
 	set_error('Please do not call that page directly, thank you.');
@@ -18,8 +42,8 @@ else
 
 ## Check Token ##
 if($is_add) { // if add server request
-	//if(verifyFormToken('addserver', $tokens) == false) // verify token
-	//	ifTokenBad('Add Server');
+	if(verifyFormToken('addserver', $tokens) == false) // verify token
+		ifTokenBad('Add Server');
 } else { // if edit server settings
 	if(verifyFormToken('editserversettings', $tokens) == false) // verify token
 		ifTokenBad('Server Settings Edit');
@@ -84,11 +108,12 @@ else :
 	$result = $dbl->setServerSettings($server_id, $name, $ip, $pb, $rcon_ip, $rcon_port, $rcon_pw, $change_rcon_pw); // update the settings in the DB
 endif;
 
-if($result == false)
+if(!$result)
 	sendBack('Something did not update');
 
 ## Return ##
-if($is_add)
+if($is_add) {
+	set_good('Server '. $name .' has been added to the database records');
 	send('../settings-server.php');
-else
+} else
 	sendGood('Your settings have been updated');

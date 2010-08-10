@@ -999,7 +999,7 @@ function time_duration($seconds, $use = null, $zeros = false) {
 function getEchVer(){
 
 	$c = @file_get_contents(VER_CHECK_URL);
-	if($c == false) {
+	if(!$c) {
 		return false;
 	} else {
 		$string = cleanvar($c);
@@ -1009,7 +1009,7 @@ function getEchVer(){
 }
 
 /**
- * Simple isPage($page) functions
+ * Simple isPage() functions
  */
 function isHome() {
 	global $page;
