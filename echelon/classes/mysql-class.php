@@ -23,7 +23,7 @@ class DB_B3 {
 	private $error_sec = 'We are having some database problems, please check back later.'; // message to show the public if the DB query/connect fails
 	private $error_on = false; // are detailed error reports on (default, can be overidden)
 	
-	private static $instance;
+	private static $instance = NULL;
 
 	## Connection Vars ##
 	private $host; // B3 DB MySQL Host
@@ -37,10 +37,9 @@ class DB_B3 {
 	 * @return object $instance - the current instance of the class
 	 */
 	public static function getInstance($host, $user, $pass, $name, $error_on = false) {
-        if (!(self::$instance instanceof self)) {
-            self::$instance = new self($host, $user, $pass, $name, $error_on);
-        }
- 
+		if (!(self::$instance instanceof self))
+			self::$instance = new self($host, $user, $pass, $name, $error_on);
+
         return self::$instance;
     }
 	
@@ -53,7 +52,7 @@ class DB_B3 {
 	/**
 	 * Auto Load in sent vars and make connection to the B3 DB
 	 */
-	private function __construct($host, $user, $pass, $name, $error_on) {
+	public function __construct($host, $user, $pass, $name, $error_on) {
 		$this->host = $host;
 		$this->user = $user;
 		$this->pass = $pass;
@@ -88,6 +87,16 @@ class DB_B3 {
 	public function __call($name, $arg) {
 		echLog('error', 'System tried to access function '. $name .', a private or protected function in class '. get_class($this)); // log error
 		echo "<strong>" . $name . "</strong> is a private function that cannot be accessed outside the B3 MySQL class"; // error out error
+    }
+	
+	/**
+     * __destruct : Destructor for class, closes the MySQL connection
+     */
+    public function __destruct() {
+        if($this->mysql != NULL) // if it is set/created (defalt starts at NULL)
+            @$this->mysql->close(); // close the connection
+		
+		$this->instance = NULL;
     }
 	
 	/**

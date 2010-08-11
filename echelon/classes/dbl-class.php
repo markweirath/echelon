@@ -1245,5 +1245,13 @@ class DbL {
 		else
 			return false;
 	}
+	
+	function gamesBanList() {
+		$query = "SELECT id, name, db_host, db_user, db_pw, db_name FROM ech_games";
+	
+		$data = $this->query($query);
+		
+		return $data;
+	}
 
 } // end class

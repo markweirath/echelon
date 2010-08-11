@@ -86,7 +86,7 @@ $config['game']['servers'] = array(); // create array
 ## add server information to config array##
 $i = 1; // start counter ("i") at 1
 
-if(!empty($servers)) :
+if(!empty($servers) && $page != 'banlist') :
 
 	foreach($servers as $server) : // loop thro the list of servers for current game
 		
