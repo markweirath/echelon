@@ -56,10 +56,11 @@ class plugins {
 	 * @param array $plugins_class - an array of pointers to the class of the plugins
 	 */
 	function displayCDBio() {
-		
 		foreach(self::$plugins_class  as $plugin) :
-			$content = $plugin::returnClientBio();
-			echo $content;
+			if(method_exists($plugin, 'returnClientBio')) {
+				$content = $plugin->returnClientBio();
+				echo $content;
+			}
 		endforeach;
 	}
 	
@@ -69,10 +70,11 @@ class plugins {
 	 * @param array $plugins_class - an array of pointers to the class of the plugins
 	 */
 	function displayCDFormTab() {
-	
 		foreach(self::$plugins_class as $plugin) :
-			$content = $plugin::returnClientFormTab();
-			echo $content;
+			if(method_exists($plugin, 'returnClientFormTab')) {
+				$content = $plugin->returnClientFormTab();
+				echo $content;
+			}
 		endforeach;
 	}
 	
@@ -82,10 +84,11 @@ class plugins {
 	 * @param array $plugins_class - an array of pointers to the class of the plugins
 	 */
 	function displayCDForm($cid = 0) {
-	
 		foreach(self::$plugins_class as $plugin) :
-			$content = $plugin::returnClientForm($cid);
-			echo $content;
+			if(method_exists($plugin, 'returnClientForm')) {
+				$content = $plugin->returnClientForm($cid);
+				echo $content;
+			}
 		endforeach;
 	}
 	
@@ -94,8 +97,10 @@ class plugins {
 	 */
 	function displayNav() {
 		foreach(self::$plugins_class as $plugin) :
-			$content = $plugin::returnNav();
-			echo $content;
+			if(method_exists($plugin, 'returnNav')) {
+				$content = $plugin->returnNav();
+				echo $content;
+			}
 		endforeach;
 	}
 	
@@ -103,10 +108,11 @@ class plugins {
 	 * For each plugin check if they want to append something to the end of the CD page
 	 */
 	function displayCDlogs($cid) {
-	
 		foreach(self::$plugins_class as $plugin) :
-			$content = $plugin::returnClientlogs($cid);
-			echo $content;
+			if(method_exists($plugin, 'returnClientLogs')) {
+				$content = $plugin->returnClientlogs($cid);
+				echo $content;
+			}
 		endforeach;
 	}
 	
@@ -114,10 +120,11 @@ class plugins {
 	 * For each plugin check if they need to include a css file
 	 */
 	function getCSS() {
-		
 		foreach(self::$plugins_class as $plugin) :
-			$content = $plugin::returnCSS();
-			echo $content;
+			if(method_exists($plugin, 'returnCSS')) {
+				$content = $plugin->returnCSS();
+				echo $content;
+			}
 		endforeach;
 	}
 	
@@ -125,10 +132,11 @@ class plugins {
 	 * For each plugin check if they need to include a JS file
 	 */
 	function getJS() {
-	
 		foreach(self::$plugins_class as $plugin) :
-			$content = $plugin::returnJS();
-			echo $content;
+			if(method_exists($plugin, 'returnJS')) {
+				$content = $plugin->returnJS();
+				echo $content;
+			}
 		endforeach;
 	}
 

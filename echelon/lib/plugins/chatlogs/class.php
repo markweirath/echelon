@@ -24,8 +24,8 @@ class chatlogs extends plugins {
 	 */
 	
 	// Next two vars need to have the same number of items, they should be in the same order aswell
-	private static $tables = 'chatlog,chatlog_164,chatlog_165';
-	private static $tables_names = 'Crash,Crossfire,Search &amp; Destory';
+	private $tables = 'chatlog';
+	private $tables_names = 'Server 1';
 	
 	/**
 	 * Gets the current instance of the class, there can only be one instance (this make the class a singleton class)
@@ -41,11 +41,18 @@ class chatlogs extends plugins {
     }
 	
 	public function __construct() {
-		parent::__construct($this->getClass()); // call the parent constructor
+		parent::__construct($this->getClass()); // call the parent constructor (var: name)
+		
+		global $config; // get the site config
+		global $game; // current game id
+		
+		$this->tables = explode(',', $config['cosmos']['chats_table_'.$game]);
+		
+		$this->tables_names = explode(',', $config['cosmos']['chats_names_'.$game]);	
 	
 		parent::setTitle('Chatlogger');
 		parent::setVersion(1.0);
-		
+
 		if(count($this->tables) != count($this->tables_names))
 			parent::error('In your settings, there are not the same number of tables and table names listed.');
 	
@@ -55,24 +62,12 @@ class chatlogs extends plugins {
 		parent::__destruct();
 	}
 	
-	/**
-	 * Main Function - DO NOT REMOVE any of the below functions
-	 */
-	public static function returnClientFormTab() {}
-	public static function returnClientForm($cid) {}
-	public static function returnClientBio() {}
-	public static function returnCSS() {}
-	
-	/**
-	 * You may edit below here
-	 */
-	
-	protected static function getTables() {
-		return self::$tables;
+	protected function getTables() {
+		return $this->tables;
 	}
 	
-	protected static function getTablesNames() {
-		return self::$tables_names;
+	protected function getTablesNames() {
+		return $this->tables_names;
 	}
 	
 	/**
@@ -102,20 +97,20 @@ class chatlogs extends plugins {
 	 *
 	 * @param int $cid - the client id of the user that we need the logs for
 	 */
-	public static function returnClientLogs($cid) {
+	public function returnClientLogs($cid) {
 	
-		$tables_info = self::$tables; // get the table information for the chatlogs queries
+		$tables_info = $this->getTables(); // get the table information for the chatlogs queries
+		$tables_names = $this->getTablesNames();
 		
 		global $tformat; // get the time format for use in the logs
 	
 		include 'chatlogs-cd.php'; // include the file
-		
 	}
 	
 	/**
 	 * Returns the link to the needed in the nav for the full chatlogs page
 	 */
-	public static function returnNav() {
+	public function returnNav() {
 	
 		global $mem; // get pointer to the members class
 		
@@ -141,19 +136,19 @@ class chatlogs extends plugins {
 	 *
 	 * @param string $table_name - name of the table to get records from (default to chatlog, plugin default)
 	 */
-	private static function pageLogic($table_num) {
+	private function pageLogic($table_num) {
 	
 		if(empty($table_num)) {
 			$table_name = 'chatlog';
 			$table_num = 0;
 		}
 		
-		$tables_array = explode(',', self::getTables()); // make an array from the tables list
+		$tables = $this->getTables();
+		$tables_names = $this->getTablesNames();
 		
 		if(is_numeric($table_num))
-			$table_name = $tables_array[$table_num];
-		
-		if(!in_array($table_name, $tables_array)) // if the asked for table is not in the area return error
+			$table_name = $tables[$table_num];
+		else
 			return false;
 	
 		$db = DB_B3::getPointer(); // get the db pointer
@@ -173,12 +168,12 @@ class chatlogs extends plugins {
 	/**
 	 * Return the fully formated page content for this plugin
 	 */
-	public static function returnPage($table_num) {
+	public function returnPage($table_num) {
 	
 		global $mem;
 		global $config; // get the config servers data
 		
-		$logic = self::pageLogic($table_num);
+		$logic = $this->pageLogic($table_num);
 		
 		if($logic == false)
 			set_error('The chatlogs table you asked for does not exist, please select a real table.');
@@ -189,7 +184,7 @@ class chatlogs extends plugins {
 			return 'There was a database error in retrieving the chatlogs';
 		
 		## matching up tables
-		$tables_names = explode(',', self::getTablesNames());
+		$tables_names = $this->getTablesNames();
 		$num_tables = count($tables_names);
 		
 		$content = '
@@ -239,6 +234,24 @@ class chatlogs extends plugins {
 			</form>';
 		endif;
 		
+		if($mem->reqLevel('chats_edit_tables')) :
+			
+			$content .= '
+			<label class="chat-fh">Table Settings</label>
+			<form action="'.PATH.'lib/plugins/'.__CLASS__.'/actions.php" method="post" id="c-settings">
+			<small>Please specify each table seperate by a comma (eg. chatlog,chatlog2), and the same with the names. Put the corresponding names and tables in the same order.</small><br />
+			
+				<label id="tables">MySQL Table Names</label>
+					<input type="text" name="tables" id="tables" class="longer" value="'. implode(',', $this->getTables()) .'" />
+					
+				<label id="table-names">Name</label>
+					<input type="text" name="table-names" id="table-names" class="longer" value="'. implode(',', $this->getTablesNames()) .'" />
+			
+				<br /><input type="submit" value="Edit Settings" />
+			</form>';
+			
+		endif;
+		
 		$content .= '<span id="refreshcommand"></span></fieldset>';
 		
 		if($logic['num_rows'] > 0) :
@@ -265,7 +278,7 @@ class chatlogs extends plugins {
 				</tfoot>
 				<tbody id="chatlog-body">';
 		
-		$content .= self::buildLines($logic['data']);
+		$content .= $this->buildLines($logic['data']);
 			
 		$content .= '</tbody></table>';
 			
@@ -278,15 +291,16 @@ class chatlogs extends plugins {
 		
 	} // end returnPage
 	
-	private static function buildLines($data_set, $ani = false) {
+	private function buildLines($data_set, $ani = false) {
 	
 		global $tformat; // get the standardised time format
 		
-		
 		if($ani == 'tb')
 			$ani = 'tb-row';
-		elseif($ani != false)
+		elseif($ani == 'yes')
 			$ani = 'animate';
+		else
+			$ani = '';
 
 		if(count($data_set) > 0) :
 	
@@ -324,13 +338,13 @@ EOD;
 	
 	} // end buildLines
 	
-	private static function getLastChatsDB($table_num, $id) {
+	private function getLastChatsDB($table_num, $id) {
 	
 		$db = DB_B3::getPointer(); // get the db pointer
 		
-		$tables_array = explode(',', self::getTables()); // make an array from the tables list
+		$tables = $this->getTables(); // make an array from the tables list
 		
-		$table = $tables_array[$table_num]; // get the table from settings array
+		$table = $tables[$table_num]; // get the table from settings array
 	
 		$query = 'SELECT id, msg_time, msg_type, client_id, client_name, msg 
 					FROM '. $table .' WHERE id > ? ORDER BY id DESC LIMIT 25';
@@ -357,15 +371,15 @@ EOD;
 		return $data;
 	}
 	
-	public static function getLastChats($table_num, $id) {
+	public function getLastChats($table_num, $id) {
 	
-		$data = self::getLastChatsDB($table_num, $id);
+		$data = $this->getLastChatsDB($table_num, $id);
 		
-		return self::buildLines($data, true);
+		return $this->buildLines($data, 'yes');
 	}
 	
 	
-	public static function talkback($msg, $server_id, $last_id) {
+	public function talkback($msg, $server_id, $last_id) {
 	
 		global $mem;
 		global $config; // get the config servers data
@@ -401,19 +415,48 @@ EOD;
 			'msg' => $msg
 		);
 		
-		return self::buildLines($data, 'tb');
+		return $this->buildLines($data, 'tb');
 	
 	}
 	/**
 	 * Return the chats JS only on the chatlogs plugin page
 	 */
-	public static function returnJS() {
+	public function returnJS() {
 	
 		global $page; // get the current page name
 	
 		if($page == __CLASS__) // if this is the chatlogs page, load the JS
 			return '<script src="'. PATH .'lib/plugins/'.__CLASS__.'/chats.js"></script>';
 		
+	}
+	
+	public function editSettings($tables, $names) {
+	
+		global $game; // current game id
+	
+		$dbl = DBL::getInstance(); // get Echelon db pointer
+		$db = DB_B3::getPointer(); // get B3 Db pointer
+		
+		$tables_array = explode(',', $tables);
+		
+		foreach($tables_array as $table) : // check each table exists
+			$query = "SELECT id FROM $table LIMIT 1";
+			
+			if(!$stmt = $db->mysql->prepare($query)) // if table does not exist then prepare will fail
+				return false; // if not return false
+		endforeach;
+		
+		// Update the tables row
+		$result = $dbl->setSettings($tables, 'chats_table_'.$game, 's');
+		if(!$result)
+			return false;
+		
+		// update the names row
+		$result_n = $dbl->setSettings($names, 'chats_names_'.$game, 's');
+		if(!$result_n)
+			return false;
+			
+		return true;
 	}
 
 } // end class

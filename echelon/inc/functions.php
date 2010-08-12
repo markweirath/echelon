@@ -86,6 +86,7 @@ function displayEchLog($array, $style = 'client') {
 		$msg = tableClean($ech_log['msg']);
 		$time_add = $ech_log['time_add'];
 		$time_add_read = date($tformat, $time_add);
+		$game_id = $ech_log['game_id'];
 		
 		## Page row color alternate
 		$alter = alter();
@@ -93,7 +94,7 @@ function displayEchLog($array, $style = 'client') {
 		if($style == 'admin') :
 		
 			$cid = $ech_log['client_id'];
-			$client_link = clientLink($cid, $cid);
+			$client_link = clientLink($cid, $cid, $game_id);
 			
 			$table = <<<EOD
 			<tr class="$alter">
@@ -433,6 +434,7 @@ function emptyInput($var, $field) {
  */
 function cleanvar($var) {
 	$var = trim(htmlentities(strip_tags($var)));
+	
 	return $var;
 } // end clean var
 
@@ -514,8 +516,11 @@ function tooltip($msg, $float = false) {
 /**
  * Echo out simple clientdetails link
  */
-function clientLink($name, $id) {
-	return '<a href="clientdetails.php?id='.$id.'" title="Check out '.$name.' client information profile">'.$name.'</a>';
+function clientLink($name, $id, $game_id = NULL) {
+	if(!empty($game_id))
+		$href = '&amp;game='.$game_id;
+
+	return '<a href="clientdetails.php?id='.$id.$href.'" title="Check out '.$name.' client information profile">'.$name.'</a>';
 }
 
 /**

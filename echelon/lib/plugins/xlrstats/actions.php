@@ -10,7 +10,7 @@ endif;
 
 ## check that the sent form token is corret
 if(verifyFormToken('xlrstats', $tokens) == false) // verify token
-	ifTokenBad('XLRStats Edit');
+	ifTokenBad('XLRstats Edit');
 
 // Gets vars from form
 $cid = cleanvar($_POST['cid']);
@@ -30,15 +30,15 @@ if(!isID($cid))
 	sendBack('Invalid data sent, ban not added');
 
 ## LOG Query ##
-$results = $dbl->addEchLog('XLRStats', 'XLRStats information changed', $cid, $mem->id);
+$results = $dbl->addEchLog('XLRstats', 'XLRstats information changed', $cid, $mem->id);
 
-## Update XLRStats table ##
+## Update XLRstats table ##
 $query = "UPDATE xlr_playerstats SET hide = ?, fixed_name = ? WHERE client_id = ? LIMIT 1";
 $stmt = $db->mysql->prepare($query) or die('DB Error');
 $stmt->bind_param('isi', $hide, $name, $cid);
 $stmt->execute();
 
 if($stmt->affected_rows > 0)
-	sendGood('XLRStats information edited');
+	sendGood('XLRstats information edited');
 else
 	sendBack('There is a problem, changes were not saved');

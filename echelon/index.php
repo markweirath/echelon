@@ -64,6 +64,9 @@ require 'inc/header.php';
 			
 			echo '</ul></div>';
 			
+		else:
+			echo 'no results';
+			
 		endif;
 		## End External Links Section ##
 	?>

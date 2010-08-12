@@ -4,7 +4,7 @@ if (!empty($_SERVER['SCRIPT_FILENAME']) && 'class.php' == basename($_SERVER['SCR
 
 /**
  * class xlrstats
- * desc: File to deal with Echelon plugin XLRStats
+ * desc: File to deal with Echelon plugin XLRstats
  *
  */ 
 
@@ -23,9 +23,9 @@ class xlrstats extends plugins {
 	 * You may edit below here
 	 */
 	
-	public static $xlr_user = false;
-	public static $xlr_hide = 0;
-	public static $xlr_fixed_name = NULL;
+	public $xlr_user = false;
+	public $xlr_hide = 0;
+	public $xlr_fixed_name = NULL;
 	
 	/**
 	 * Gets the current instance of the class, there can only be one instance (this make the class a singleton class)
@@ -44,7 +44,7 @@ class xlrstats extends plugins {
 	public function __construct() {
 		parent::__construct($this->getClass());
 	
-		parent::setTitle('XLRStats');
+		parent::setTitle('XLRstats');
 		parent::setVersion(1.0);
 	}
 	
@@ -53,27 +53,22 @@ class xlrstats extends plugins {
 	}
 	
 	/**
-	 * Main Function - DO NOT REMOVE any of the below functions
+	 * Get the title of the plugin
 	 */
-	public static function returnClientLogs($cid) {}
-	public static function returnNav() {}
-	public static function returnCSS() {}
-	public static function returnJS() {}
+	public function getTitle() {
+		return parent::getTitle();
+	}
 	
-	/**
-	 * You may edit below here
-	 */
-	
-	public static function returnClientFormTab() {
+	public function returnClientFormTab() {
 		
 		global $mem; // use the member class instance from outside this class
 	
 		if($mem->reqLevel('edit_xlrstats'))
-			return '<li><a href="#tabs" title="Edit some XLRStats information" rel="cd-act-xlrstats" class="cd-tab">XLRStats</a></li>';
+			return '<li><a href="#tabs" title="Edit some XLRstats information" rel="cd-act-xlrstats" class="cd-tab">XLRstats</a></li>';
 
 	}// end returnClientFormTab
 	
-	public static function returnClientForm($cid) {
+	public function returnClientForm($cid) {
 	
 		if(empty($cid))
 			return NULL;
@@ -84,14 +79,14 @@ class xlrstats extends plugins {
 	
 			$xlr_token = genFormToken('xlrstats');
 	
-			if(self::$xlr_hide == 1) 
+			if($this->xlr_hide == 1) 
 				$hide = 'checked="checked"';
 	
 			$data = '<div id="cd-act-xlrstats" class="act-slide">
 				<form action="lib/plugins/'.__CLASS__.'/actions.php" method="post">
 				
 					<label for="xlr-name">Fixed Name:</label>
-						<input type="text" name="fixed-name" value="'. self::$xlr_fixed_name .'" id="xlr-name" /><br />
+						<input type="text" name="fixed-name" value="'. $this->xlr_fixed_name .'" id="xlr-name" /><br />
 					
 					<label for="xlr-hid">Hide Stats:</label>
 						<input type="checkbox" name="hidden" id="xlr-hid" '.$hide.' />
@@ -116,7 +111,7 @@ class xlrstats extends plugins {
 	/**
 	 * Internal function to connect to the DB and retrieve clients XLR bio Infomation
 	 */
-	private static function getClientBio() {
+	private function getClientBio() {
 	
 		$db = DB_B3::getPointer(); // get the pointer to the current B3 connection
 		global $cid;
@@ -130,7 +125,7 @@ class xlrstats extends plugins {
 
 		if($stmt->num_rows > 0) {
 			
-			self::$xlr_user = true;
+			$this->xlr_user = true;
 			$stmt->bind_result($id, $kills, $deaths, $ratio, $skill, $rounds, $hide, $fixed_name);
 			$stmt->fetch();
 			
@@ -145,12 +140,12 @@ class xlrstats extends plugins {
 				'fixed_name' => $fixed_name
 			);
 			
-			self::$xlr_fixed_name = $fixed_name;
-			self::$xlr_hide = $hide;
+			$this->xlr_fixed_name = $fixed_name;
+			$this->xlr_hide = $hide;
 			
 			
 		} else
-			self::$xlr_user = false;
+			$this->xlr_user = false;
 
 		$stmt->free_result();
 		$stmt->close();
@@ -160,11 +155,11 @@ class xlrstats extends plugins {
 	}
 	
 	## Main Function ##
-	public static function returnClientBio() {
+	public function returnClientBio() {
 	
-		$result = self::getClientBio();
+		$result = $this->getClientBio();
 	
-		if(self::$xlr_user) :
+		if($this->xlr_user) :
 		
 			$ratio = number_format($result['ratio'], 2, '.', '');
 			$skill = number_format($result['skill'], 2, '.', '');

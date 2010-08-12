@@ -20,7 +20,7 @@ ul.cd-tabs li a:hover { color: #666; text-decoration: none; cursor: pointer; }
 
 #chats-box { background: #f3f3f3; padding: 15px; border: 1px solid #CCC; -moz-border-radius: 7px; -webkit-border-radius: 7px; }
 .chat-content { display: none; }
-#chat-tab-1 { display: block; }
+#chat-tab-0 { display: block; }
 
 .xlr { height: 7px; }
 

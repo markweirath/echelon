@@ -72,7 +72,7 @@ require 'inc/header.php';
 			<input type="text" name="user_key_expire" value="<?php echo $settings['user_key_expire']; ?>" class="int"><label for="user_key_expire">Days a user reg. key is active</label><?php tooltip('Number of days a registration key will remain valid after the time it was created'); ?><br>
 			
 			<input type="checkbox" name="https"<?php if($settings['https'] == 1) echo ' checked="checked"'; ?>><label for="https">SSL connection required</label><br>
-				<p class="tip">Forces HTTPS, only enable if you have an SSL cert, consult the <a href="http://echelon.bigbrotherbot.com/help/ssl" class="external help-docs">Help Docs</a></p>
+				<p class="tip">Forces HTTPS, only enable if you have an SSL cert. Consult the <a href="http://echelon.bigbrotherbot.com/help/ssl" class="external help-docs">Help Docs</a> before you enable this setting.</p>
 			
 			<input type="checkbox" name="allow_ie"<?php if($settings['allow_ie'] == 1) echo ' checked="checked"'; ?>><label for="allow_ie">Allow Internet Explorer</label><?php tooltip('If unchecked, this bans users from using Internet Explorer anywhere but the Public Ban List page'); ?>
 			

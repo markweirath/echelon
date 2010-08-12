@@ -25,7 +25,7 @@ if(!isID($cid))
 	sendBack('Invalid data sent, ban not added');
 
 ## Query ##
-$result = $dbl->addEchLog('Comment', $comment, $cid, $mem->id);
+$result = $dbl->addEchLog('Comment', $comment, $cid, $mem->id, $game);
 if($result)
 	sendGood('Comment added');
 else

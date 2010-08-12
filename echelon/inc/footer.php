@@ -66,6 +66,7 @@ endif; // end if pagination is on
 				<a href="<?php echo $path; ?>" title="Home Page">Home</a> -
 				<a href="<?php echo $path; ?>sa.php" title="Site Administration">Site Admin</a> -
 				<a href="<?php echo $path; ?>me.php" title="Edit your account">My Account</a> -
+				<a href="http://echelon.bigbrotherbot.net/help/" title="Get some help with Echelon">Help</a> -
 				<a href="<?php echo $path; ?>actions/logout.php" class="logout" title="Logout">Logout</a>
 			</span>
 		<?php } ?>

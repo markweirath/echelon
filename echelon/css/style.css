@@ -69,6 +69,7 @@ input[type=hidden] { display: none !important; }
 input[type=checkbox] { margin: 3px; display: inline !important; }
 
 input[disabled=disabled], input[disabled=disabled]:hover { opacity: 0.5; }
+input.longer{width:240px;}
 	
 /* Small DESC Forms */
 .sm-f-select { display: inline; }

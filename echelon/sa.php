@@ -44,7 +44,7 @@ if($_GET['t'] == 'user') :
 		$admin_name = $result[8];
 	}
 	
-	$ech_logs = $dbl->getEchLogs($admin_id, 'admin'); // get the echelon logs created by this user
+	$ech_logs = $dbl->getEchLogs($admin_id, NULL, 'admin'); // get the echelon logs created by this user
 
 	$is_view_user = true;
 endif; // end 

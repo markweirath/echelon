@@ -21,8 +21,8 @@ else
 
 ## Check Token ##
 if($is_add) {
-	//if(!verifyFormToken('addgame', $tokens)) // verify token
-	//	ifTokenBad('Add Game');
+	if(!verifyFormToken('addgame', $tokens)) // verify token
+		ifTokenBad('Add Game');
 } else {
 	if(!verifyFormToken('gamesettings', $tokens)) // verify token
 		ifTokenBad('Game Settings Edit');
@@ -39,14 +39,17 @@ $db_user = cleanvar($_POST['db-user']);
 $db_pw_cng = cleanvar($_POST['cng-pw']);
 $db_pw = cleanvar($_POST['db-pw']);
 $db_name = cleanvar($_POST['db-name']);
+// plugins enabled
+$g_plugins = $_POST['plugins'];
 // Verify Password
-$password = cleanvar($_POST['password']);
+$password = $_POST['password']; // do not clean passwords
 
 // Whether to change DB PW or not
 if($db_pw_cng == 'on')
 	$change_db_pw = true;
 else
 	$change_db_pw = false;
+
 
 ## Check for empty vars ##
 emptyInput($name, 'game name');
@@ -62,19 +65,24 @@ if(!$is_add)
 	emptyInput($password, 'your current password');
 	
 if($is_add) :
-
 	## Check game is supported ##
 	if(!array_key_exists($game_type, $supported_games))
 		sendBack('That game type does not exist, please choose a game');
 endif;
 
+if(!empty($g_plugins)) :
+	foreach($g_plugins as $plugin) :
+		$enabled .= $plugin.',';
+	endforeach;
+
+	$enabled = substr($enabled, 0, -1); // remove trailing comma
+endif;
 
 ## Check that the DB information supplied will make a connection to the B3 database.
 $db_test = DB_B3::getInstance($db_host, $db_user, $db_pw, $db_name, true); // the last argument is hard coded because any error report needs to be the full error message, not just the failed connection line; this will only be seen by people who can add/edit settings
 
 if($db_test->error)
 	sendBack($db_test->error_msg); // send back with a failed connection message
-	
 
 ## Update DB ##
 if($is_add) : // add game queries
@@ -86,9 +94,9 @@ if($is_add) : // add game queries
 	
 else : // edit game queries
 	$mem->reAuthUser($password, $dbl);
-	$result = $dbl->setGameSettings($game, $name, $name_short, $db_user, $db_host, $db_name, $db_pw, $change_db_pw); // update the settings in the DB
+	$result = $dbl->setGameSettings($game, $name, $name_short, $db_user, $db_host, $db_name, $db_pw, $change_db_pw, $enabled); // update the settings in the DB
 	if(!$result)
-		sendBack('Something did not update');
+		sendBack('Something did not update. Did you edit anything?');
 endif;
 
 ## Return with result message

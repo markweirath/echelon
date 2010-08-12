@@ -32,7 +32,7 @@ $f_pw_req_level = cleanvar($_POST['pw_req_level']);
 $f_pw_req_level_group = cleanvar($_POST['pw_req_level_group']);
 
 // Verify Password
-$password = cleanvar($_POST['password']);
+$password = $_POST['password']; // do not clean passwords
 
 // Set Checkboxes
 if($f_https == 'on')

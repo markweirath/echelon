@@ -12,6 +12,16 @@ require 'classes/dbl-class.php'; // class to preform all DB related actions
 $dbl = DBL::getInstance(); // start connection to the local Echelon DB
 
 require 'inc/setup.php'; // class to preform all DB related actions
+
+## If SSL required die if not an ssl connection ##
+if($https_enabled == 1) :
+	if(!detectSSL() && !isError()) { // if this is not an SSL secured page and this is not the error page
+		sendError('ssl');
+		exit;
+	}
+endif;
+
+
 require 'classes/session-class.php'; // class to deal with the management of sesssions
 require 'classes/members-class.php'; // class to preform all B3 DB related actions
 
@@ -39,20 +49,23 @@ endif;
 if(!$no_plugins_active) : // if there are any registered plugins with this game
 	
 	require 'classes/plugins-class.php'; // require the plugins base class
-	
-	$plugins = new plugins($plugin); // create a new instance of the base plugin class
+
+	$plugins = new plugins(NULL);
 	
 	foreach($config['game']['plugins'] as $plugin) : // foreach plugin there is 
 
+		$minus_slash = substr(PATH, 1);
+	
 		// file = root to www path + echelon path + path to plugin from echelon path
-		$file = getenv("DOCUMENT_ROOT").PATH.'lib/plugins/'.$plugin.'/class.php'; // abolsute path - needed because this page is include in all levels of this site
+		$file = getenv("DOCUMENT_ROOT").$minus_slash.'lib/plugins/'.$plugin.'/class.php'; // abolsute path - needed because this page is include in all levels of this site
 		
-		if(file_exists($file))
+		if(file_exists($file)) :
 			require $file;
-		else
-			die('Unable to include the plugin file for the plugin '. $plugin .'<br /> In the directory: '. $file);
-			
-		$plugins_class["$plugin"] = $plugin::getInstance(); // create a new instance of the plugin (whatever, eg. xlrstats) plugin
+			$plugins_class["$plugin"] = $plugin::getInstance(); // create a new instance of the plugin (whatever, eg. xlrstats) plugin
+		else :
+			if($mem->reqLevel('manage_settings')) // only show the error to does who can fix it
+				set_error('Unable to include the plugin file for the plugin '. $plugin .'<br /> In the directory: '. $file);
+		endif;
 		
 	endforeach;
 	

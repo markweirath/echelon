@@ -3,18 +3,13 @@ if (!empty($_SERVER['SCRIPT_FILENAME']) && 'chatlogs-cd.php' == basename($_SERVE
   		die ('Please do not load this page directly. Thanks!');
 
 		
-if(!empty($tables_info))
-	$tables = explode(',', $tables_info);
-else
+	
+if(!empty($tables_info)) {
+	$tables = $tables_info;
+} else
 	$tables = array(0 => 'chatlog');
 
-foreach ($tables as $table) :
-
-	$table_names[] = trim($table); // put cleaned string onto the end of the table_names array
-
-endforeach;
-
-$num_tables = count($table_names); // number of tables to pull data from
+$num_tables = count($tables); // number of tables to pull data from
 
 $limit_rows = 100;
 
@@ -28,7 +23,7 @@ while($i < $num_tables) : // write and preform query for each server
 	$query = array();
 	
 	// write query
-	$query[$i] = sprintf("SELECT id, msg_time, msg_type, msg FROM %s WHERE client_id = %s ORDER BY msg_time DESC LIMIT %s", $table_names[$i], $cid, $limit_rows);
+	$query[$i] = sprintf("SELECT id, msg_time, msg_type, msg FROM %s WHERE client_id = %s ORDER BY msg_time DESC LIMIT %s", $tables[$i], $cid, $limit_rows);
 
 	$db = DB_B3::getPointer();
 	
@@ -68,19 +63,16 @@ echo '<div id="chatlog">
 	## setup tabs
 	echo '<ul class="cd-tabs">';
 		
-		$i = 1; // set counter for server array id
+		$i = 0; // set counter for server array id
 		
-		while($i <= $num_tables) :
+		while($i < $num_tables) :
 			
-			if($i == 1)
+			if($i == 0)
 				echo '<li class="chat-active">';
 			else
 				echo '<li>';
 			
-			if($config['games'][$game]['servers'][$i]['name'] == NULL)
-				$server_name = 'Server: '.$i;
-			else
-				$server_name = $config['games'][$game]['servers'][$i]['name'];
+			$server_name = $tables_names[$i];
 			
 			echo '<a rel="chat-tab-'. $i .'"  title="View the chat logs from '. $server_name .'" class="chat-tab">'. $server_name .'</a></li>';
 			
@@ -94,14 +86,12 @@ echo '<div id="chatlog">
 	
 	echo '<div id="chats-box">';
 	
-	$i_srv = 0; // set counter for server array id
-	$i_tab = 1; // reset counter for second loop
 	$i = 0;
 
-	while ($i_srv < $num_tables) : // loop for 1 tab per server ?>
+	while ($i < $num_tables) : // loop for 1 tab per server ?>
 	
-		<div id="chat-tab-<?php echo $i_tab; ?>" class="chat-content">
-			<?php if($num_rows_{$i_srv} == 0) { ?>
+		<div id="chat-tab-<?php echo $i; ?>" class="chat-content">
+			<?php if($num_rows_{$i} == 0) { ?>
 				<p><strong>This user has no recorded chat logs for this server.</strong></p>
 					<table style="display: none;">
 			<?php } else { ?>
@@ -122,7 +112,7 @@ echo '<div id="chatlog">
 	
 		<?php // nested while loop for content
 			
-			if($num_rows_{$i_srv} > 0) :
+			if($num_rows_{$i} > 0) :
 				
 				foreach($records[$i] as $record) : //there are still rows in results
 					
@@ -160,9 +150,6 @@ EOD;
 		</div>
 	
 	<?php
-
-		$i_srv++;
-		$i_tab++;
 		$i++;
 
 	endwhile; // end loop - make content for each server

@@ -7,11 +7,11 @@ if (!empty($_SERVER['SCRIPT_FILENAME']) && 'dbl-class.php' == basename($_SERVER[
  * desc: File to deal with the connection and all queries to the Echelon Database 
  * note: this is a singleton type class
  *
- * @var $mysql - the var that stores the connection to the mysql DB
- * @var $instance - the pointer to the instance of the class
- * @var $dbl_error - holds the db errors if any
- * @var $install_error - holds any installation test connection errors
- * @var $install - is this instance to be a install test connection or a full connection
+ * @var object $mysql - the var that stores the connection to the mysql DB
+ * @var object $instance - the pointer to the instance of the class
+ * @var bool $dbl_error - holds the db errors if any
+ * @var string $install_error - holds any installation test connection errors
+ * @var bool $install - is this instance to be a install test connection or a full connection
  */ 
 
 class DbL {
@@ -69,11 +69,11 @@ class DbL {
 		if($this->mysql != NULL) // if it is set/created (default starts at NULL)
 			@$this->mysql->close();
 
-        $this->mysql = @new mysqli(DBL_HOSTNAME, DBL_USERNAME, DBL_PASSWORD, DBL_DB); // block any error on connect, it will be cuahgt in the next line and handled properly
+        $this->mysql = @new mysqli(DBL_HOSTNAME, DBL_USERNAME, DBL_PASSWORD, DBL_DB); // block any error on connect, it will be caught in the next line and handled properly
 		
 		if(mysqli_connect_errno()) : // if the connection error is on then throw exception
 
-			if($this->install == true) :
+			if($this->install) :
 				$error_msg = '<strong>Database Connection Error</strong>
 					<p>'.mysqli_connect_error().'<br />
 					The connection information you supplied is incorrect. Please try again.</p>';
@@ -89,7 +89,7 @@ class DbL {
 								
 			endif;
 
-			throw new Exception ($error_msg);
+			throw new Exception($error_msg);
 		endif;
 		
     } // end connect
@@ -111,7 +111,7 @@ class DbL {
 	 */
 	private function query($sql, $fetch = true, $type = 'select') {
 
-		if($mysql = NULL || $this->error)
+		if($this->error)
 			return false;
 		
 		try {
@@ -249,7 +249,10 @@ class DbL {
 		$stmt->bind_param($value_type.'s', $value, $name);
 		$stmt->execute();
 		
-		if($stmt->affected_rows > 0)
+		$affect = $stmt->affected_rows;
+		$stmt->close();
+		
+		if($affect > 0)
 			return true;
 		else
 			return false;
@@ -260,9 +263,9 @@ class DbL {
 	 *
 	 * @return bool
 	 */
-    function setGameSettings($game, $name, $name_short, $db_user, $db_host, $db_name, $db_pw, $change_db_pw) {
+    function setGameSettings($game, $name, $name_short, $db_user, $db_host, $db_name, $db_pw, $change_db_pw, $plugins) {
 		
-		$query = "UPDATE ech_games SET name = ?, name_short = ?, db_host = ?, db_user = ?, db_name = ?";
+		$query = "UPDATE ech_games SET name = ?, name_short = ?, db_host = ?, db_user = ?, db_name = ?, plugins = ?";
 		
 		if($change_db_pw) // if the DB password is to be chnaged
 			$query .= ", db_pw = ?";
@@ -270,10 +273,10 @@ class DbL {
 		$query .= " WHERE id = ? LIMIT 1";
 			
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
-		if($change_db_pw) // if chnage DB PW append var
-			$stmt->bind_param('ssssssi', $name, $name_short, $db_host, $db_user, $db_name, $db_pw, $game);
+		if($change_db_pw) // if change DB PW append var
+			$stmt->bind_param('sssssssi', $name, $name_short, $db_host, $db_user, $db_name, $plugins, $db_pw, $game);
 		else // else var info not needed in bind_param
-			$stmt->bind_param('sssssi', $name, $name_short, $db_host, $db_user, $db_name, $game);
+			$stmt->bind_param('ssssssi', $name, $name_short, $db_host, $db_user, $db_name, $plugins, $game);
 		$stmt->execute();
 		
 		if($stmt->affected_rows > 0)
@@ -1138,23 +1141,26 @@ class DbL {
 		return $result;
 	}
 	
-	function getEchLogs($id, $type = 'client') {
-		$query = "SELECT log.id, log.type, log.msg, log.client_id, log.user_id, log.time_add, u.display 
+	function getEchLogs($id, $game_id = NULL, $type = 'client') {
+		$query = "SELECT log.id, log.type, log.msg, log.client_id, log.user_id, log.time_add, log.game_id, u.display 
 				  FROM ech_logs log LEFT JOIN ech_users u ON log.user_id = u.id ";
 		
 		if($type == 'admin')
 			$query .= "WHERE user_id = ?";
 		else
-			$query .= "WHERE client_id = ?";
+			$query .= "WHERE client_id = ? AND game_id = ?";
 			
 		$query .= " ORDER BY log.time_add DESC";
 			
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
-		$stmt->bind_param('i', $id);
+		if($type == 'admin')
+			$stmt->bind_param('i', $id);
+		else
+			$stmt->bind_param('ii', $id, $game_id);
 		$stmt->execute();
 		
 		$stmt->store_result();
-		$stmt->bind_result($id, $type, $msg, $client_id, $user_id, $time_add, $user_name);
+		$stmt->bind_result($id, $type, $msg, $client_id, $user_id, $time_add, $game_id, $user_name);
 		
 		while($stmt->fetch()) :
 			$ech_logs[] = array(
@@ -1164,6 +1170,7 @@ class DbL {
 				'client_id' => $client_id,
 				'user_id' => $user_id,
 				'user_name' => $user_name,
+				'game_id' => $game_id,
 				'time_add' => $time_add
 			); 	
 		endwhile;
@@ -1172,11 +1179,11 @@ class DbL {
 		return $ech_logs;
 	}
 	
-	function addEchLog($type, $comment, $cid, $user_id) {
+	function addEchLog($type, $comment, $cid, $user_id, $game_id) {
 		// id, type, msg, client_id, user_id, time_add
-		$query = "INSERT INTO ech_logs VALUES(NULL, ?, ?, ?, ?, UNIX_TIMESTAMP())";
+		$query = "INSERT INTO ech_logs VALUES(NULL, ?, ?, ?, ?, UNIX_TIMESTAMP(), ?)";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
-		$stmt->bind_param('ssii', $type, $comment, $cid, $user_id);
+		$stmt->bind_param('ssiii', $type, $comment, $cid, $user_id, $game_id);
 		$stmt->execute();
 		
 		$affect = $stmt->affected_rows;

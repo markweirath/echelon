@@ -158,6 +158,45 @@ if($is_add) : ?>
 				</fieldset><!-- end DB info -->
 				
 			<fieldset class="none">
+				<legend>Echelon Plugins</legend>
+				
+				<?php
+					$plugins_enabled = $config['game']['plugins'];
+				
+					foreach(glob(getenv("DOCUMENT_ROOT").PATH.'lib/plugins/*') as $name) :
+					
+						$name = basename($name);
+						
+						if(!empty($plugins_enabled)) :
+							if(in_array($name, $plugins_enabled))
+								$check = 'checked="checked" ';
+							else
+								$check = '';
+						
+						else:
+							## we need this now because it is not in the inc because of no active plugins
+							require_once 'classes/plugins-class.php'; // require the plugins base class
+						endif;
+						
+						$minus_slash = substr(PATH, 1);
+						
+						$file = getenv("DOCUMENT_ROOT").$minus_slash.'lib/plugins/'.$name.'/class.php'; // abolsute path - needed because this page is include in all levels of this site
+						if(file_exists($file)) {
+							include_once $file;
+							$plugin = $name::getInstance();
+							$title = $plugin->getTitle();
+						} else
+							$title = $name;
+						
+						echo '<input id="'. $name .'" type="checkbox" name="plugins[]" value="'. $name .'" '. $check .'/>
+								<label for="'. $name .'">'. $title .'</label><br />';	
+						
+					endforeach; 
+				?>
+				
+			</fieldset>
+				
+			<fieldset class="none">
 				<legend>Verify Identity</legend>
 
 				<label for="verify-pw">Your current password:</label>

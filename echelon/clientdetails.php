@@ -354,7 +354,7 @@ EOD;
 
 <?php
 	## Get Echelon Logs Client Logs (NOTE INFO IN THE ECHELON DB) ##
-	$ech_logs = $dbl->getEchLogs($cid);
+	$ech_logs = $dbl->getEchLogs($cid, $game);
 	
 	$count = count($ech_logs);
 	if($count > 0) : // if there are records

@@ -4,7 +4,7 @@ Source Host: localhost
 Source Database: echelon
 Target Host: localhost
 Target Database: echelon
-Date: 08/08/2010 03:43:41
+Date: 13/08/2010 00:47:01
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -33,7 +33,7 @@ CREATE TABLE `ech_config` (
   `value` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `i_config` (`name`,`value`)
-) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Table structure for ech_games
@@ -78,7 +78,7 @@ CREATE TABLE `ech_links` (
   `title` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `i_url` (`url`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Table structure for ech_logs
@@ -91,6 +91,7 @@ CREATE TABLE `ech_logs` (
   `client_id` smallint(5) DEFAULT NULL,
   `user_id` smallint(5) DEFAULT NULL,
   `time_add` int(32) DEFAULT NULL,
+  `game_id` mediumint(10) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `i_logs` (`client_id`,`user_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
@@ -105,7 +106,7 @@ CREATE TABLE `ech_permissions` (
   `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`,`name`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=27 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=28 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Table structure for ech_servers
@@ -122,7 +123,7 @@ CREATE TABLE `ech_servers` (
   `rcon_port` int(5) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `game` (`game`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Table structure for ech_user_keys
@@ -152,7 +153,7 @@ CREATE TABLE `ech_users` (
   `password` varchar(64) NOT NULL,
   `salt` varchar(12) NOT NULL,
   `ip` varchar(24) DEFAULT NULL,
-  `ech_group` smallint(4) unsigned NOT NULL DEFAULT '0',
+  `ech_group` smallint(4) unsigned NOT NULL DEFAULT '1',
   `admin_id` smallint(6) unsigned NOT NULL DEFAULT '0',
   `first_seen` int(24) DEFAULT NULL,
   `last_seen` int(24) DEFAULT NULL,
@@ -166,7 +167,7 @@ CREATE TABLE `ech_users` (
 -- ----------------------------
 -- Records 
 -- ----------------------------
-INSERT INTO `ech_config` VALUES ('1', 'name', 'Hello');
+INSERT INTO `ech_config` VALUES ('1', 'name', 'Development');
 INSERT INTO `ech_config` VALUES ('2', 'num_games', '0');
 INSERT INTO `ech_config` VALUES ('3', 'limit_rows', '50');
 INSERT INTO `ech_config` VALUES ('4', 'min_pw_len', '8');
@@ -181,9 +182,9 @@ INSERT INTO `ech_config` VALUES ('12', 'email_header', 'Hello %name%, This is an
 INSERT INTO `ech_config` VALUES ('13', 'email_footer', 'Thanks, the %ech_name% Echelon Team');
 INSERT INTO `ech_config` VALUES ('14', 'pw_req_level', '1');
 INSERT INTO `ech_config` VALUES ('15', 'pw_req_level_group', '64');
-INSERT INTO `ech_config` VALUES ('16', 'reg_clan_tags', '=(e)=,=(eG)=,=(eGO)=,{ROC},*{PotW}*,{DP},=KND=,{KGB}');
-INSERT INTO `ech_groups` VALUES ('1', 'visitor', 'Visitor', '1');
-INSERT INTO `ech_groups` VALUES ('2', 'siteadmin', 'Site Admin', '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30');
+INSERT INTO `ech_config` VALUES ('16', 'reg_clan_tags', '=(e)=,=(eG)=,=(eGO)=,{KGB}');
+INSERT INTO `ech_groups` VALUES ('1', 'visitor', 'Visitor', '1,2,4,5');
+INSERT INTO `ech_groups` VALUES ('2', 'siteadmin', 'Site Admin', '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27');
 INSERT INTO `ech_groups` VALUES ('3', 'senioradmin', 'Senior Admin', '1,2,3,4,5,8,12,14,16,17,20,21,22,23,24');
 INSERT INTO `ech_groups` VALUES ('4', 'admin', 'Admin', '1,2,3,4,5,8,16,17,20,21,22');
 INSERT INTO `ech_groups` VALUES ('5', 'mod', 'Moderator', '1,2,3,4,5,8,16,22');
@@ -191,13 +192,15 @@ INSERT INTO `ech_links` VALUES ('1', 'http://wiki.bigbrotherbot.net/doku.php/ech
 INSERT INTO `ech_links` VALUES ('2', 'http://echelon.bigbrotherbot.net/', 'Echelon Home', 'Home site of Echelon project, check here for development news, updates, and information regarding Echelon');
 INSERT INTO `ech_links` VALUES ('3', 'http://eire32designs.com', 'Eire32 Site', 'The developers site');
 INSERT INTO `ech_links` VALUES ('4', 'http://www.bigbrotherbot.net/forums/', 'B3 Site', 'Home of bigbrother bot');
+INSERT INTO `ech_links` VALUES ('5', 'http://cback.de/', 'CTracker', 'Anti-worm and anti-injection attack protection');
+INSERT INTO `ech_links` VALUES ('6', 'http://dryicons.com/', 'DryIcons', 'Thanks for the use of the nav icons!');
 INSERT INTO `ech_permissions` VALUES ('1', 'login', 'Allows the user to login');
 INSERT INTO `ech_permissions` VALUES ('2', 'clients', 'Allows the user to view the client listing');
 INSERT INTO `ech_permissions` VALUES ('3', 'chatlogs', 'Allows the user to view Chatlogs');
 INSERT INTO `ech_permissions` VALUES ('4', 'penalties', 'Allows the user to view the Penalty Listing pages');
 INSERT INTO `ech_permissions` VALUES ('5', 'admins', 'Allows the user to view the Admins Pages');
 INSERT INTO `ech_permissions` VALUES ('6', 'manage_settings', 'Allows the user to Manage Echelon Settings.');
-INSERT INTO `ech_permissions` VALUES ('7', 'pbss', 'Allows the user to view PBSS (If Enabled)');
+INSERT INTO `ech_permissions` VALUES ('7', 'chats_edit_tables', 'Allows the user to edit chatlogger settings');
 INSERT INTO `ech_permissions` VALUES ('8', 'logs', 'Allows the user to view Logs');
 INSERT INTO `ech_permissions` VALUES ('9', 'edit_user', 'Allows the user to edit other Echelon users');
 INSERT INTO `ech_permissions` VALUES ('10', 'add_user', 'Allows the user to Add Echelon Users');
@@ -217,3 +220,4 @@ INSERT INTO `ech_permissions` VALUES ('23', 'unban', 'Allows user to remove a B3
 INSERT INTO `ech_permissions` VALUES ('24', 'edit_xlrstats', 'Allows user to edit a client\'s XLRStats information (hidden, fixed name)');
 INSERT INTO `ech_permissions` VALUES ('25', 'ctime', 'Allows user to view CTime information');
 INSERT INTO `ech_permissions` VALUES ('26', 'see_update_msg', 'Shows this user the Echelon needs updating message');
+INSERT INTO `ech_permissions` VALUES ('27', 'chats_talk_back', 'Allows the user to talk back to the server using the Chats Plugin');
