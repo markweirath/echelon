@@ -1,4 +1,5 @@
 <?php
+// plubic page keep things simple
 require '../inc/functions.php';
 require '../inc/config.php';
 require '../classes/dbl-class.php'; // require sessions class

@@ -16,11 +16,14 @@ if($_GET['t'] == 'del') :
 		ifTokenBad('Deleting a server');
 		
 	$result = $dbl->delServer($sid);
-		
 	if(!$result)
 		sendBack('There was a problem with deleting the server');
-	else
-		sendGood('The server has been deleted');
+	
+	$result = $dbl->delServerUpdateGames($game_id);
+	if(!$result)
+		sendBack('There was a problem with deleting the server');
+	
+	sendGood('The server has been deleted');
 	
 	exit; // stop - no need to load the rest of the page
 

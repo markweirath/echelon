@@ -57,10 +57,9 @@ if($_POST['deact']) { // if this is a deactivation request
 	} // end foreach
 	
 	## Query Section ##
-	$bl = $dbl->blacklist($ip, $reason, $mem->id);
-	if($bl == false) // if false
-		sendBack('That IP was not added to the blacklist was not added');
-	
+	$result = $dbl->blacklist($ip, $reason, $mem->id);
+	if(!$result) // if false
+		sendBack('That IP was not added to the blacklist');
 	
 	// if got this far we are doing well so lets send back a good message
 	sendGood('The IP has been added to the banlist');

@@ -1,13 +1,13 @@
 <?php
-$auth_name = 'siteadmin';
+$auth_name = 'clients';
 $b3_conn = true;
 require '../inc.php';
 
-if(!isset($_GET['s'])) {
-	echo 'There should be no direct access to this script!';
-	exit;
-}
+## If no string die
+if(!isset($_GET['s']))
+	die('There should be no direct access to this script!');
 
+## Continue
 $string = cleanvar($_GET['s']);
 
 if(strlen($string) > 0) {
@@ -71,7 +71,7 @@ if(strlen($string) > 0) {
 	
 	} // end if query one returned nothing !
 
-	
+	echo '<ol><li>There was nothing in the search box</li></ol>';
 }
 
 ?>

@@ -1,4 +1,4 @@
-<?php
+.<?php
 error_reporting(E_ALL ^ E_NOTICE); // show all errors but notices
 
 require 'inc/ctracker.php'; // anti worm injection protection
@@ -20,7 +20,6 @@ if($https_enabled == 1) :
 		exit;
 	}
 endif;
-
 
 require 'classes/session-class.php'; // class to deal with the management of sesssions
 require 'classes/members-class.php'; // class to preform all B3 DB related actions

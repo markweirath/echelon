@@ -24,7 +24,7 @@ if($_POST['greeting-sub']) : // if the form is submitted
 		
 	## Query ##
 	$query = "UPDATE clients SET greeting = ? WHERE id = ? LIMIT 1";
-	$stmt = $db->mysql->prepare($query) or die('Database Error');
+	$stmt = $db->mysql->prepare($query) or sendBack('Database Error');
 	$stmt->bind_param('si', $greeting, $client_id);
 	$stmt->execute();
 	if($stmt->affected_rows)

@@ -32,7 +32,8 @@ $password = cleanvar($_POST['password']);
 emptyInput($level, 'data not sent');
 emptyInput($client_id, 'data not sent');
 emptyInput($old_level, 'data not sent');
-emptyInput($password, 'current password');
+if(!$is_mask) // only the client level needs a password
+	emptyInput($password, 'current password');
 
 ## Check if the client_id is numeric ##
 if(!isID($client_id))
@@ -53,7 +54,7 @@ if(!in_array($level, $b3_groups_id))
 	sendBack('That group does not exist, please submit a real group');
 
 ## Check that authorisation passsword is correct ##
-if($config['cosmos']['pw_req_level'] == 1) : // if requiring a pw auth for edit-level is on or off
+if($config['cosmos']['pw_req_level'] == 1 && !$is_mask) : // if requiring a pw auth for edit-level is on or off
 	if($level >= $config['cosmos']['pw_req_level_group']) // site setting to see if only certain levels need a pw check and if the selected level is above the threshold
 		$mem->reAuthUser($password, $dbl);
 endif;
@@ -75,12 +76,18 @@ if(!$is_mask)
 else
 	$query = "UPDATE clients SET mask_level = ? WHERE id = ? LIMIT 1";
 	
-$stmt = $db->mysql->prepare($query) or die('Database Error: '.$db->mysql->error);
+$stmt = $db->mysql->prepare($query) or sendBack('Database Error');
 $stmt->bind_param('ii', $level, $client_id);
 $stmt->execute();
-if($stmt->affected_rows)
-	sendGood('User level has been changed');
+
+if($is_mask)
+	$msg_st = 'Mask';
 else
-	sendBack('User level was not changed');
+	$msg_st = 'User';
+
+if($stmt->affected_rows)
+	sendGood($msg_st.' level has been changed');
+else
+	sendBack($msg_st.' level was not changed');
 
 $stmt->close(); // close connection

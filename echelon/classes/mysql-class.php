@@ -152,7 +152,7 @@ class DB_B3 {
 			else
 				$this->error_msg = $this->error_sec;
 
-			return;
+			return false;
 		}
 		
 		## setup results array
@@ -312,24 +312,26 @@ class DB_B3 {
  */
 class MysqlException extends Exception {
 
-	private $error;
-	private $errno;
+	private $ex_error;
+	private $ex_errno;
 
 	public function __construct($error, $errno) {
 		
 		// get sent vars
-		$this->error = $error;
-		$this->errno = $errno;
+		$this->ex_error = $error;
+		$this->ex_errno = $errno;
 		
 		// get exception information from parent class
 		$traces = parent::getTraceAsString();
 		
 		// find error message and code
-		$code = $this->errno;
-		$message = $this->error;
+		$code = $this->ex_errno;
+		$message = $this->ex_error;
 		
 		// log error message
 		$log_success = echLog('mysql', $message, $code, $traces);
+		if(!$log_success)
+			die('Could not log fatal error');
 
 		// call parent constructor
 		parent::__construct($message, $code);

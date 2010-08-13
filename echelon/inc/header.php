@@ -13,13 +13,20 @@ if($pagination == true && (!$db_error)) : // if pagination is needed on the page
 	$total_num_rows = $db->query($query, false); // do not fetch the data
 	$total_rows = $total_num_rows['num_rows'];
 	
+		$query_string_page = queryStringPage();
+	
 	// create query_string
-	$query_string_page = queryStringPage();
-	
-	$total_pages = totalPages($total_rows, $limit_rows);
-	
-	if($page_no > $total_pages)
-		$db->error = true;
+	if($total_rows > 0) {
+
+		$total_pages = totalPages($total_rows, $limit_rows);
+		
+		if($page_no > $total_pages) {
+			$db->error = true;
+			$db->error_msg = 'That page does not exists, please select a real page.';
+		}
+	} else
+		$total_pages = 0;
+
 endif;
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -239,7 +246,7 @@ endif;
 	errors(); // echo out all errors/success/warnings
 
 	if($query_normal) : // if this is a normal query page and there is a db error show message
-
+	
 		if($db->error)
 			dbErrorShow($db->error_msg); // show db error
 

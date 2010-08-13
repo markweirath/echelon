@@ -60,8 +60,8 @@ function delUserLink($id, $token) {
 		return NULL;
 	else
 		return '<form action="actions/user-edit.php" method="post" class="user-del">
-				<input type="hidden" value="$token" name="token" />
-				<input type="hidden" value="$id" name="id" />
+				<input type="hidden" value="'.$token.'" name="token" />
+				<input type="hidden" value="'.$id.'" name="id" />
 				<input type="hidden" value="del" name="t" />
 				<input class="harddel" type="image" src="images/user_del.png" alt="Delete" title="Delete this user forever" />
 			</form>';
@@ -70,7 +70,7 @@ function delUserLink($id, $token) {
 
 function editUserLink($id, $name) {
 
-	return '<a href="sa.php?t=edituser&amp;id=$id" title="Edit '. $name .'"><img src="images/user_edit.png" alt="edit" /></a>';
+	return '<a href="sa.php?t=edituser&amp;id='.$id.'" title="Edit '. $name .'"><img src="images/user_edit.png" alt="edit" /></a>';
 	
 }
 
@@ -563,12 +563,15 @@ function emailLink($email, $name) {
  * @param string $name - name of the person
  * @return string $msg - the link to user
  */
-function echUserLink($id, $name, $name_title = NULL) {
+function echUserLink($id, $name, $name_title = NULL, $name_box = NULL) {
 
-	if($name_title == NULL)
+	if(empty($name_title))
 		$name_title = $name;
+		
+	if(empty($name_box))
+		$name_box = $name;
 
-	$msg = '<a href="sa.php?t=user&amp;id='.$id.'" title="View '.$name_title.' in more detail">'.$name.'</a>';
+	$msg = '<a href="sa.php?t=user&amp;id='.$id.'" title="View '.$name_title.' in more detail">'.$name_box.'</a>';
 	return $msg;
 }
 
@@ -795,7 +798,7 @@ function echLog($type, $message, $code = NULL, $traces = NULL) {
 		
 		return true;
 	else:
-		return false;
+		die('Couldn\'t find the Echelon Log at: '. ECH_LOG);
 		
 	endif;
 

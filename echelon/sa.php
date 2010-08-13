@@ -9,6 +9,9 @@ if(isset($_GET['t'])) {
 	elseif($_GET['t'] == 'user')
 		$auth_name = 'siteadmin';
 		
+	elseif($_GET['t'] == 'edituser')
+		$auth_name = 'edit_user';
+		
 } else {
 	$auth_name = 'siteadmin';
 	
@@ -45,17 +48,19 @@ if($_GET['t'] == 'user') :
 	}
 	
 	$ech_logs = $dbl->getEchLogs($admin_id, NULL, 'admin'); // get the echelon logs created by this user
+	
+	$token_del = genFormToken('del'.$id);
 
 	$is_view_user = true;
 endif; // end 
 
 // if this is an edit user page
 if($_GET['t'] == 'edituser') :
-	$uid = $_GET['id'];
-	if(!isID($uid)) {
+	if(!isID($_GET['id'])) {
 		set_error('Invalid data sent. Request aborted.');
 		send('sa.php');
-	}
+	} else
+		$uid = $_GET['id'];
 	
 	## Get a users details
 	$result = $dbl->getUserDetailsEdit($uid);
@@ -116,7 +121,10 @@ endif;
 ## Require Header ##	
 require 'inc/header.php';
 
-if($is_edit_user) : ?>
+if($is_edit_user) : 
+
+	echo echUserLink($uid, $u_display, null, '&laquo; Go Back');
+?>
 
 	<fieldset>
 		<legend>Edit <?php echo $u_display; ?></legend>
@@ -152,7 +160,7 @@ if($is_edit_user) : ?>
 	</fieldset>
 
 <?php elseif($is_view_user) : ?>
-	<a href="sa.php" title="Go back to the site admin page">&laquo; Go Back</a>
+	<a href="sa.php" title="Go back to site admin page" class="float-left">&laquo; Site Admin</a>
 	<span class="float-right"><span class="float-left"><?php echo delUserLink($id, $token_del)?></span><?php echo editUserLink($id, $name); ?></span>
 	
 	<table class="user-table">

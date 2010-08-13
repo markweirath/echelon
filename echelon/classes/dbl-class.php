@@ -190,7 +190,7 @@ class DbL {
 	 * @return array
 	 */
 	function getSettings() {
-        $query = "SELECT name, value FROM ech_config";
+        $query = "SELECT SQL_CACHE name, value FROM ech_config";
         $stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->execute();
 		
@@ -210,7 +210,7 @@ class DbL {
 	
 	function getGameInfo($game) {
 	
-		$query = "SELECT id, game, name, name_short, num_srvs, db_host, db_user, db_pw, db_name, plugins FROM ech_games WHERE id = ?";
+		$query = "SELECT SQL_CACHE id, game, name, name_short, num_srvs, db_host, db_user, db_pw, db_name, plugins FROM ech_games WHERE id = ?";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('i', $game);
 		$stmt->execute();
@@ -318,7 +318,7 @@ class DbL {
 	}
 	
 	function getServers($cur_game) {
-		$query = "SELECT id, name, ip, pb_active, rcon_pass, rcon_ip, rcon_port FROM ech_servers WHERE game = ?";
+		$query = "SELECT SQL_CACHE id, name, ip, pb_active, rcon_pass, rcon_ip, rcon_port FROM ech_servers WHERE game = ?";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('i', $cur_game);
 		$stmt->execute();
@@ -437,7 +437,10 @@ class DbL {
 		$stmt->bind_param('ississi', $game_id, $name, $ip, $pb, $rcon_pw, $rcon_ip, $rcon_port);
 		$stmt->execute();
 		
-		if($stmt->affected_rows > 0)
+		$affect = $stmt->affected_rows;
+		$stmt->close();
+		
+		if($affect > 0)
 			return true;
 		else
 			return false;	
@@ -453,10 +456,33 @@ class DbL {
 		$stmt = $this->mysql->prepare($query) or die('Database Error:'. $this->mysql->error);;
 		$stmt->bind_param('i', $game_id);
 		$stmt->execute();
+		
+		$affect = $stmt->affected_rows;
+		$stmt->close();
+		
+		if($affect > 0)
+			return true;
+		else
+			return false;
+	}
+	
+	function delServerUpdateGames($game_id) {
+		$query = "UPDATE ech_games SET num_srvs = (num_srvs - 1) WHERE id = ? LIMIT 1";
+		$stmt = $this->mysql->prepare($query) or die('Database Error:'. $this->mysql->error);;
+		$stmt->bind_param('i', $game_id);
+		$stmt->execute();
+		
+		$affect = $stmt->affected_rows;
+		$stmt->close();
+		
+		if($affect > 0)
+			return true;
+		else
+			return false;
 	}
 	
 	function getGamesList() {
-		$query = "SELECT id, name, name_short FROM ech_games ORDER BY id ASC";
+		$query = "SELECT SQL_CACHE id, name, name_short FROM ech_games ORDER BY id ASC";
 		$results = $this->mysql->query($query) or die('Database error');
 		
 		while($row = $results->fetch_object()) :	
@@ -616,7 +642,13 @@ class DbL {
 		$stmt->bind_param('ssii', $ip, $comment, $time, $admin);
 		$stmt->execute(); // run query
 		
+		$affect = $stmt->affected_rows;
 		$stmt->close();
+		
+		if($affect > 0)
+			return true;
+		else
+			return false;
 	}
 	
 	/**
@@ -1180,7 +1212,7 @@ class DbL {
 	}
 	
 	function addEchLog($type, $comment, $cid, $user_id, $game_id) {
-		// id, type, msg, client_id, user_id, time_add
+		// id, type, msg, client_id, user_id, time_add, game_id
 		$query = "INSERT INTO ech_logs VALUES(NULL, ?, ?, ?, ?, UNIX_TIMESTAMP(), ?)";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('ssiii', $type, $comment, $cid, $user_id, $game_id);

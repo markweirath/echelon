@@ -8,10 +8,10 @@ require 'inc.php';
 
 ######### QUERIES #########
 
-$time = 1250237292; // fake the time since we're using a DB backup
-$length = 7; // one day
+$time = time();
+$length = 7; // length in days
 
-$query = sprintf("SELECT ip FROM clients WHERE (%d - time_edit < %d*60*60*24 )", $time, $length);
+$query = "SELECT ip FROM clients WHERE ($time - time_edit < $length*60*60*24 )";
 
 ## Prepare and run Query ##
 $stmt = $db->mysql->prepare($query) or die('Database Error: '.$db->mysql->error);
@@ -29,70 +29,86 @@ endif;
 $stmt->free_result(); // free the data in memory from store_result
 $stmt->close(); // closes the prepared statement
 
-require_once("inc/geoip.php");
+$geoip_db_file = 'lib/GeoIP.dat';
 
-$gi = geoip_open("lib/GeoIP.dat", GEOIP_STANDARD);
+if(file_exists($geoip_db_file)) :
 
-$countries = array();
+	require_once("inc/geoip.php");
 
-foreach($ips as $ip) :
+	$gi = geoip_open($geoip_db_file, GEOIP_STANDARD);
 
-	$country_name = geoip_country_name_by_addr($gi, $ip);
-	$count = $countries[$country_name];
-	$countries[$country_name] = $count + 1;
+	$countries = array();
 
-endforeach;
+	foreach($ips as $ip) :
 
-geoip_close($gi);
+		$country_name = geoip_country_name_by_addr($gi, $ip);
+		$count = $countries[$country_name];
+		$countries[$country_name] = $count + 1;
 
-$num_countries = count($countries);
+	endforeach;
 
-## Create Code to be inserted into the header
+	geoip_close($gi);
 
+	$num_countries = count($countries);
 
-$map_js = "
-<script type='text/javascript' src='http://www.google.com/jsapi'></script>
-<script type='text/javascript'>
-	google.load('visualization', '1', {'packages': ['geomap']});
-	google.setOnLoadCallback(drawMap);
+	$map_js = "
+	<script type='text/javascript' src='http://www.google.com/jsapi'></script>
+	<script type='text/javascript'>
+		google.load('visualization', '1', {'packages': ['geomap']});
+		google.setOnLoadCallback(drawMap);
 
-	function drawMap() {
-		var data = new google.visualization.DataTable();
-		data.addRows(".$num_countries.");
-		data.addColumn('string', 'Country');
-		data.addColumn('number', 'Player Connections');";
-		
-		$i = 0;
-		foreach($countries as $key => $value) :
+		function drawMap() {
+			var data = new google.visualization.DataTable();
+			data.addRows(".$num_countries.");
+			data.addColumn('string', 'Country');
+			data.addColumn('number', 'Player Connections');";
 			
-			$map_js .= "
-				data.setValue(". $i .", 0, '". $key ."');
-				data.setValue(". $i .", 1, ". $value .");
-				";
+			$i = 0;
+			foreach($countries as $key => $value) :
+				
+				$map_js .= "data.setValue(". $i .", 0, '". $key ."');
+				data.setValue(". $i .", 1, ". $value .");";
+				
+				$i++;
+			endforeach;
 			
-			$i++;
-		endforeach;
-		
-$map_js .= "
-		var options = {};
-		options['dataMode'] = 'regions';
-		options['width'] = '800px';
-		options['height'] = '550px';
+	$map_js .= "
+			var options = {};
+			options['dataMode'] = 'regions';
+			options['width'] = '800px';
+			options['height'] = '550px';
 
-		var container = document.getElementById('map-box');
-		var geomap = new google.visualization.GeoMap(container);
-		geomap.draw(data, options);
-	};
-</script>
-";
+			var container = document.getElementById('map-box');
+			var geomap = new google.visualization.GeoMap(container);
+			geomap.draw(data, options);
+		};
+	</script>
+	";
+	
+	$geoip_db = true;
+	
+else:
+	$geoip_db = false;
+	$map_js = NULL;
+
+endif;
 
 ## Require Header ##	
 require 'inc/header.php';
+
+if(!$geoip_db) : ?>
+
+	<h3>Player Map Error</h3>
+		<p>This page requires that you have downloaded <a href="http://www.maxmind.com/app/geoip_country">Maxmind's GeoIP Database</a>, and place in in the "lib" folder with the name "GeoIP.dat".</p>
+
+<?php else: ?>
+
+	<h3>Player Map</h3>
+	<div id="map-box"></div>
+	<p><small>Map shows unique connections of players on a world map. There were a total of <strong><?php echo $num_rows; ?></strong> unique connections in the last <strong>7 days</strong>.</small></p>
+	<br />
+
+<?php 
+endif;
+require 'inc/footer.php';
 ?>
-
-<h3>Player Map</h3>
-<div id="map-box"></div>
-<p><small>Map shows unique connections of players on a world map. There were a total of <strong><?php echo $num_rows; ?></strong> unique connections in the last <strong>7 days</strong>.</small></p>
-<br />
-
-<?php require 'inc/footer.php'; ?>

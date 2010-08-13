@@ -2,7 +2,7 @@
 $auth_name = 'edit_user';
 require '../inc.php';
 
-if($_POST['t'] == 'del') :
+if($_POST['t'] == 'del') : // delete user
 
 	## get and clean vars ##
 	$token = cleanvar($_POST['token']);
@@ -24,7 +24,7 @@ if($_POST['t'] == 'del') :
 		
 	exit;
 
-elseif($_POST['ad-edit-user']):
+elseif($_POST['ad-edit-user']): // admin edit user
 	
 	## get and clean vars ##
 	$username = cleanvar($_POST['username']);
@@ -46,11 +46,11 @@ elseif($_POST['ad-edit-user']):
 		sendGood($display."'s information has been updated");
 	else
 		sendBack('There is a problem. The user information has not been changed');
+
 	exit;
 	
 else :
-
-	set_error('Please do not call this page directly');
+	set_error('You cannot view this page directly');
 	send('sa.php');
 
 endif;

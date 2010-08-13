@@ -143,7 +143,6 @@ class xlrstats extends plugins {
 			$this->xlr_fixed_name = $fixed_name;
 			$this->xlr_hide = $hide;
 			
-			
 		} else
 			$this->xlr_user = false;
 
@@ -168,8 +167,8 @@ class xlrstats extends plugins {
 				$name =  "Non Set";
 			else 
 				$name = $result['fixed_name'];
-				
-			if($results['hide'] == 1) 
+			
+			if($this->xlr_hide == 1) 
 				$hide = "Yes";
 			else
 				$hide = "No";

@@ -7,7 +7,7 @@ $plugin = chatlogs::getInstance();
 
 if(isset($_REQUEST['talkback'])) :
 	
-	if($mem->reqLevel('chats_talk_back') :
+	if($mem->reqLevel('chats_talk_back')) : // extra perms needed to talk to server
 		if(!empty($_GET['last-id']))
 			$last_id = cleanvar($_GET['last-id']);
 		else
@@ -31,7 +31,7 @@ endif;
 
 if(isset($_POST['tables'])) :
 
-	if($mem->reqLevel('chats_edit_tables') :
+	if($mem->reqLevel('chats_edit_tables')) : // extra perms needed to edit settings
 	
 		$tables = $_POST['tables'];
 		$names = $_POST['table-names'];

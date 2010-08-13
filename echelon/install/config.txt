@@ -33,3 +33,7 @@ define("VER_CHECK_URL", "http://echelon.bigbrotherbot.net/version.txt");
 
 // Do not touch this varible
 define("INSTALLED", 'yes');
+
+$ech_log_path = getenv("DOCUMENT_ROOT").PATH."lib/log.txt";
+define("ECH_LOG", $ech_log_path); // location of the Echelon Log file
+unset($ech_log_path);

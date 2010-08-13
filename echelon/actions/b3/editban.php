@@ -41,7 +41,7 @@ if($pb_ban == 'on') {
 // check for empty reason
 emptyInput($reason, 'ban reason');
 
-if( (!isID($ban_id) OR (!isID($cid) )
+if( !isID($ban_id) || !isID($cid) )
 	sendBack('Some of the information sent by you is invalid, the ban was not edited');
 
 ## Query Section ##

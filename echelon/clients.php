@@ -54,24 +54,24 @@ if($_GET['t']) {
 
 $query = "SELECT c.id, c.name, c.connections, c.time_edit, c.time_add, c.group_bits, g.name as level
 			FROM clients c LEFT JOIN groups g
-			ON c.group_bits = g.id WHERE c.id > 1 ";
+			ON c.group_bits = g.id WHERE c.id != 1 ";
 
 if($is_search == true) : // IF SEARCH
 	if($search_type == 'alias') { // ALIAS
-		$query .= sprintf("AND c.name LIKE '$search_string' ORDER BY %s", $orderby);
+		$query .= "AND c.name LIKE '%$search_string%' ORDER BY $orderby";
 		
 	} elseif($search_type == 'id') { // ID
-		$query .= sprintf("AND c.id LIKE '$search_string' ORDER BY %s", $orderby);
+		$query .= "AND c.id LIKE '%$search_string%' ORDER BY $orderby";
 		
 	} elseif($search_type == 'pbid') { // PBID
-		$query .= sprintf("AND c.pbid LIKE '$search_string' ORDER BY %s", $orderby);
+		$query .= "AND c.pbid LIKE '%$search_string%' ORDER BY $orderby";
 		
 	} elseif($search_type == 'ip') { // IP
-		$query .= sprintf("AND c.ip LIKE '$search_string' ORDER BY %s", $orderby);
+		$query .= "AND c.ip LIKE '%$search_string%' ORDER BY $orderby";
 		
 	} else { // ALL
-		$query .= sprintf("AND c.name LIKE '$search_string' OR c.pbid LIKE '$search_string' OR c.ip LIKE '$search_string' OR c.id LIKE '$search_string'
-			ORDER BY %s", $orderby);
+		$query .= "AND c.name LIKE '%$search_string%' OR c.pbid LIKE '%$search_string%' OR c.ip LIKE '%$search_string%' OR c.id LIKE '%$search_string%'
+			ORDER BY $orderby";
 	}
 else : // IF NOT SEARCH
 	$query .= sprintf("ORDER BY %s ", $orderby);
@@ -121,15 +121,15 @@ if(!$db->error) :
 		<small>
 			<?php
 			if($search_type == "all")
-				echo 'You are searching all clients that match <strong>'.$search_string.'</strong>.';
+				echo 'You are searching all clients that match <strong>'.$search_string.'</strong> there are <strong>'. $total_rows .'</strong>.';
 			elseif($search_type == 'alias')
-				echo 'You are searching all clients names for <strong>'.$search_string.'</strong>.';
+				echo 'You are searching all clients names for <strong>'.$search_string.'</strong> there are <strong>'. $total_rows .'</strong>.';
 			elseif($search_type == 'pbid')
-				echo 'You are searching all clients Punkbuster Guids for <strong>'.$search_string.'</strong>.';
+				echo 'You are searching all clients Punkbuster Guids for <strong>'.$search_string.'</strong> there are <strong>'. $total_rows .'</strong>.';
 			elseif($search_type == 'id')
-				echo 'You are searching all clients B3 IDs for <strong>'.$search_string.'</strong>.';
+				echo 'You are searching all clients B3 IDs for <strong>'.$search_string.'</strong> there are <strong>'. $total_rows .'</strong>.';
 			elseif($search_type == 'ip')
-				echo 'You are searching all clients IP addresses for <strong>'.$search_string.'</strong>.';
+				echo 'You are searching all clients IP addresses for <strong>'.$search_string.'</strong> there are <strong>'. $total_rows .'</strong>.';
 			else
 				echo 'A list of all players who have ever connected to the server.';
 			?>
@@ -210,7 +210,9 @@ EOD;
 	</tbody>
 </table>
 
-<?php 
+<?php
+	else:
+		
 	endif; // db error
 
 	require 'inc/footer.php'; 

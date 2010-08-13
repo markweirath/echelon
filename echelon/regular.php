@@ -133,7 +133,7 @@ EOD;
 		
 	else:
 		$no_data = true;
-		echo '<tr class="odd"><td colspan="5">There are no people who have had a total mininium of '.$connections_limit.' and been seen in the last '.$lenght.' days.</td></tr>';
+		echo '<tr class="odd"><td colspan="5">There are no people who have had a total mininium of '.$connections_limit.' connections and been seen in the last '.$lenght.' days.</td></tr>';
 	endif; // no records
 	?>
 	</tbody>
