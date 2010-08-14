@@ -52,7 +52,12 @@
 		## Read Config ##
 		$file_read = 'config.txt';
 		$file_write = 'config.php';
+		
+		
+		
 		if(file_exists($file_read)) :
+		
+			chmod($file_read, 0777);
 		
 			if(is_readable($file_read)) {
 
@@ -73,6 +78,9 @@
 					
 					## write config ##
 					if(file_exists($file_write)) :
+					
+						chmod($file_write, 0777);
+					
 						if(is_writeable($file_write)) :
 						
 							$fw = fopen($file_write, "a");
@@ -99,10 +107,6 @@
 					sendBack('Failed to move config file');
 				
 			} else {
-				
-				chmod($file_write, 0777);
-				chmod($file_read, 0777);
-				
 				if(!is_readable($file_read))
 					die('Config file is not readable or writeable');
 			}
