@@ -1,4 +1,4 @@
-.<?php
+<?php
 error_reporting(E_ALL ^ E_NOTICE); // show all errors but notices
 
 require 'inc/ctracker.php'; // anti worm injection protection
