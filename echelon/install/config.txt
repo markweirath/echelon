@@ -7,11 +7,12 @@ define("PATH", $path);
 define("DBL_HOSTNAME", "%db_host%"); // hostname of where the server is located
 define("DBL_USERNAME", "%db_user%"); // username that can connect to that DB
 define("DBL_PASSWORD", "%db_pass%"); // Password for that user
+define("DBL_PASSWORD", "%db_name%"); // Password for that user
 
 #############################
 ///// IGNORE BELOW HERE /////
 ## Echelon Version ##
-define("ECH_VER", "v.2.0a");
+define("ECH_VER", "v.2.0b");
 
 define("SALT", '%ech_salt%'); // do not change ever, this is salt for hashes
 
