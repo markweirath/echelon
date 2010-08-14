@@ -66,7 +66,12 @@ endif;
 
 require 'inc/header.php';
 
-if($page_type == 'add') : ?>
+if($num_games < 1) : ?>
+
+	<h3>No Games Created</h3>
+		<p>Please go to <a href="settings-games.php?t=add">Settings Games</a>, and add a game befreo you can add/edit any server settings</p>
+
+<?php elseif($page_type == 'add') : ?>
 
 	<a href="settings-server.php" title="Go back to the main server listing" class="float-left">&laquo; Server List</a><br />
 
