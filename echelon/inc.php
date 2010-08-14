@@ -60,7 +60,8 @@ if(!$no_plugins_active) : // if there are any registered plugins with this game
 		
 		if(file_exists($file)) :
 			require $file;
-			$plugins_class["$plugin"] = $plugin::getInstance(); // create a new instance of the plugin (whatever, eg. xlrstats) plugin
+			$plugins_class["$plugin"] = call_user_func(array($plugin, 'getInstance'), 'name');
+			//$plugin::getInstance(); // create a new instance of the plugin (whatever, eg. xlrstats) plugin
 		else :
 			if($mem->reqLevel('manage_settings')) // only show the error to does who can fix it
 				set_error('Unable to include the plugin file for the plugin '. $plugin .'<br /> In the directory: '. $file);
