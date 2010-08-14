@@ -98,8 +98,14 @@
 				if(!rename($file_write, '../inc/config.php'))
 					sendBack('Failed to move config file');
 				
-			} else
-				die('Config file is not readable or writeable');
+			} else {
+				
+				chmod($file_write, 0777);
+				chmod($file_read, 0777);
+				
+				if(!is_readable($file_read))
+					die('Config file is not readable or writeable');
+			}
 			
 		else:
 			die('Config file does not exist');

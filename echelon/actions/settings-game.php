@@ -21,8 +21,8 @@ else
 
 ## Check Token ##
 if($is_add) {
-	if(!verifyFormToken('addgame', $tokens)) // verify token
-		ifTokenBad('Add Game');
+	//if(!verifyFormToken('addgame', $tokens)) // verify token
+		//ifTokenBad('Add Game');
 } else {
 	if(!verifyFormToken('gamesettings', $tokens)) // verify token
 		ifTokenBad('Game Settings Edit');
@@ -50,7 +50,7 @@ if($db_pw_cng == 'on')
 else
 	$change_db_pw = false;
 
-
+	
 ## Check for empty vars ##
 emptyInput($name, 'game name');
 emptyInput($name_short, 'short version of game name');
@@ -79,10 +79,11 @@ if(!empty($g_plugins)) :
 endif;
 
 ## Check that the DB information supplied will make a connection to the B3 database.
-$db_test = DB_B3::getInstance($db_host, $db_user, $db_pw, $db_name, true); // the last argument is hard coded because any error report needs to be the full error message, not just the failed connection line; this will only be seen by people who can add/edit settings
+$db_test = @new mysqli($db_host, $db_user, $db_pw, $db_name);
 
-if($db_test->error)
-	sendBack($db_test->error_msg); // send back with a failed connection message
+if($db_test->connect_error) // send back with a failed connection message
+	sendBack('<strong>Database Connection Error</strong>
+				<p>The connection information you supplied is incorrect.<br />'.$db_test->connect_error.'</p>'); 
 
 ## Update DB ##
 if($is_add) : // add game queries
