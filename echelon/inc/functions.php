@@ -249,8 +249,8 @@ function genPW($input, $salt) {
  *
  * @return string $salt
  */
-function genSalt() {
-	$salt = randPass(12);
+function genSalt($length = 12) {
+	$salt = randPass($length);
 	return $salt;
 }
 

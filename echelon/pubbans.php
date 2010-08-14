@@ -14,7 +14,7 @@ checkBL(); // check the blacklist for the users IP (this is needed because this 
 
 ## Default Vars ##
 $orderby = "time_add";
-$order = "desc";
+$order = "DESC";
 
 ## Sorts requests vars ##
 if($_GET['ob'])

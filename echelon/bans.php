@@ -25,7 +25,7 @@ require 'inc.php';
 
 ## Default Vars ##
 $orderby = "time_add";
-$order = "desc";
+$order = "ASC";
 
 ## Sorts requests vars ##
 if($_GET['ob'])

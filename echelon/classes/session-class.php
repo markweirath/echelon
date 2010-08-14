@@ -16,7 +16,7 @@ class Session {
         static function sesStart($name = 'echelon', $limit = 0, $path = '/', $domain = null, $secure = null) {
 		
 			// Set the cookie name
-			session_name($name . '_session');
+			session_name($name . '_session_' . SES_SALT);
 
 			// Set SSL level
 			$https = isset($secure) ? $secure : isset($_SERVER['HTTPS']);

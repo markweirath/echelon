@@ -12,7 +12,7 @@ require 'inc.php';
 
 ## Default Vars ##
 $orderby = "time_add";
-$order = "desc";
+$order = "DESC";
 
 //$limit_rows = 75; // limit_rows can be set by the DB settings // uncomment this line to manually overide the number of table rows per page
 

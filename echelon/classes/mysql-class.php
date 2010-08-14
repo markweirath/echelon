@@ -113,13 +113,20 @@ class DB_B3 {
 		// if there was a connection error 
 		if (mysqli_connect_errno()) : // NOTE: we are using the procedural method here because of a problem with the OOP method before PHP 5.2.9
 
-			$code = $this->mysql->connect_errno;
+			$code = @$this->mysql->connect_errno; // not all versions of PHP respond nicely to this
+			if(empty($code)) // so if it does not then 
+				$code = 1; // set to 1
 		
 			if($this->error_on) // only if settings say show to con error, will we show it, else just say error
 				$error_msg = '<strong>B3 Database Connection Error:</strong> (#'. $code .') '.mysqli_connect_error();
 			else
 				$error_msg = $this->error_sec;
-			
+				
+			$traces = NULL;
+			$log_success = echLog('mysql', $error_msg, $code, $traces);
+			if(!$log_success)
+				die('Could not log fatal error');
+				
 			throw new Exception($error_msg, $code); // throw new mysql typed exception
 			
 		endif;

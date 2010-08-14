@@ -33,7 +33,7 @@ if(!in_array($orderby, $allowed_orderby)) // Check if the sent varible is in the
 	$orderby = 'time_edit'; // if not just set to default id
 
 // allowed times to limit by
-$allowed_length = array('1', '3', '7', '21', '28', '35', '182', '365');
+$allowed_length = array(1, 3, 7, 14, 21, 28, 35, 182, 365);
 if(!in_array($length, $allowed_length)) // Check if the sent varible is in the allowed array 
 	$length = 7; // reset to default of 7 days
 	

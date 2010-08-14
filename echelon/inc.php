@@ -1,10 +1,13 @@
 <?php
+if (!empty($_SERVER["SCRIPT_FILENAME"]) && "inc.php" == basename($_SERVER["SCRIPT_FILENAME"]))
+	die ("Please do not load this page directly. Thanks!"); // do not edit
+
 error_reporting(E_ALL ^ E_NOTICE); // show all errors but notices
 
 require 'inc/ctracker.php'; // anti worm injection protection
 require 'inc/config.php'; // load the config file
 
-if(INSTALLED != 'yes') // if echelon is not install (a constant is added to the end of the cnfig during install) then die and tell the user to go  install Echelon
+if(INSTALLED != 'yes') // if echelon is not install (a constant is added to the end of the config during install) then die and tell the user to go install Echelon
 	die('You still need to install Echelon. <a href="install/index.php">Install</a>');
 
 require_once 'inc/functions.php'; // require all the basic functions used in this site
@@ -52,11 +55,9 @@ if(!$no_plugins_active) : // if there are any registered plugins with this game
 	$plugins = new plugins(NULL);
 	
 	foreach($config['game']['plugins'] as $plugin) : // foreach plugin there is 
-
-		$minus_slash = substr(PATH, 1);
 	
 		// file = root to www path + echelon path + path to plugin from echelon path
-		$file = getenv("DOCUMENT_ROOT").$minus_slash.'lib/plugins/'.$plugin.'/class.php'; // abolsute path - needed because this page is include in all levels of this site
+		$file = getenv("DOCUMENT_ROOT").PATH.'lib/plugins/'.$plugin.'/class.php'; // abolsute path - needed because this page is include in all levels of this site
 		
 		if(file_exists($file)) :
 			require $file;

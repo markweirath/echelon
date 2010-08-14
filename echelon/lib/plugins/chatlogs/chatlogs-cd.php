@@ -22,8 +22,13 @@ while($i < $num_tables) : // write and preform query for each server
 	// create query array
 	$query = array();
 	
+	$table_name = $tables[$i];
+	
+	if(empty($table_name))
+		$table_name = 'chatlog';
+	
 	// write query
-	$query[$i] = sprintf("SELECT id, msg_time, msg_type, msg FROM %s WHERE client_id = %s ORDER BY msg_time DESC LIMIT %s", $tables[$i], $cid, $limit_rows);
+	$query[$i] = "SELECT id, msg_time, msg_type, msg FROM $table_name WHERE client_id = $cid ORDER BY msg_time DESC LIMIT $limit_rows";
 
 	$db = DB_B3::getPointer();
 	
@@ -31,14 +36,12 @@ while($i < $num_tables) : // write and preform query for each server
 	$results = $db->mysql->query($query[$i]) or die('DB Error');
 	
 	while($row = $results->fetch_object()) :
-	
 		$records[$i][] = array(
 			'id' => $row->id,
 			'msg_time' => $row->msg_time,
 			'msg_type' => $row->msg_type,
 			'msg' => $row->msg
 		);
-	
 	endwhile;
 	
 	// find num of rows found

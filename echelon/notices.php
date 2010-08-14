@@ -12,7 +12,7 @@ require 'inc.php';
 
 ## Default Vars ##
 $orderby = "time_add";
-$order = "desc"; // pick either asc or desc
+$order = "DESC"; // pick either asc or desc
 
 
 ## Sorts requests vars ##
@@ -43,7 +43,7 @@ $query = "SELECT p.id, p.type, p.client_id, p.time_add, p.reason,
 		FROM penalties p LEFT JOIN clients c1 ON c1.id = p.admin_id LEFT JOIN clients c2 ON c2.id = p.client_id
 		WHERE p.type = 'Notice'";
 
-$query .= sprintf("ORDER BY %s ", $orderby);
+$query .= "ORDER BY $orderby";
 
 ## Append this section to all queries since it is the same for all ##
 if($order == "DESC")
@@ -52,6 +52,7 @@ else
 	$query .= " ASC"; // default to ASC if nothing adds up
 
 $query_limit = sprintf("%s LIMIT %s, %s", $query, $start_row, $limit_rows); // add limit section
+
 
 ## Require Header ##	
 require 'inc/header.php';

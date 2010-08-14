@@ -17,6 +17,7 @@
 		
 		## Create an Echelon salt 
 		$ech_salt = genSalt(16);
+		$ses_salt = randPass(6);
 
 		## Get the form information ##
 		$email = cleanvar($_POST['email']);
@@ -53,8 +54,6 @@
 		$file_read = 'config.txt';
 		$file_write = 'config.php';
 		
-		
-		
 		if(file_exists($file_read)) :
 		
 			chmod($file_read, 0777);
@@ -75,6 +74,7 @@
 					$config = preg_replace("/%db_user%/", $db_user, $config);
 					$config = preg_replace("/%db_pass%/", $db_pass, $config);
 					$config = preg_replace("/%db_name%/", $db_name, $config);
+					$config = preg_replace("/%ses_salt%/", $ses_salt, $config);
 					
 					## write config ##
 					if(file_exists($file_write)) :

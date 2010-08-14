@@ -69,7 +69,7 @@ require 'inc/header.php';
 if($num_games < 1) : ?>
 
 	<h3>No Games Created</h3>
-		<p>Please go to <a href="settings-games.php?t=add">Settings Games</a>, and add a game befreo you can add/edit any server settings</p>
+		<p>Please go to <a href="settings-games.php?t=add">Settings Games</a>, and add a game before you can add/edit any server settings</p>
 
 <?php elseif($page_type == 'add') : ?>
 
