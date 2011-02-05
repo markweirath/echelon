@@ -23,7 +23,7 @@ CREATE TABLE `links` (
   `description` text,
   `level` int(11) NOT NULL default '0',
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=4 ;
+) ENGINE=MyISAM AUTO_INCREMENT=4 ;
 
 #
 # Dumping data for table `links`
@@ -47,7 +47,7 @@ CREATE TABLE `users` (
   `b3cod` int(11) default NULL,
   `b3uo` int(11) default NULL,
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=2 ;
+) ENGINE=MyISAM AUTO_INCREMENT=2 ;
 
 #
 # Dumping data for table `users`
