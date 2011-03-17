@@ -20,7 +20,7 @@ if($_POST['greeting-sub']) : // if the form is submitted
 	
 	## Add Log Message ##
 	$comment = 'Greeting message changed';
-	$dbl->addEchLog('Greeting', $comment, $client_id, $mem->id);	
+	$dbl->addEchLog('Greeting', $comment, $client_id, $mem->id, $game);	
 		
 	## Query ##
 	$query = "UPDATE clients SET greeting = ? WHERE id = ? LIMIT 1";

@@ -43,6 +43,10 @@
 		define("DBL_DB", $db_name); // name of the database to connect to
 		define("DB_CON_ERROR_SHOW", TRUE);
 		
+		if(!function_exists('mysqli_connect')) {
+			sendBack('Echelon requires mysqli');
+		}
+		
 		// start connectionn to the DB
 		require '../classes/dbl-class.php';
 		$dbl = DBL::getInstance(true); // test connection if it fails then it dies (install test is true)

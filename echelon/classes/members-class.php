@@ -211,11 +211,11 @@ function pwStrength($password, $min_pw_len = 8) {
         $power++;
 
     // check if lenth is 17 - 25 chars 
-    if($length >= 17 && $length <=25)
+    elseif($length >= 17 && $length <=25)
         $power += 2;
 
     // check if length greater than 25 chars 
-    if($length > 25)
+    elseif($length > 25)
         $power += 3;
     
     // get the numbers in the password 
@@ -227,14 +227,12 @@ function pwStrength($password, $min_pw_len = 8) {
     $spec = sizeof($specialchars[0]);
 	if($spec < 2)
 		$power--;
-	elseif($spec >= 2)
+	elseif($spec <= 4)
 		$power++;
-	elseif(($spec > 4) && ($spec <= 5))
+	elseif($spec == 5)
 		$power += 2;
-	elseif(($spec >= 5) && ($lenght/5 >= 2)) // the second part here is a check to that half the password isn't special characters
+	elseif($length / $spec >= 2) //check that half the password isn't special characters
 		$power += 3;
-	else
-		$power;
 	
 
     // get the number of unique chars 
@@ -248,8 +246,7 @@ function pwStrength($password, $min_pw_len = 8) {
 	// if the password is strong enough return true, else return false
 	if($power >= 5)
 		return true;
-	else
-		return false;
+	return false;
 
 }
 
