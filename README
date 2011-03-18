@@ -10,7 +10,7 @@ All the files are copyrighted by Eire.32 (eire32designs.com) and Bigbrotherbot (
 
 ## Requirements ##
 - Webserver (Aphace currently, other support coming soon)
-- Version 5+ PHP
+- Version 5+ PHP (with my mysqli)
 - MySQL DB (your B3 DB will work, but a seperate  one is advised)
 - A MySQL user with connection rights to your B3 databases
 - RCON details for the servers running B3 (RCON support is currently being phased out of Echelon)

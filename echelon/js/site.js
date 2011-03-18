@@ -178,12 +178,10 @@ $(document).ready(function() {
 	
 	// Site navigation dropdown menus
 	$('#nav li.cdd').hover(function(){
-		$('#nav li.cdd ul.dd').slideUp(150); // hide all other dd
-		$(this).children('#nav li.cdd ul.dd').slideDown('fast');
+		$('#nav li.cdd ul.dd').hide(); // hide all other dd
+		$(this).children('#nav li.cdd ul.dd').show();
 	}, function(){
-		$(this).oneTime(250, function() {
-			$(this).children('#nav li.cdd ul.dd').slideUp('fast');
-		});
+		$(this).children('#nav li.cdd ul.dd').hide();
 	});
 	
 	// Clear Inpt of Text
