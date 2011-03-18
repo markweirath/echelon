@@ -19,7 +19,7 @@ if(isset($_GET['v']))
 	
 $page = $plugin; // name of the page is the plugin name
 
-$Cplug = $plugin::getInstance();
+$Cplug = $plugins_class["$plugin"];
 
 $page_title = $Cplug->getTitle(); // get the page title from the title of the plugin
 
