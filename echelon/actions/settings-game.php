@@ -79,7 +79,10 @@ if(!empty($g_plugins)) :
 endif;
 
 ## Check that the DB information supplied will make a connection to the B3 database.
-$db_test = @new mysqli($db_host, $db_user, $db_pw, $db_name);
+if($change_db_pw == true)
+        $db_test = @new mysqli($db_host, $db_user, $db_pw, $db_name);
+else
+        $db_test = @new mysqli($db_host, $db_user, $config['game']['db_pw'], $db_name);
 
 if($db_test->connect_error) // send back with a failed connection message
 	sendBack('<strong>Database Connection Error</strong>

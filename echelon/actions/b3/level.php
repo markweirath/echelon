@@ -32,8 +32,8 @@ $password = cleanvar($_POST['password']);
 emptyInput($level, 'data not sent');
 emptyInput($client_id, 'data not sent');
 emptyInput($old_level, 'data not sent');
-if(!$is_mask) // only the client level needs a password
-	emptyInput($password, 'current password');
+//the password is not checked here, rather it is checked when the user
+//is authenticated or not, otherwise it doesn't matter what the field it
 
 ## Check if the client_id is numeric ##
 if(!isID($client_id))
@@ -55,8 +55,10 @@ if(!in_array($level, $b3_groups_id))
 
 ## Check that authorisation passsword is correct ##
 if($config['cosmos']['pw_req_level'] == 1 && !$is_mask) : // if requiring a pw auth for edit-level is on or off
-	if($level >= $config['cosmos']['pw_req_level_group']) // site setting to see if only certain levels need a pw check and if the selected level is above the threshold
+	if($level >= $config['cosmos']['pw_req_level_group']) {// site setting to see if only certain levels need a pw check and if the selected level is above the threshold
+		emptyInput($password, 'current password'); //now we check that the password is set
 		$mem->reAuthUser($password, $dbl);
+	}
 endif;
 
 ## Add Echelon Log ##
@@ -68,7 +70,7 @@ if(!$is_mask)
 else
 	$comment = 'Mask level changed from '. $old_level_name .' to '. $level_name;
 
-$dbl->addEchLog('Level Change', $comment, $client_id, $mem->id);
+$dbl->addEchLog('Level Change', $comment, $client_id, $mem->id, $game);
 
 ## Query Section ##
 if(!$is_mask)
