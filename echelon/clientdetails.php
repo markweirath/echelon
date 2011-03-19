@@ -69,7 +69,7 @@ require 'inc/header.php';
 						if($guid_len == 32) 
 							guidCheckLink($guid);
 						else 
-							echo $guid.' <span class="red" title="This guid is only 31 characters long, it should be 32 characters!">['. $guid_len .']</span>';
+							echo $guid.' <span class="red" title="This guid is only ' . $guid_len . ' characters long, it should be 32 characters!">['. $guid_len .']</span>';
 				
 					} elseif($mem->reqLevel('view_half_guid')) { // if allowed to see the last 8 chars of guid
 						
