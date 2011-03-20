@@ -77,7 +77,7 @@ require 'inc/header.php';
 							$half_guid = substr($guid, -8); // get the last 8 characters of the guid
 							guidCheckLink($half_guid);
 						} else
-							echo $guid.' <span class="red" title="This guid is only 31 characters long, it should be 32 characters!">['. $guid_len .']</span>';
+							echo $guid.' <span class="red" title="This guid is only ' . $guid_len . ' characters long, it should be 32 characters!">['. $guid_len .']</span>';
 					
 					} else { // if not allowed to see any part of the guid
 						echo '(You do not have access to see the GUID)';

@@ -85,7 +85,7 @@ endif;
 $comment = 'A ban for this user was edited';
 
 ## Query ##
-$result = $dbl->addEchLog('Edit Ban', $comment, $cid, $mem->id);
+$result = $dbl->addEchLog('Edit Ban', $comment, $cid, $mem->id, $game);
 
 if($results)
 	sendGood('Ban edited');
