@@ -94,7 +94,7 @@ require 'inc/header.php';
 								&nbsp;&nbsp;
 							<a href="http://whois.domaintools.com/<?php echo $ip; ?>" title="Whois IP Search"><img src="images/id_card.png" width="16" height="16" alt="W" /></a>
 								&nbsp;&nbsp;
-							<a href="http://geotool.servehttp.com/?ip=<?php echo $ip; ?>" title="Show Location of IP origin on map"><img src="images/globe.png" width="16" height="16" alt="L" /></a>
+							<a href="http://www.geoiptool.com/en/?IP=<?php echo $ip; ?>" title="Show Location of IP origin on map"><img src="images/globe.png" width="16" height="16" alt="L" /></a>
 					<?php
 						} else {
 							echo "(No IP address available)";
