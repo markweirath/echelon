@@ -427,6 +427,22 @@ function emptyInput($var, $field) {
 } // end function
 
 /**
+ * Check is a form var is empty, but accept 0's, if so set error and send back to reffering page
+ *
+ * @param string $var - the varible to check
+ * @param string $field - the name of the varible (used in the error message) eg. 'your new password'
+ */
+function emptyInputNumeric($var, $field) {
+	$var = trim($var);
+	$ref = $_SERVER['HTTP_REFERER'];
+	if(!isset($var)) {
+		set_error('You must put something in the '.$field.' field.');
+		send($ref); // send back to referering page
+		exit;
+	}
+} // end function
+
+/**
  * Cleans var of unwanted materials
  *
  * @param string $var - var to be cleaned

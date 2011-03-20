@@ -31,7 +31,7 @@ $password = cleanvar($_POST['password']);
 ## Check Empties ##
 emptyInput($level, 'data not sent');
 emptyInput($client_id, 'data not sent');
-emptyInput($old_level, 'data not sent');
+emptyInputNumeric($old_level, 'data not sent');
 //the password is not checked here, rather it is checked when the user
 //is authenticated or not, otherwise it doesn't matter what the field it
 
