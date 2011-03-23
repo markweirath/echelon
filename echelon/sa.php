@@ -47,7 +47,7 @@ if($_GET['t'] == 'user') :
 		$admin_name = $result[8];
 	}
 	
-	$ech_logs = $dbl->getEchLogs($admin_id, NULL, 'admin'); // get the echelon logs created by this user
+	$ech_logs = $dbl->getEchLogs($id, NULL, 'admin'); // get the echelon logs created by this user (note: admin_id is admin group not the id stored in log)
 	
 	$token_del = genFormToken('del'.$id);
 

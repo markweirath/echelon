@@ -47,11 +47,7 @@ function isID($id) {
 	if($fc == 0)
 		return false;
 		
-	if(!is_numeric($id))
-		return false;
-		
-	return true;
-
+	return is_numeric($id);
 }
 
 function delUserLink($id, $token) {
@@ -75,6 +71,8 @@ function editUserLink($id, $name) {
 }
 
 function displayEchLog($array, $style = 'client') {
+	if(empty($array))
+        return;
 
 	global $tformat; // import the time format varible for use in this function
 

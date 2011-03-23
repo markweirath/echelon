@@ -29,7 +29,7 @@ $old_level = cleanvar($_POST['old-level']);
 $password = cleanvar($_POST['password']);
 
 ## Check Empties ##
-emptyInput($level, 'data not sent');
+emptyInputNumeric($level, 'data not sent');
 emptyInput($client_id, 'data not sent');
 emptyInputNumeric($old_level, 'data not sent');
 //the password is not checked here, rather it is checked when the user
