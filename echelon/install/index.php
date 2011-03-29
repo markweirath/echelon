@@ -153,6 +153,11 @@
 		if(!mail($email, $subject, $body, $headers))
 			sendback('There was a problem sending the user login information email.');
 		
+		//update the admins email address
+		$result = $dbl->setSettings($email, 'email', 's');
+		if(!$result)
+			sendBack('Their was a problem updating the settings table, please check that it exists in your Echelon database');
+			
 		## Done ##
 		send('index.php?t=done'); // send to a thankyou done page that explains what next
 	

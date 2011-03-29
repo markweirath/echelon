@@ -16,8 +16,8 @@ $order = "ASC"; // either ASC or DESC
 
 //$time = 1250237292;
 $time = time();
-$lenght = 7; // default lenght (in days) that the client must have connected to the server(s) on in order to be on the list
-$connections_limit = 50; // default number of connections that the player must have (in total) to be on the list
+$lenght = $config['cosmos']['reg_days'];; // default length (in days) that the client must have connected to the server(s) on in order to be on the list
+$connections_limit = $config['cosmos']['reg_connections']; // default number of connections that the player must have (in total) to be on the list
 
 $clan_tags = $config['cosmos']['reg_clan_tags']; // use the clan tags stored in the DB conifg table
 
@@ -51,8 +51,9 @@ $query = sprintf("SELECT c.id, c.name, c.connections, c.time_edit, g.name as lev
 	AND connections > %d AND c.id != 1 ", $time, $lenght, $connections_limit);
 	
 foreach ($clan_tags as $tag) {
-	// run through array appending clantag section for each value in the array
-	$query .= "AND c.name NOT LIKE '%".$tag."%' ";
+	// run through array appending clantag section for each value in the arrayi
+	if($tag != null)
+		$query .= "AND c.name NOT LIKE '%".$tag."%' ";
 }
 
 $query .= sprintf("ORDER BY %s", $orderby);
@@ -72,7 +73,7 @@ if(!$db->error) :
 ?>
 
 <table summary="A list of players who are regular server go'ers o your servers.">
-	<caption>Regulars<small>A list of players who are regular server go'ers o your servers. Must have more than <strong><?php echo $connections_limit; ?></strong> connections and been seen in the last <strong><?php echo $lenght; ?></strong> days.</small></caption>
+	<caption>Regulars<small>A list of players who are regular server go'ers on your servers, excluding clan members. Must have more than <strong><?php echo $connections_limit; ?></strong> connections and been seen in the last <strong><?php echo $lenght; ?></strong> days.</small></caption>
 	<thead>
 		<tr>
 			<th>Name
