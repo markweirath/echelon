@@ -52,7 +52,9 @@ function loggedIn() { // are they logged in
 function auth($name) {
 	locked(); // stop blocked people from acessing	
 	if(!$this->loggedIn()) { // if not authorised/logged in
-		set_error('Please login to Echelon');
+		global $page;
+		if($page != "home") //don't set an error if we came from the homepage
+			set_error('Please login to Echelon');
 		sendLogin();
 		exit;
 	}
