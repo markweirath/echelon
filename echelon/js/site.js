@@ -340,6 +340,7 @@ function suggest(iString){
 }
 
 function fill(thisValue) {
-	$('#search').val(thisValue);
+	if(thisValue != null)
+		$('#search').val(thisValue);
 	setTimeout("$('#suggestions').fadeOut('normal');", 500);
 }

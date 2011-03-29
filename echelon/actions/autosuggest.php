@@ -71,7 +71,6 @@ if(strlen($string) > 0) {
 	
 	} // end if query one returned nothing !
 
-	echo '<ol><li>There was nothing in the search box</li></ol>';
 }
 
 ?>
