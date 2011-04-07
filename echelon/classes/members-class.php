@@ -145,9 +145,9 @@ function getGravatar($email) {
 	
 	if($https) {
 		$grav_url = "https://secure.gravatar.com/avatar.php?
-		gravatar_id=".md5( strtolower($email) );
+		gravatar_id=".md5( strtolower($email) ) . '?d=identicon';
 	} else {
-		$grav_url = "http://www.gravatar.com/avatar/" . md5( strtolower( $email ) );
+		$grav_url = "http://www.gravatar.com/avatar/" . md5( strtolower( $email ) ).'?d=identicon';
 	}
 	
 	$gravatar = '<span class="gravatar">

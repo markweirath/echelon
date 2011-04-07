@@ -551,8 +551,7 @@ function guidCheckLink($guid) {
  * @return string $msg - the link to whois of IP
  */
 function ipLink($ip) {
-	$msg = '<a href="http://whois.domaintools.com/'.$ip.'/" class="external" title="WhoIs IP Search this User">'.$ip.'</a>';
-	return $msg;
+	return '<a href="http://whois.domaintools.com/'.$ip.'/" class="external" title="WhoIs IP Search this User">'.$ip.'</a>';
 }
 
 /**
@@ -667,9 +666,7 @@ function linkSortClients($keyword, $title, $is_search, $search_type, $search_str
  * @return string - the cleaned text
  */
 function removeColorCode($text) {
-
-	$text = preg_replace('/\\^([0-9])/ie', '', $text);
-	return $text;
+	return preg_replace('/\\^([0-9])/ie', '', $text);
 }
 
 /**
@@ -680,8 +677,7 @@ function removeColorCode($text) {
  */
 function tableClean($text) {
 
-	$text = htmlspecialchars($text);
-	return $text;
+	return htmlspecialchars($text);
 }
 
 function timeExpire($time_expire, $type, $inactive) {
@@ -852,38 +848,23 @@ LOGMSGG;
 function verifyFormToken($form, $tokens) {
         
 	// check if a session is started and a token is transmitted, if not return an error
-	if(!isset($tokens[$form])) 
-		return false;
-	
 	// check if the form is sent with token in it
-	if(!isset($_POST['token']))
-		return false;
-	
 	// compare the tokens against each other if they are still the same
-	if ($tokens[$form] !== $_POST['token'])
-		return false;
-	
-	return true;
+	if(isset($tokens[$form]) && isset($_POST['token']) && $tokens[$form] === $_POST['token']) 
+		return true;
+	return false;
 }
 
 /**
  * Same as above function but slight chnage to account for some login form differences
  */
 function verifyFormTokenLogin($form) {
-        
 	// check if a session is started and a token is transmitted, if not return an error
-	if(!isset($_SESSION['tokens'][$form]))
-		return false;
-
 	// check if the form is sent with token in it
-	if(!isset($_POST['token']))
-		return false;
-
 	// compare the tokens against each other if they are still the same
-	if ($_SESSION['tokens'][$form] !== $_POST['token'])
-		return false;
-
-	return true;
+    if(isset($_SESSION['tokens'][$form]) && isset($_POST['token']) && $_SESSION['tokens'][$form] === $_POST['token'])
+		return true;
+	return false;
 }
 
 /**
@@ -945,17 +926,9 @@ function errors() {
  * @reutnr bool
  */
 function detectSSL(){
-	if($_SERVER["https"] == "on")
+	if($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1 || $_SERVER['SERVER_PORT'] == 443)
 		return true;
-		
-	elseif($_SERVER["https"] == 1)
-		return true;
-		
-	elseif($_SERVER['SERVER_PORT'] == 443)
-		return true;
-		
-	else
-		return false;
+	return false;
 }
 
 /**
@@ -1008,8 +981,7 @@ function time_duration($seconds, $use = null, $zeros = false) {
         $array[] = $segment;
     }
 
-    $str = implode(', ', $array);
-    return $str;
+    return implode(', ', $array);
 }
 
 

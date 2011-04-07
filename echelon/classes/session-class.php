@@ -19,7 +19,7 @@ class Session {
 			session_name($name . '_session_' . SES_SALT);
 
 			// Set SSL level
-			$https = isset($secure) ? $secure : isset($_SERVER['HTTPS']);
+			$https = isset($secure) ? $secure : detectSSL();
 			
 			// Set session cookie options
 			// httpOnly is set to true // this can help prevent identiy theft with XSS hacks
