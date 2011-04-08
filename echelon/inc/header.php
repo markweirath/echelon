@@ -91,24 +91,24 @@ endif;
 
 		<li class="home<?php if(isHome()) echo ' selected'; ?>"><a href="<?php echo PATH; ?>" title="Home Page">Home</a></li>
 
-		<?php if(!$no_games) : ?>
+		<?php 
+		$games_list = $dbl->getActiveGamesList();
+		$count = count($games_list);
+		if($count > 0) : ?>
 
 		<li class="cdd">
 			<a href="#">Games</a>
 			<ul class="dd games-list">
 				<?php
 					$this_cur_page = basename($_SERVER['SCRIPT_NAME']);						
-					$games_list = $dbl->getGamesList();
 					$i = 0;
-					$count = count($games_list);
-					$count--; // minus 1
-					while($i <= $count) :
+					while($i < $count) :
 
 						if($game == $games_list[$i]['id'])
 							echo '<li class="selected">';
 						else
 							echo '<li>';
-						echo '<a href="'.PATH . $this_cur_page .'?game='.$games_list[$i]['id'].'" title="Switch to this game">'.$games_list[$i]['name'].'</a></li>';
+						echo '<a href="'.PATH . $this_cur_page .'?game='.$games_list[$i]['id'].'" title="Switch to this game">'.$games_list[$i]['name_short'].'</a></li>';
 						
 						$i++;
 					endwhile;

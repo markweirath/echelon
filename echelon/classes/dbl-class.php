@@ -210,12 +210,12 @@ class DbL {
 	
 	function getGameInfo($game) {
 	
-		$query = "SELECT SQL_CACHE id, game, name, name_short, num_srvs, db_host, db_user, db_pw, db_name, plugins FROM ech_games WHERE id = ?";
+		$query = "SELECT SQL_CACHE id, game, name, name_short, num_srvs, db_host, db_user, db_pw, db_name, plugins, active FROM ech_games WHERE id = ?";
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		$stmt->bind_param('i', $game);
 		$stmt->execute();
 		
-		$stmt->bind_result($id, $game, $name, $name_short, $num_srvs, $db_host, $db_user, $db_pw, $db_name, $plugins);
+		$stmt->bind_result($id, $game, $name, $name_short, $num_srvs, $db_host, $db_user, $db_pw, $db_name, $plugins, $active);
         $stmt->fetch(); // get results		
 		
 		$game = array(
@@ -228,7 +228,8 @@ class DbL {
 			'db_user' => $db_user,
 			'db_pw' => $db_pw,
 			'db_name' => $db_name,
-			'plugins' => $plugins
+			'plugins' => $plugins,
+			'active' => $active
 		);
 		
 		return $game;
@@ -263,9 +264,9 @@ class DbL {
 	 *
 	 * @return bool
 	 */
-    function setGameSettings($game, $name, $name_short, $db_user, $db_host, $db_name, $db_pw, $change_db_pw, $plugins) {
+    function setGameSettings($game, $name, $name_short, $db_user, $db_host, $db_name, $db_pw, $change_db_pw, $plugins, $enable = true) {
 		
-		$query = "UPDATE ech_games SET name = ?, name_short = ?, db_host = ?, db_user = ?, db_name = ?, plugins = ?";
+		$query = "UPDATE ech_games SET name = ?, name_short = ?, db_host = ?, db_user = ?, db_name = ?, plugins = ?, active = ?";
 		
 		if($change_db_pw) // if the DB password is to be chnaged
 			$query .= ", db_pw = ?";
@@ -274,15 +275,12 @@ class DbL {
 			
 		$stmt = $this->mysql->prepare($query) or die('Database Error');
 		if($change_db_pw) // if change DB PW append var
-			$stmt->bind_param('sssssssi', $name, $name_short, $db_host, $db_user, $db_name, $plugins, $db_pw, $game);
+			$stmt->bind_param('sssssssi', $name, $name_short, $db_host, $db_user, $db_name, $plugins, $db_pw, $enable, $game);
 		else // else var info not needed in bind_param
-			$stmt->bind_param('ssssssi', $name, $name_short, $db_host, $db_user, $db_name, $plugins, $game);
+			$stmt->bind_param('ssssssii', $name, $name_short, $db_host, $db_user, $db_name, $plugins, $enable, $game);
 		$stmt->execute();
 		
-		if($stmt->affected_rows > 0)
-			return true;
-		else
-			return false;
+		return $stmt->affected_rows > 0;
     }
 	
 	/**
@@ -299,7 +297,7 @@ class DbL {
 	 */
 	function addGame($name, $game, $name_short, $db_host, $db_user, $db_pw, $db_name) {
 		// id, name, game, name_short, num_srvs, db_host, db_user, db_pw, db_name
-		$query = "INSERT INTO ech_games (name, game, name_short, num_srvs, db_host, db_user, db_pw, db_name) VALUES(?, ?, ?, 0, ?, ?, ?, ?)";
+		$query = "INSERT INTO ech_games (name, game, name_short, num_srvs, db_host, db_user, db_pw, db_name, active) VALUES(?, ?, ?, 0, ?, ?, ?, ?, TRUE)";
 		$stmt = $this->mysql->prepare($query) or die('Database Error:'. $this->mysql->error);
 		$stmt->bind_param('sssssss', $name, $game, $name_short, $db_host, $db_user, $db_pw, $db_name);
 		$stmt->execute();
@@ -1291,6 +1289,29 @@ class DbL {
 		$data = $this->query($query);
 		
 		return $data;
+	}
+	
+	/**
+	 * Checks if the game exsits and is active
+	 */
+	function isActiveGame($game) {
+		$query = "SELECT SQL_CACHE id FROM ech_games WHERE id = $game  AND active = 1";
+        $results = $this->mysql->query($query) or die('DB Error');
+        return $results->fetch_object()->id > 0;
+	}
+	
+	function getActiveGamesList() {
+		$query = "SELECT SQL_CACHE id, name, name_short FROM ech_games WHERE active = 1 ORDER BY id ASC";
+		$results = $this->mysql->query($query) or die('Database error');
+		
+		while($row = $results->fetch_object()) :	
+			$games[] = array(
+				'id' => $row->id,
+				'name' => $row->name,
+				'name_short' => $row->name_short
+			);
+		endwhile;
+		return $games;
 	}
 
 } // end class

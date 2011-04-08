@@ -370,7 +370,7 @@ if($mem->loggedIn()) { ## if logged in users may skip this page
 		<label for="f-game">Game:</label>
 			<select name="f-game" id="f-game" tabindex="3">
 				<?php
-					$games_list = $dbl->getGamesList();
+					$games_list = $dbl->getActiveGamesList();
 					$i = 0;
 					$count = count($games_list);
 					$count--; // minus 1

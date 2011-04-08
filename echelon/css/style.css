@@ -234,7 +234,7 @@ div.info { width: 170px; float: left; height: 48px; background: url(../images/na
 	.gravatar { border: 1px solid #ccc; padding: 1px; margin: 3px; display: block; }
 	.display-name { color: #888; padding: 2px 3px 0; font-size: 17px; }
 	.last-seen { color: #ccc; font-size: 11px; padding: 2px 3px; }
-div.log-cor { width: 89px; text-align: right; float: right; height: 48px; padding-top: 13px;  background: url(../images/nav/white-side-corner.png) no-repeat; }
+div.log-cor { width: 100px; text-align: right; float: right; height: 48px; padding-top: 13px;  background: url(../images/nav/white-side-corner.png) no-repeat; }
 	.log-cor  a { background: url(../images/nav/logout.png) no-repeat center right; margin: 3px 7px 3px 0; padding: 5px 20px 5px 5px; 
 				border-left: 1px solid #ececec; color: #000; font-size: 14px; }
 		.log-cor a:hover { color: #226091; text-decoration: none; }

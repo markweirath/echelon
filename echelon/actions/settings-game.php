@@ -43,6 +43,8 @@ $db_name = cleanvar($_POST['db-name']);
 $g_plugins = $_POST['plugins'];
 // Verify Password
 $password = $_POST['password']; // do not clean passwords
+$enable = cleanvar($_POST['enable']);
+
 
 // Whether to change DB PW or not
 if($db_pw_cng == 'on')
@@ -78,6 +80,8 @@ if(!empty($g_plugins)) :
 	$enabled = substr($enabled, 0, -1); // remove trailing comma
 endif;
 
+$enable == null ? $enable = 0 : $enable = 1;
+
 ## Check that the DB information supplied will make a connection to the B3 database.
 if($change_db_pw == true)
         $db_test = @new mysqli($db_host, $db_user, $db_pw, $db_name);
@@ -98,14 +102,14 @@ if($is_add) : // add game queries
 	
 else : // edit game queries
 	$mem->reAuthUser($password, $dbl);
-	$result = $dbl->setGameSettings($game, $name, $name_short, $db_user, $db_host, $db_name, $db_pw, $change_db_pw, $enabled); // update the settings in the DB
+	$result = $dbl->setGameSettings($game, $name, $name_short, $db_user, $db_host, $db_name, $db_pw, $change_db_pw, $enabled, $enable); // update the settings in the DB
 	if(!$result)
 		sendBack('Something did not update. Did you edit anything?');
 endif;
 
 ## Return with result message
-if($is_add) {
+if($is_add)
 	set_good('Game Added');
-	send('../settings-games.php');
-} else 
-	sendGood('Your settings have been updated');
+else 
+	set_good('Your settings have been updated');
+send('../settings-games.php');

@@ -187,13 +187,20 @@ if($is_add) : ?>
 							$title = $name;
 						
 						echo '<input id="'. $name .'" type="checkbox" name="plugins[]" value="'. $name .'" '. $check .'/>
-								<label for="'. $name .'">'. $title .'</label><br />';	
-						
+								<label for="'. $name .'">'. $title .'</label><br />';
 					endforeach; 
 				?>
 				
 			</fieldset>
-				
+
+			<fieldset class="none">
+				<legend>Enable/Disable</legend>
+
+				<input id="enable" type="checkbox" name="enable" value="enable" <?php if($game_active) : ?>checked="checked"<?php endif;?> />
+				<label for="enable">Enable/Disable</label><br />
+
+			</fieldset>
+
 			<fieldset class="none">
 				<legend>Verify Identity</legend>
 

@@ -83,8 +83,12 @@ if($is_pb_ban == true) :
 	endwhile;
 endif; // end if a $is_pb_ban == true
 
-if($result)
+if($result) {
+	// set comment for the ban, and log it
+	$comment = 'A ban for this user was created';
+	$result = $dbl->addEchLog('Ban', $comment, $cid, $mem->id, $game);
 	sendGood('Ban added to banlist and to the DB');
+}
 else
 	sendBack('Something went wrong the ban was not added');
 

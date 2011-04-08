@@ -23,6 +23,9 @@ if($_GET['game']) {
 	$game = 1;
 	setcookie("game", $game, $cookie_time, PATH); // set the cookie to game value
 }
+if(!$dbl->isActiveGame($game)) {
+	set_warning('Attempting to access an inactive game');
+}
 
 
 ## Setup Arrays ##
@@ -126,6 +129,7 @@ $game_db_host = $config['game']['db_host'];
 $game_db_user = $config['game']['db_user'];
 $game_db_pw = $config['game']['db_pw'];
 $game_db_name = $config['game']['db_name'];
+$game_active = $config['game']['active'];
 
 ## setup default page number so this doesn't have to be in every file ##
 $page_no = 0;

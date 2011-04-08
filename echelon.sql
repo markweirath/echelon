@@ -50,6 +50,7 @@ CREATE TABLE `ech_games` (
   `db_pw` varchar(255) DEFAULT NULL,
   `db_name` varchar(255) NOT NULL,
   `plugins` varchar(255) DEFAULT NULL,
+  `active` bool DEFAULT TRUE,
   PRIMARY KEY (`id`),
   KEY `i_games` (`name`,`num_srvs`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
