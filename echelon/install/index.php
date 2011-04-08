@@ -151,7 +151,7 @@
 
 		// send email
 		if(!mail($email, $subject, $body, $headers))
-			sendback('There was a problem sending the user login information email.');
+			set_warning('There was a problem sending the user login information email. Username: admin Password: ' . $user_pw . ' This is the only time you will get you\re password');
 		
 		//update the admins email address
 		$result = $dbl->setSettings($email, 'email', 's');
