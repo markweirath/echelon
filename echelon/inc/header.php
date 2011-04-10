@@ -33,7 +33,7 @@ endif;
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-
+	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
 	<title><?php echo $site_name; ?> Echelon - <?php echo $page_title; ?></title>
 
 	<!-- favicon -->
