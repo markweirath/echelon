@@ -43,7 +43,7 @@ if($_GET['s']) {
 
 if($_GET['t']) {
 	$search_type = $_GET['t']; //  no need to escape it will be checked off whitelist
-	$allowed_search_type = array('all', 'alias', 'pbid', 'ip', 'id');
+	$allowed_search_type = array('all', 'name', 'alias', 'pbid', 'ip', 'id');
 	if(!in_array($search_type, $allowed_search_type))
 		$search_type = 'all'; // if not just set to default all
 }
@@ -57,8 +57,13 @@ $query = "SELECT c.id, c.name, c.connections, c.time_edit, c.time_add, c.group_b
 			ON c.group_bits = g.id WHERE c.id != 1 ";
 
 if($is_search == true) : // IF SEARCH
-	if($search_type == 'alias') { // ALIAS
+	if($search_type == 'name') { // name
 		$query .= "AND c.name LIKE '%$search_string%' ORDER BY $orderby";
+		
+	} elseif($search_type == 'alias') { // alias this one requires an extra join so its a different query
+		$query = "SELECT c.id, c.name, c.connections, c.time_edit, c.time_add, c.group_bits, g.name as level
+					FROM clients c INNER JOIN aliases a ON c.id = a.client_id LEFT JOIN groups
+					g ON c.group_bits = g.id WHERE a.alias LIKE '%$search_string%' AND c.id != 1 ORDER BY $orderby";
 		
 	} elseif($search_type == 'id') { // ID
 		$query .= "AND c.id LIKE '%$search_string%' ORDER BY $orderby";
@@ -69,8 +74,8 @@ if($is_search == true) : // IF SEARCH
 	} elseif($search_type == 'ip') { // IP
 		$query .= "AND c.ip LIKE '%$search_string%' ORDER BY $orderby";
 		
-	} else { // ALL
-		$query .= "AND c.name LIKE '%$search_string%' OR c.pbid LIKE '%$search_string%' OR c.ip LIKE '%$search_string%' OR c.id LIKE '%$search_string%'
+	} else { // ALL again a modified query as all is responsible for checking aliases
+		$query .= "AND (c.name LIKE '%$search_string%' OR c.pbid LIKE '%$search_string%' OR c.ip LIKE '%$search_string%' OR c.id LIKE '%$search_string%')
 			ORDER BY $orderby";
 	}
 else : // IF NOT SEARCH
@@ -106,7 +111,8 @@ if(!$db->error) :
 		
 		<select name="t">
 			<option value="all" <?php if($search_type == "all") echo 'selected="selected"' ?>>All Records</option>
-			<option value="alias" <?php if($search_type == "alias") echo 'selected="selected"' ?>>Name</option>
+			<option value="name" <?php if($search_type == "name") echo 'selected="selected"' ?>>Name</option>
+			<option value="alias" <?php if($search_type == "alias") echo 'selected="selected"' ?>>Alias</option>
 			<option value="pbid" <?php if($search_type == "pbid") echo 'selected="selected"' ?>>PBID</option>
 			<option value="ip" <?php if($search_type == "ip") echo 'selected="selected"' ?>>IP Address</option>
 			<option value="id" <?php if($search_type == "id") echo 'selected="selected"' ?>>Player ID</option>
@@ -122,8 +128,10 @@ if(!$db->error) :
 			<?php
 			if($search_type == "all")
 				echo 'You are searching all clients that match <strong>'.$search_string.'</strong> there are <strong>'. $total_rows .'</strong>.';
-			elseif($search_type == 'alias')
+			elseif($search_type == 'name')
 				echo 'You are searching all clients names for <strong>'.$search_string.'</strong> there are <strong>'. $total_rows .'</strong>.';
+			elseif($search_type == 'alias')
+				echo 'You are searching all clients aliases for <strong>'.$search_string.'</strong> there are <strong>'. $total_rows .'</strong>.';
 			elseif($search_type == 'pbid')
 				echo 'You are searching all clients Punkbuster Guids for <strong>'.$search_string.'</strong> there are <strong>'. $total_rows .'</strong>.';
 			elseif($search_type == 'id')
@@ -159,7 +167,7 @@ if(!$db->error) :
 	</thead>
 	<tfoot>
 		<tr>
-			<th colspan="6">Click client name to see details</th>
+			<th colspan="6">Click client name to see details. Didn't find what you were looking for? Try searching by alias</th>
 		</tr>
 	</tfoot>
 	<tbody>
