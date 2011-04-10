@@ -248,8 +248,7 @@ function genPW($input, $salt) {
  * @return string $salt
  */
 function genSalt($length = 12) {
-	$salt = randPass($length);
-	return $salt;
+	return randPass($length);
 }
 
 /**
@@ -274,11 +273,7 @@ function randPass($count) {
  */
 function detectAJAX() {
 	/* AJAX check  */
-	if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')
-		return true;
-	else
-		return false;
-		
+	return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 	// This method is not full proof since all servers do not support the $_SERVER['HTTP_X_REQUESTED_WITH'] varible.
 }
 
@@ -288,10 +283,7 @@ function detectAJAX() {
  * @return bool
  */
 function detectIE() {
-    if (isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false))
-        return true;
-    else
-        return false;
+    return isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false);
 }
 
 /**
@@ -333,14 +325,13 @@ function checkBL() {
  * Find how many login attempts the user has made
  */
 function trys() { //
-	echo '<em class="trys">';
+	$trys = '<em class="trys">';
 
 	if($_SESSION['wrong'] != 0)
-		echo 'You have used '.$_SESSION['wrong'].' of 3 attempts to login';
+		$trys .= 'You have used '.$_SESSION['wrong'].' of 3 attempts to login';
 	else
-		echo 'Please login to Echelon';
-		
-	echo '</em><br />';
+		$trys .= 'Please login to Echelon';
+	return $trys . '</em><br />';
 }
 
 /**
@@ -447,9 +438,7 @@ function emptyInputNumeric($var, $field) {
  * @return string
  */
 function cleanvar($var) {
-	$var = trim(htmlentities(strip_tags($var)));
-	
-	return $var;
+	return trim(htmlentities(strip_tags($var)));
 } // end clean var
 
 /**
@@ -564,9 +553,8 @@ function ipLink($ip) {
 function emailLink($email, $name) {
 	if($name == '') // if name is not set make name the same as email
 		$name = $email;
-		
-	$msg = '<a href="mailto:'.$email.'" title="Send '.$name.' an email">'.$email.'</a>';
-	return $msg;
+
+	return '<a href="mailto:'.$email.'" title="Send '.$name.' an email">'.$email.'</a>';
 }
 
 /**
@@ -707,7 +695,7 @@ function timeExpire($time_expire, $type, $inactive) {
 	}
 	
 	if($msg == '') // if we got nothing then return unknown
-		$msg = '<em>(Unknwon)</em>';
+		return '<em>(Unknwon)</em>';
 
 	return $msg;
 }

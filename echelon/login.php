@@ -355,7 +355,7 @@ if($mem->loggedIn()) { ## if logged in users may skip this page
 	<form id="login-form" action="login.php" method="post">
 
 		<?php
-			trys();
+			echo trys();
 			$token = genFormToken('login');
 		?>
 
