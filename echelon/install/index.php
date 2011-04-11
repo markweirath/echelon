@@ -130,6 +130,11 @@
 		$result = $dbl->addUser('admin', 'Admin', $email, $pass_hash, $user_salt, 2, 1);
 		if(!$result)
 			sendBack('Their was a problem adding the admin user to the admin tables, please check the users table exists in your Echelon database');
+				//update the admins email address
+
+		$result = $dbl->setSettings($email, 'email', 's');
+		if(!$result)
+			sendBack('Their was a problem updating the settings table, please check that it exists in your Echelon database');
 		
 		## Send the admin their email ##
 		$body = '<html><body>';
@@ -151,13 +156,8 @@
 
 		// send email
 		if(!mail($email, $subject, $body, $headers))
-			set_warning('There was a problem sending the user login information email. Username: admin Password: ' . $user_pw . ' This is the only time you will get you\re password');
-		
-		//update the admins email address
-		$result = $dbl->setSettings($email, 'email', 's');
-		if(!$result)
-			sendBack('Their was a problem updating the settings table, please check that it exists in your Echelon database');
-			
+			sendBack('There was a problem sending the user login information email. Username: admin Password: ' . $user_pw . ' This is the only time you will get you\re password');
+					
 		## Done ##
 		send('index.php?t=done'); // send to a thankyou done page that explains what next
 	
