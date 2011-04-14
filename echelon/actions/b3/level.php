@@ -50,7 +50,7 @@ foreach($b3_groups as $group) :
 endforeach;
 
 // Check if the group_bits provided match a known group (Known groups is a list of groups pulled from the DB -- this allow more control for custom groups)
-if(!in_array($level, $b3_groups_id))
+if(!in_array($level, $b3_groups_id) && $level!=0)
 	sendBack('That group does not exist, please submit a real group');
 
 ## Check that authorisation passsword is correct ##

@@ -309,7 +309,7 @@ require 'inc/header.php';
 	<tbody>
 	<?php
 		// notice on the query we say that time_add does not equal time_edit, this is because of bug in alias recording in B3 that has now been solved
-		$query = "SELECT alias, num_used, time_add, time_edit FROM aliases WHERE client_id = ? AND time_add != time_edit ORDER BY time_edit DESC";
+		$query = "SELECT alias, num_used, time_add, time_edit FROM aliases WHERE client_id = ? ORDER BY time_edit DESC";
 		$stmt = $db->mysql->prepare($query) or die('Alias Database Query Error'. $db->mysql->error);
 		$stmt->bind_param('i', $cid);
 		$stmt->execute();

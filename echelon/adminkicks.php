@@ -1,6 +1,18 @@
 <?php
-$page = "adminkicks";
-$page_title = "Admin Kicks";
+if(!isset($_GET['t']))
+	$t = 'b';
+else
+	$t = $_GET['t'];
+
+if($t == 'a') :
+	$page = "adminkicks";
+	$page_title = "Admin Kicks";
+	$type_admin = true;
+else :
+	$page = "b3kicks";
+	$page_title = "B3 Kicks";
+	$type_admin = false; // this is not an admin page
+endif;
 $auth_name = 'penalties';
 $b3_conn = true; // this page needs to connect to the B3 database
 $pagination = true; // this page requires the pagination part of the footer
@@ -37,12 +49,13 @@ $start_row = $page_no * $limit_rows;
 
 ###########################
 ######### QUERIES #########
-
-$query = "SELECT p.time_add, p.reason, target.id as target_id, target.name as target_name, c.id as admin_id, c.name as admins_name FROM penalties p, clients c, clients as target WHERE admin_id != '0' AND p.type = 'Kick' AND inactive = 0 AND p.client_id = target.id AND p.admin_id = c.id";
-
-$query .= sprintf(" ORDER BY %s ", $orderby);
+if($type_admin)
+	$query = "SELECT p.time_add, p.reason, target.id as target_id, target.name as target_name, c.id as admin_id, c.name as admins_name FROM penalties p, clients c, clients as target WHERE p.type = 'Kick' AND inactive = 0 AND p.client_id = target.id AND p.admin_id = c.id";
+else //b3 kick query came from echelon1
+	$query = "SELECT penalties.id, penalties.type, penalties.time_add, penalties.time_expire, penalties.keyword, penalties.reason, penalties.inactive, penalties.duration, penalties.admin_id, target.id as target_id, target.name as target_name FROM penalties, clients as target WHERE penalties.type != 'Warning' AND inactive = 0 AND penalties.client_id = target.id AND penalties.admin_id = 0";
 
 ## Append this section to all queries since it is the same for all ##
+$query .= sprintf(" ORDER BY %s ", $orderby);
 if($order == "DESC")
 	$query .= " DESC"; // set to desc 
 else

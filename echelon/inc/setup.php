@@ -6,7 +6,7 @@ require_once 'config.php'; // if config is not loaded load it in
 
 $this_page = cleanvar($_SERVER["PHP_SELF"]);
 
-$cookie_time = time()*60*60*24*31; // 31 days from now
+$cookie_time = time()+60*60*24*31; // 31 days from now
 ## setup the game var ##
 if($_GET['game']) {
 	$game = $_GET['game'];
@@ -65,7 +65,7 @@ if($num_games == 0) {
 	$no_games = true;
 
 } elseif($game > $num_games) {
-	setcookie("game", 1, time()*60*60*24*31, $path); // set the cookie to game value
+	setcookie("game", 1, time()+60*60*24*31, $path); // set the cookie to game value
 	set_error('That game doesn\'t exist');
 	if($page != 'error')
 		sendError();

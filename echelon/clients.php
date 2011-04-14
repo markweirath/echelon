@@ -61,7 +61,7 @@ if($is_search == true) : // IF SEARCH
 		$query .= "AND c.name LIKE '%$search_string%' ORDER BY $orderby";
 		
 	} elseif($search_type == 'alias') { // alias this one requires an extra join so its a different query
-		$query = "SELECT c.id, c.name, c.connections, c.time_edit, c.time_add, c.group_bits, g.name as level
+		$query = "SELECT c.id, c.name, c.connections, c.time_edit, c.time_add, c.group_bits, a.alias, g.name as level
 					FROM clients c INNER JOIN aliases a ON c.id = a.client_id LEFT JOIN groups
 					g ON c.group_bits = g.id WHERE a.alias LIKE '%$search_string%' AND c.id != 1 ORDER BY $orderby";
 		
@@ -163,6 +163,7 @@ if(!$db->error) :
 			<th>Last Seen
 				<?php linkSortClients('time_edit', 'Last Seen', $is_search, $search_type, $search_string); ?>
 			</th>
+			<?php if($search_type == 'alias') echo('<th>Alias Matched</th>');?>
 		</tr>
 	</thead>
 	<tfoot>
@@ -181,7 +182,7 @@ if(!$db->error) :
 			$connections = $client['connections'];
 			$time_edit = $client['time_edit'];
 			$time_add = $client['time_add'];
-			
+			$alias = $client['alias'];
 			$time_add = date($tformat, $time_add);
 			$time_edit = date($tformat, $time_edit);
 			
@@ -191,6 +192,7 @@ if(!$db->error) :
 			
 			
 			// setup heredoc (table data)			
+			if($search_type != 'alias') :
 			$data = <<<EOD
 			<tr class="$alter">
 				<td><strong>$client</strong></td>
@@ -201,6 +203,19 @@ if(!$db->error) :
 				<td><em>$time_edit</em></td>
 			</tr>
 EOD;
+			else :
+			$data = <<<EOD
+				<tr class="$alter">
+				<td><strong>$client</strong></td>
+				<td>@$cid</td>
+				<td>$level</td>
+				<td>$connections</td>
+				<td><em>$time_add</em></td>
+				<td><em>$time_edit</em></td>
+				<td>$alias</td>
+			</tr>
+EOD;
+			endif;
 
 		echo $data;
 		endforeach;
