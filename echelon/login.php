@@ -125,7 +125,7 @@ if($mem->loggedIn()) { ## if logged in users may skip this page
 	$_SESSION['wrong'] = 0; // reset wrong counter
 	$_SESSION['hack'] = 0; // reset hack atempt count
 	
-	setcookie("game", $game_input, time()*60*60*24*31, $path); // set the game cookie equal to the game choosen in the login form
+	setcookie("game", $game_input, time()+60*60*24*31, $path); // set the game cookie equal to the game choosen in the login form
 
 	$_SESSION['finger'] = $ses->getFinger(); // find the hash of user agent plus salt
 

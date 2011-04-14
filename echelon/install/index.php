@@ -60,7 +60,7 @@
 		
 		if(file_exists($file_read)) :
 		
-			chmod($file_read, 0777);
+			@chmod($file_read, 0777);
 		
 			if(is_readable($file_read)) {
 
@@ -83,7 +83,7 @@
 					## write config ##
 					if(file_exists($file_write)) :
 					
-						chmod($file_write, 0777);
+						@chmod($file_write, 0777);
 					
 						if(is_writeable($file_write)) :
 						
