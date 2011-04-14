@@ -81,19 +81,19 @@ endif;
 	<thead>
 		<tr>
 			<th>Target
-				<?php linkSortBan('client_name', 'Name', $t); ?>
+				<?php linkSortType('client_name', 'Name', $t); ?>
 			</th>
 			<th>Type
-				<?php linkSortBan('type', 'penalty type', $t); ?>
+				<?php linkSortType('type', 'penalty type', $t); ?>
 			</th>
 			<th>Added
-				<?php linkSortBan('time_add', 'time the penalty was added', $t); ?>
+				<?php linkSortType('time_add', 'time the penalty was added', $t); ?>
 			</th>
 			<th>Duration
-				<?php linkSortBan('duration', 'duration of penalty', $t); ?>
+				<?php linkSortType('duration', 'duration of penalty', $t); ?>
 			</th>
 			<th>Expires
-				<?php linkSortBan('time_expire', 'time the penalty expires', $t); ?>
+				<?php linkSortType('time_expire', 'time the penalty expires', $t); ?>
 			</th>
 			<th>Reason</th>
 			<?php if($type_admin) echo '<th>Admin</th>'; // only the admin type needs this header line ?>

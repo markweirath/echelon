@@ -621,7 +621,7 @@ function linkSort($keyword, $title) {
 
 }
 
-function linkSortBan($keyword, $title, $t) {
+function linkSortType($keyword, $title, $t) {
 
 	$this_p = cleanvar($_SERVER['PHP_SELF']);
 	

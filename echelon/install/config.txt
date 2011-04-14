@@ -17,13 +17,19 @@ define("ECH_VER", "v.2.0b");
 define("SALT", '%ech_salt%'); // do not change ever, this is salt for hashes
 
 $supported_games = array( // supported games
-	"q3a" => "Quake 3 Arena", 
-	"cod" => "Call of Duty", 
-	"cod2" => "Call of Duty 2", 
-	"cod4" => "Call of Duty 4 MW", 
-	"cod5" => "Call of Duty: World at War", 
-	"iourt41" => "Urban Terror", 
-	"wop" => "World of Padman"
+	"q3a" => "Quake 3 Arena",
+	"cod" => "Call of Duty",
+	"cod2" => "Call of Duty 2",
+	"cod4" => "Call of Duty: Modern Warfare",
+	"cod5" => "Call of Duty: World at War",
+	"cod6" => "Call of Duty: Modern Warfare 2",
+	"cod7" => "Call of Duty: Black Ops",
+	"iourt41" => "Urban Terror",
+	"etpro" => "Enemy Territory",
+	"wop" => "World of Padman",
+	"smg" => "Smokin' Guns",
+	"smg11" => "Smokin' Guns 1.1",
+	"oa081" => "Open Arena"
 );
 
 // URL to check for updates with

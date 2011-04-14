@@ -1,6 +1,6 @@
 <?php
 if(!isset($_GET['t']))
-	$t = 'b';
+	$t = 'a';
 else
 	$t = $_GET['t'];
 
@@ -73,15 +73,15 @@ if(!$db->error) :
 	<thead>
 		<tr>
 			<th>Client
-				<?php linkSort('target_name', 'client name'); ?>
+				<?php linkSortType('target_name', 'client name', $t); ?>
 			</th>
 			<th>Kicked At
-				<?php linkSort('time_add', 'time the penalty was added'); ?>
+				<?php linkSortType('time_add', 'time the penalty was added', $t); ?>
 			</th>
 			<th>Reason</th>
 			<th>
 				Admin
-				<?php linkSort('admins_name', 'admin name'); ?>
+				<?php linkSortType('admins_name', 'admin name', $t); ?>
 			</th>
 		</tr>
 	</thead>
