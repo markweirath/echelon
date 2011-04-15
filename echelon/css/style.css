@@ -206,7 +206,7 @@ body { color: black; font: 17px; background: url(../images/body-bg.jpg) repeat; 
 	
 	/* Sprite Information */
 	#nav li ul.dd li.n-admins a { background-position: 0 0; } 
-	#nav li ul.dd li.n-b3pen a { background-position: 0 -31px; } 
+	#nav li ul.dd li.n-b3bans a { background-position: 0 -31px; } 
 	#nav li ul.dd li.n-adminbans a { background-position: 0 -62px; } 
 	#nav li ul.dd li.n-pbss a { background-position: 0 -93px; } 
 	#nav li ul.dd li.n-chart a { background-position: 0 -124px; } 

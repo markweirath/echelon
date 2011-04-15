@@ -134,9 +134,10 @@ endif;
 		<li class="cdd">
 			<a href="#">Penalties</a>
 			<ul class="dd">
-				<li class="n-adminkicks<?php if($page == 'adminkicks') echo ' selected'; ?>"><a href="<?php echo PATH; ?>adminkicks.php">Admin Kicks</a></li>
+				<li class="n-adminkicks<?php if($page == 'adminkicks') echo ' selected'; ?>"><a href="<?php echo PATH; ?>kicks.php?t=a">Admin Kicks</a></li>
 				<li class="n-adminbans<?php if($page == 'adminbans') echo ' selected'; ?>"><a href="<?php echo PATH; ?>bans.php?t=a">Admin Bans</a></li>
-				<li class="n-b3pen<?php if($page == 'b3pen') echo ' selected'; ?>"><a href="<?php echo PATH; ?>bans.php?t=b" title="All Kicks/Bans added automatically by B3">B3 Bans</a></li>
+				<li class="n-b3bans<?php if($page == 'b3kicks') echo ' selected'; ?>"><a href="<?php echo PATH; ?>adminkicks.php?t=b" title="All kicks added automatically by B3">B3 Kicks</a></li>
+				<li class="n-b3bans<?php if($page == 'b3bans') echo ' selected'; ?>"><a href="<?php echo PATH; ?>bans.php?t=b" title="All bans added automatically by B3">B3 Bans</a></li>
 				<li class="n-pubbans<?php if(isPubbans()) echo ' selected'; ?>"><a href="<?php echo PATH; ?>pubbans.php" title="A public list of bans in the database">Public Ban List</a></li>
 			</ul>
 		</li>

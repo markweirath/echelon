@@ -191,7 +191,7 @@ INSERT INTO `ech_groups` VALUES ('2', 'siteadmin', 'Site Admin', '1,2,3,4,5,6,7,
 INSERT INTO `ech_groups` VALUES ('3', 'senioradmin', 'Senior Admin', '1,2,3,4,5,8,12,14,16,17,20,21,22,23,24');
 INSERT INTO `ech_groups` VALUES ('4', 'admin', 'Admin', '1,2,3,4,5,8,16,17,20,21,22');
 INSERT INTO `ech_groups` VALUES ('5', 'mod', 'Moderator', '1,2,3,4,5,8,16,22');
-INSERT INTO `ech_links` VALUES ('1', 'http://wiki.bigbrotherbot.net/doku.php/echelon', 'Echelon Help Wiki', 'Documentation for the installation and use of Echelon');
+INSERT INTO `ech_links` VALUES ('1', 'http://wiki.bigbrotherbot.net/support:echelon', 'Echelon Help Wiki', 'Documentation for the installation and use of Echelon');
 INSERT INTO `ech_links` VALUES ('2', 'http://echelon.bigbrotherbot.net/', 'Echelon Home', 'Home site of Echelon project, check here for development news, updates, and information regarding Echelon');
 INSERT INTO `ech_links` VALUES ('3', 'http://eire32designs.com', 'Eire32 Site', 'The developers site');
 INSERT INTO `ech_links` VALUES ('4', 'http://www.bigbrotherbot.net/forums/', 'B3 Site', 'Home of bigbrother bot');

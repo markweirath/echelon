@@ -9,7 +9,7 @@ if($t == 'a') :
 	$page_title = "Admin Bans";
 	$type_admin = true;
 else :
-	$page = "b3pen";
+	$page = "b3bans";
 	$page_title = "B3 Penalties";
 	$type_admin = false; // this is not an admin page
 endif;
