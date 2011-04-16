@@ -21,6 +21,7 @@
 
 		## Get the form information ##
 		$email = cleanvar($_POST['email']);
+		$useMail = cleanvar($_POST['useMail']);
 		$db_host = cleanvar($_POST['db-host']);
 		$db_user = cleanvar($_POST['db-user']);
 		$db_pass = cleanvar($_POST['db-pass']);
@@ -35,7 +36,12 @@
 		// check the new email address is a valid email address
 		if(!filter_var($email,FILTER_VALIDATE_EMAIL))
 			sendBack('That email is not valid');
-		
+			
+		if($useMail == 'On')
+			$useMail = 'TRUE';
+		else
+			$useMail = 'FALSE';
+				
 		## test connection is to the Db works ##
 		define("DBL_HOSTNAME", $db_host); // hostname of where the server is located
 		define("DBL_USERNAME", $db_user); // username that can connect to that DB
@@ -65,6 +71,10 @@
 			if(is_readable($file_read)) {
 
 				$fr = fopen($file_read, 'r');
+				$fw = fopen($file_write, 'w');
+				
+				if($fw === false)
+					die("Couldn't write to the config file");
 				
 				while (!feof($fr)) :
 				
@@ -79,34 +89,13 @@
 					$config = preg_replace("/%db_pass%/", $db_pass, $config);
 					$config = preg_replace("/%db_name%/", $db_name, $config);
 					$config = preg_replace("/%ses_salt%/", $ses_salt, $config);
-					
-					## write config ##
-					if(file_exists($file_write)) :
-					
-						@chmod($file_write, 0777);
-					
-						if(is_writeable($file_write)) :
-						
-							$fw = fopen($file_write, "a");
-							
-							fwrite($fw, $config);
-							
-							fclose($fw);
-	
-						else:
-							die("Couldn't write to the config file");
-						
-						endif;
-					
-					else:
-						die("Couldn't find the config file");
-
-					endif;
+					$config = preg_replace("/%use_mail%/", $useMail, $config);
+					fwrite($fw, $config);
 
 				endwhile;
 				
 				fclose($fr);
-				
+				fclose($fw);
 				if(!rename($file_write, '../inc/config.php'))
 					sendBack('Failed to move config file');
 				
@@ -132,34 +121,37 @@
 			sendBack('Their was a problem adding the admin user to the admin tables, please check the users table exists in your Echelon database');
 				//update the admins email address
 
-		$result = $dbl->setSettings($email, 'email', 's');
-		if(!$result)
-			sendBack('Their was a problem updating the settings table, please check that it exists in your Echelon database');
+		$dbl->setSettings($email, 'email', 's');
 		
-		## Send the admin their email ##
-		$body = '<html><body>';
-		$body .= '<h2>Echelon Admin User Information</h2>';
-		$body .= 'This is the admin user login informtion.<br />';
-		$body .= 'Username: <b>admin</b><br />';	
-		$body .= 'Password: <b>' . $user_pw . "</b><br />";
-		$body .= 'If you have not already, please entirely remove the install folder from Echelon (/echelon/install/).<br />';
-		$body .= 'Thank you for downloading and installing Echelon, <br />';
-		$body .= 'The B3 Dev. Team';
-		$body .= '</body></html>';
-
-		$headers = "From: echelon@" . $_SERVER['HTTP_HOST'] . "\r\n";
-		$headers .= "Reply-To: " . $email . "\r\n";
-		$headers .= "MIME-Version: 1.0\r\n";
-		$headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-		
-		$subject = "Echelon Admin User Setup";
-
-		// send email
-		if(!mail($email, $subject, $body, $headers))
-			sendBack('There was a problem sending the user login information email. Username: admin Password: ' . $user_pw . ' This is the only time you will get you\re password');
-					
-		## Done ##
-		send('index.php?t=done'); // send to a thankyou done page that explains what next
+		if($useMail == "TRUE") {
+			## Send the admin their email ##
+			$body = '<html><body>';
+			$body .= '<h2>Echelon Admin User Information</h2>';
+			$body .= 'This is the admin user login informtion.<br />';
+			$body .= 'Username: <b>admin</b><br />';	
+			$body .= 'Password: <b>' . $user_pw . "</b><br />";
+			$body .= 'If you have not already, please entirely remove the install folder from Echelon (' . $echelon_dir . '/install/).<br />';
+			$body .= 'Thank you for downloading and installing Echelon, <br />';
+			$body .= 'The B3 Dev. Team';
+			$body .= '</body></html>';
+	
+			$headers = "From: echelon@" . $_SERVER['HTTP_HOST'] . "\r\n";
+			$headers .= "Reply-To: " . $email . "\r\n";
+			$headers .= "MIME-Version: 1.0\r\n";
+			$headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+			
+			$subject = "Echelon Admin User Setup";
+	
+			// send email
+			if(!mail($email, $subject, $body, $headers))
+				sendBack('There was a problem sending the user login information email. Username: admin Password: ' . $user_pw . ' This is the only time you will get you\re password');
+			## Done ##
+			send('index.php?t=done'); // send to a thank you done page that explains what next
+		}
+		else {
+			## Done ##
+			send('index.php?t=done&pw=' . $user_pw); // send to a thank you done page that explains what next
+		}
 	
 	endif; // end install
 ?>
@@ -198,7 +190,11 @@
 							<ul>
 								<li>The database information you provided was correct</li>
 								<li>Your config file was writen</li>
+								<?php if(isset($_GET['pw'])) : ?>
+								<li><span class="imp">You may now login with the username; <b>admin</b> and the password; <b><?echo $_GET['pw'] ?> </b></span></li>
+								<?php else : ?>
 								<li>An email was sent, to the email address you supplied, with the user information for your Echelon 'Admin' account</li>
+								<?php endif;?>
 							</ul>
 						</div>
 						
@@ -233,7 +229,8 @@
 							
 							<label>Your Email:</label><?php tooltip('The email to send the login information for your first Echelon user'); ?>
 								<input type="text" name="email" />
-							
+							<label>Use mail server:</label><?php tooltip('If this is not clicked echelon will not send any email, but will still use the addresses'); ?>
+								<input type="checkbox" class="checkbox" name="useMail" value="On" checked="checked" />
 						</div>
 					
 					</fieldset>
