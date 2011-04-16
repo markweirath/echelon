@@ -126,7 +126,7 @@
 			$body .= '<h2>Echelon Admin User Information</h2>';
 			$body .= 'This is the admin user login informtion.<br />';
 			$body .= 'Username: <b>admin</b><br />';	
-			$body .= 'Password: <b>' . $user_pw . "</b><br />";
+			$body .= 'Password: <b>' . htmlentities($user_pw) . "</b><br />";
 			$body .= 'If you have not already, please entirely remove the install folder from Echelon (' . $echelon_dir . '/install/).<br />';
 			$body .= 'Thank you for downloading and installing Echelon, <br />';
 			$body .= 'The B3 Dev. Team';
@@ -147,7 +147,7 @@
 		}
 		else {
 			## Done ##
-			send('index.php?t=done&pw=' . $user_pw); // send to a thank you done page that explains what next
+			send('index.php?t=done&pw=' . urlencode($user_pw)); // send to a thank you done page that explains what next
 		}
 	
 	endif; // end install
@@ -188,7 +188,7 @@
 								<li>The database information you provided was correct</li>
 								<li>Your config file was writen</li>
 								<?php if(isset($_GET['pw'])) : ?>
-								<li><span class="imp">You may now login with the username; <b>admin</b> and the password; <b><?echo $_GET['pw'] ?> </b></span></li>
+								<li><span class="imp">You may now login with the username: <b>admin</b> and the password: <b><?php echo htmlentities($_GET['pw']); ?></b></span></li>
 								<?php else : ?>
 								<li>An email was sent, to the email address you supplied, with the user information for your Echelon 'Admin' account</li>
 								<?php endif;?>
