@@ -66,8 +66,6 @@
 		
 		if(file_exists($file_read)) :
 		
-			@chmod($file_read, 0777);
-		
 			if(is_readable($file_read)) {
 
 				$fr = fopen($file_read, 'r');
