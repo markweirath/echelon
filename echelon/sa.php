@@ -532,7 +532,7 @@ EOD;
 			<th>Admin</th>
 			<th>Comment</th>
 			<th>Added</th>
-			<th></th>
+			<th>Delete</th>
 		</tr>
 	</thead>
 	<tfoot>
@@ -555,7 +555,7 @@ EOD;
 			$comment = cleanvar($reg_keys['comment']); // comment about key
 			$time_add = date($tformat, $reg_keys['time_add']);
 			$email = emailLink($reg_keys['email'], '');
-			$admin_link = echUserLink($reg_keys['admin_id'], $reg_keys['admin']);
+			$admin_link = echUserLink($reg_keys['admin_id'], $reg_keys['display']);
 			
 			$alter = alter();
 			
