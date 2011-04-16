@@ -100,8 +100,7 @@
 					sendBack('Failed to move config file');
 				
 			} else {
-				if(!is_readable($file_read))
-					die('Config file is not readable or writeable');
+				die('Config file is not readable or does not exsist');
 			}
 			
 		else:
