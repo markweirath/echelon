@@ -64,6 +64,8 @@ endif;
 ## Add Echelon Log ##
 $level_name = $b3_groups_name[$level];
 $old_level_name = $b3_groups_name[$old_level];
+if($old_level_name == null)
+	$old_level_name = "Guest";
 
 if(!$is_mask)
 	$comment = 'User level changed from '. $old_level_name .' to '. $level_name;

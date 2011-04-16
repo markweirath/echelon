@@ -82,7 +82,19 @@ if($type == 'Ban') :
 endif;
 
 // set comment for the edit ban action
-$comment = 'A ban for this user was edited';
+if($duration == 0)
+	$comment = 'Changed ban #' . $ban_id . ' to a permanent ban';
+else {
+	$dur_name = array(
+			'm' => 'minute',
+			'h' => 'hour',
+			'd' => 'day',
+			'w' => 'week',
+			'mn' => 'month',
+			'y' => 'year'
+		);
+		$comment = 'Changed ban #' . $ban_id . ' to a '. $duration_form . ' ' . $dur_name[$time] . ' temp ban';
+}
 
 ## Query ##
 $result = $dbl->addEchLog('Edit Ban', $comment, $cid, $mem->id, $game);

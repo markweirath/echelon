@@ -201,6 +201,7 @@ if($is_edit_user) :
 				<th>Message</th>
 				<th>Time Added</th>
 				<th>Client</th>
+				<th>Game</th>
 			</tr>
 		</thead>
 		<tfoot>

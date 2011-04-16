@@ -85,7 +85,19 @@ endif; // end if a $is_pb_ban == true
 
 if($result) {
 	// set comment for the ban, and log it
-	$comment = 'A ban for this user was created';
+	if($type == 'Ban')
+		$comment = 'permanent ban, for \"' . $reason . '\"';
+	else {
+		$dur_name = array(
+			'm' => 'minute',
+			'h' => 'hour',
+			'd' => 'day',
+			'w' => 'week',
+			'mn' => 'month',
+			'y' => 'year'
+		);
+		$comment = $duration_form . ' ' . $dur_name[$time] . ' temp ban, for \"' . $reason . '\"';
+	}
 	$result = $dbl->addEchLog('Ban', $comment, $client_id, $mem->id, $game);
 	sendGood('Ban added to banlist and to the DB');
 }

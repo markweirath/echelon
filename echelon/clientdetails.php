@@ -74,7 +74,7 @@ require 'inc/header.php';
 					} elseif($mem->reqLevel('view_half_guid')) { // if allowed to see the last 8 chars of guid
 						
 						if($guid_len == 32) {
-							$half_guid = substr($guid, -8); // get the last 8 characters of the guid
+							$half_guid = substr($guid, -16); // get the last 8 characters of the guid
 							guidCheckLink($half_guid);
 						} else
 							echo $guid.' <span class="red" title="This guid is only ' . $guid_len . ' characters long, it should be 32 characters!">['. $guid_len .']</span>';

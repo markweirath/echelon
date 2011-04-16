@@ -1172,8 +1172,8 @@ class DbL {
 	}
 	
 	function getEchLogs($id, $game_id = NULL, $type = 'client') {
-		$query = "SELECT log.id, log.type, log.msg, log.client_id, log.user_id, log.time_add, log.game_id, u.display 
-				  FROM ech_logs log LEFT JOIN ech_users u ON log.user_id = u.id ";
+		$query = "SELECT log.id, log.type, log.msg, log.client_id, log.user_id, log.time_add, log.game_id, u.display, g.name_short 
+				  FROM ech_logs log LEFT JOIN ech_users u ON log.user_id = u.id LEFT JOIN ech_games g ON log.game_id = g.id ";
 		
 		if($type == 'admin')
 			$query .= "WHERE user_id = ?";
@@ -1190,7 +1190,7 @@ class DbL {
 		$stmt->execute();
 		
 		$stmt->store_result();
-		$stmt->bind_result($id, $type, $msg, $client_id, $user_id, $time_add, $game_id, $user_name);
+		$stmt->bind_result($id, $type, $msg, $client_id, $user_id, $time_add, $game_id, $user_name, $name_short);
 		
 		while($stmt->fetch()) :
 			$ech_logs[] = array(
@@ -1201,7 +1201,8 @@ class DbL {
 				'user_id' => $user_id,
 				'user_name' => $user_name,
 				'game_id' => $game_id,
-				'time_add' => $time_add
+				'time_add' => $time_add,
+				'name_short' => $name_short
 			); 	
 		endwhile;
 		

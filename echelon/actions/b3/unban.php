@@ -60,6 +60,14 @@ if($type == 'Ban') :
 
 endif;
 
+if($type == 'Ban')
+	$comment = 'The permanent ban (#' . $ban_id . ') has been deactivated';
+else
+	$comment = 'The temp ban (#' . $ban_id . ') has been deactivated';
+
+## Query ##
+$result = $dbl->addEchLog('Unban', $comment, $cid, $mem->id, $game);
+
 if($results) // if good results send back good message
 	sendGood('Penalty has been deactivated');
 	

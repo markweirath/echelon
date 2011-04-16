@@ -17,18 +17,19 @@ if($_POST['greeting-sub']) : // if the form is submitted
 
 	if(!isID($client_id))
 		sendBack('Invalid data sent, greeting not changed');
-	
-	## Add Log Message ##
-	$comment = 'Greeting message changed';
-	$dbl->addEchLog('Greeting', $comment, $client_id, $mem->id, $game);	
 		
 	## Query ##
 	$query = "UPDATE clients SET greeting = ? WHERE id = ? LIMIT 1";
 	$stmt = $db->mysql->prepare($query) or sendBack('Database Error');
 	$stmt->bind_param('si', $greeting, $client_id);
 	$stmt->execute();
-	if($stmt->affected_rows)
+	if($stmt->affected_rows) {
+		## Add Log Message ##
+		$comment = 'Message now: ' . $greeting;
+		$dbl->addEchLog('Greeting', $comment, $client_id, $mem->id, $game);
+
 		sendGood('Greeting has been updated');
+	}
 	else
 		sendBack('Greeting was not updated');
 	

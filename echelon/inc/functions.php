@@ -85,6 +85,7 @@ function displayEchLog($array, $style = 'client') {
 		$time_add = $ech_log['time_add'];
 		$time_add_read = date($tformat, $time_add);
 		$game_id = $ech_log['game_id'];
+		$game = $ech_log['name_short'];
 		
 		## Page row color alternate
 		$alter = alter();
@@ -101,6 +102,7 @@ function displayEchLog($array, $style = 'client') {
 				<td>$msg</td>
 				<td><em>$time_add_read</em></td>
 				<td>$client_link</td>
+				<td>$game</td>
 			</tr>
 EOD;
 
@@ -259,7 +261,7 @@ function genSalt($length = 12) {
  */
 function randPass($count) {  
 
-	$pass = str_shuffle('abcefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890@#%$*'); //shuffle
+	$pass = str_shuffle('abcefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'); //shuffle
 	
 	$rand_num = mt_rand(0,5); // get rand num for the rand start of substr
 	
