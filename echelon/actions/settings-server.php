@@ -12,7 +12,7 @@ if($_GET['t'] == 'del') :
 		sendBack('Vital information needed to delete the server was not sent');
 	
 	## check that the form token is corret
-	if(!verifyFormToken('del-server'.$sid, $tokens)) // verify token
+	if(!verifyFormToken('del-server'.$sid)) // verify token
 		ifTokenBad('Deleting a server');
 		
 	$result = $dbl->delServer($sid);
@@ -45,10 +45,10 @@ else
 
 ## Check Token ##
 if($is_add) { // if add server request
-	if(verifyFormToken('addserver', $tokens) == false) // verify token
+	if(verifyFormToken('addserver') == false) // verify token
 		ifTokenBad('Add Server');
 } else { // if edit server settings
-	if(verifyFormToken('editserversettings', $tokens) == false) // verify token
+	if(verifyFormToken('editserversettings') == false) // verify token
 		ifTokenBad('Server Settings Edit');
 }
 

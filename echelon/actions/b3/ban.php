@@ -9,7 +9,7 @@ if(!$_POST['ban-sub']) { // if the form not is submitted
 }
 
 ## check that the sent form token is corret
-if(!verifyFormToken('ban', $tokens)) // verify token
+if(!verifyFormToken('ban')) // verify token
 	ifTokenBad('Add ban');
 
 ## Type of ban and get and set vars ##

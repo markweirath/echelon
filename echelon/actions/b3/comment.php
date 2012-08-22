@@ -9,7 +9,7 @@ if(!isset($_POST['comment-sub'])) : // if the form is submitted
 endif;
 
 ## check that the sent form token is corret
-if(verifyFormToken('comment', $tokens) == false) // verify token
+if(verifyFormToken('comment') == false) // verify token
 	ifTokenBad('Add comment');
 
 // Gets vars from form

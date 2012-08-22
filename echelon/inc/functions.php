@@ -832,29 +832,43 @@ LOGMSGG;
  * Check if the suppled token is valid
  *
  * @param string $from - the form name
- * @param string $tokens - the server-side tokens array
  * @return bool
  */
-function verifyFormToken($form, $tokens) {
-        
-	// check if a session is started and a token is transmitted, if not return an error
-	// check if the form is sent with token in it
-	// compare the tokens against each other if they are still the same
-	if(isset($tokens[$form]) && isset($_POST['token']) && $tokens[$form] === $_POST['token']) 
+function verifyFormToken($form) 
+{
+	//Take this oppurtunity to remove any expired tokens for the form. 
+	foreach ($_SESSION['tokens'][$form] as $token) 
+	{ 
+		if ($token < time())
+		{
+			unset($token);
+		}
+	}
+
+	if (isset($_POST['token']) && array_key_exists($_POST['token'], $_SESSION['tokens'][$form]))
+	{
+		unset($_SESSION['tokens'][$form][$_POST['token']]);
 		return true;
-	return false;
+	}
+	else
+	{
+		return false;  
+	}	
 }
 
 /**
  * Same as above function but slight chnage to account for some login form differences
  */
-function verifyFormTokenLogin($form) {
-	// check if a session is started and a token is transmitted, if not return an error
-	// check if the form is sent with token in it
-	// compare the tokens against each other if they are still the same
-    if(isset($_SESSION['tokens'][$form]) && isset($_POST['token']) && $_SESSION['tokens'][$form] === $_POST['token'])
+function verifyFormTokenLogin($form) 
+{
+	if(isset($_SESSION['tokens'][$form]) && isset($_POST['token']) && array_key_exists($_POST['token'],  $_SESSION['tokens'][$form]))
+	{
 		return true;
-	return false;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 /**
@@ -864,15 +878,21 @@ function verifyFormTokenLogin($form) {
  * @set session vars
  * @return bool
  */
-function genFormToken($form) {
-    
-	// generate a token from an unique value, taken from microtime, you can also use salt-values, other crypting methods...
-	$token = genHash(uniqid(microtime(), true));  
-	
-	// Write the generated token to the session variable to check it against the hidden field when the form is sent
-	$_SESSION['tokens'][$form] = $token; 
-	
-	return $token;
+function genFormToken($form) 
+{
+	if (!is_array($_SESSION['tokens']))
+	{
+		$_SESSION['tokens'] = array();  
+	} 
+	if (!is_array($_SESSION['tokens'][$form]))
+	{
+		$_SESSION['tokens'][$form] = array();  
+	} 
+  
+	$hash = genHash(uniqid(microtime(), true));
+	$timeout = time() + 3600; 
+	$_SESSION['tokens'][$form][$hash] = $timeout;
+	return $hash;
 }
 
 /**

@@ -9,7 +9,7 @@ if(!$_POST['eb-sub']) { // if the form not is submitted
 }
 
 ## check that the sent form token is corret
-if(verifyFormToken('editban', $tokens) == false) // verify token
+if(verifyFormToken('editban') == false) // verify token
 	ifTokenBad('Edit ban');
 	
 $ban_id = cleanvar($_POST['banid']);
