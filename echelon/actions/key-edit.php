@@ -6,7 +6,7 @@ if($_POST['t'] == 'del') : // if this is a deletion request
 
 	$key = cleanvar($_POST['key']);
 
-	if(verifyFormToken('keydel'.$key, $tokens) == false) // verify token
+	if(verifyFormToken('keydel'.$key) == false) // verify token
 		ifTokenBad('Reg Key Delete'); // if bad token, log and send error
 
 	$result = $dbl->delKey($key);

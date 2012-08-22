@@ -22,7 +22,7 @@ function getPostsPerms($posts) {
 if($_GET['t'] == 'add') : // add group perms
 
 	# verify token #
-	//if(!verifyFormToken('perm-group-add', $tokens))
+	//if(!verifyFormToken('perm-group-add'))
 	//	ifTokenBad('Add group');
 
 	$name = cleanvar($_POST['g-name']);
@@ -56,7 +56,7 @@ if($_GET['t'] == 'add') : // add group perms
 else : // edit group perms
 
 	# verify token #
-	if(!verifyFormToken('perm-group-edit', $tokens))
+	if(!verifyFormToken('perm-group-edit'))
 		ifTokenBad('Edit Group Permissions');
 
 	$group_id = cleanvar($_GET['gid']); // get the group to update from the URL

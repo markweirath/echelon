@@ -7,7 +7,7 @@ if(!isset($_POST['add-user'])) // if this was not a post request then send back 
 	sendBack('Please do not access that page directly');
 
 ## check that the sent form token is corret
-if(!verifyFormToken('adduser', $tokens)) // verify token
+if(!verifyFormToken('adduser')) // verify token
 	ifTokenBad('Add User');
 
 // set email and comment and clean

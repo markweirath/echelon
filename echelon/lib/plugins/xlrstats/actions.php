@@ -9,7 +9,7 @@ if(!isset($_POST['xlrstats-sub'])) : // if the form is submitted
 endif;
 
 ## check that the sent form token is corret
-if(verifyFormToken('xlrstats', $tokens) == false) // verify token
+if(verifyFormToken('xlrstats') == false) // verify token
 	ifTokenBad('XLRstats Edit');
 
 // Gets vars from form

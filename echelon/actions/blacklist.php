@@ -6,7 +6,7 @@ require '../inc.php';
 if($_POST['deact']) { // if this is a deactivation request
 
 	$bl_id = $_POST['id'];
-	if(!verifyFormToken('act'.$bl_id, $tokens)) // verify token
+	if(!verifyFormToken('act'.$bl_id)) // verify token
 		ifTokenBad('BL De-activate'); // if bad log and send error
 	
 	$dbl->BLactive($bl_id, false); // run query to deact BL ban
@@ -16,7 +16,7 @@ if($_POST['deact']) { // if this is a deactivation request
 } elseif($_POST['react']) { // if this is a re-activation request
 
 	$bl_id = $_POST['id'];
-	if(!verifyFormToken('act'.$bl_id, $tokens)) // verify token
+	if(!verifyFormToken('act'.$bl_id)) // verify token
 		ifTokenBad('BL De-activate'); // if bad log and send error
 	
 	$dbl->BLactive($bl_id, true); // run query to reactivate BL ban
@@ -25,7 +25,7 @@ if($_POST['deact']) { // if this is a deactivation request
 
 } elseif($_POST['ip']) { // if this is an add request
 	
-	if(!verifyFormToken('addbl', $tokens)) // verify token
+	if(!verifyFormToken('addbl')) // verify token
 		ifTokenBad('BL Add'); // if bad log, add hack counter and throw error
 	
 	// set and clean vars

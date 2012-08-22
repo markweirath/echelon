@@ -15,10 +15,10 @@ require '../../inc.php';
 
 ## check that the sent form token is corret
 if(!$is_mask) {
-	if(verifyFormToken('level', $tokens) == false) // verify token
+	if(verifyFormToken('level') == false) // verify token
 		ifTokenBad('Change client level');
 } else {
-	if(verifyFormToken('mask', $tokens) == false) // verify token
+	if(verifyFormToken('mask') == false) // verify token
 		ifTokenBad('Change client mask level');
 }
 
