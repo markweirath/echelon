@@ -21,10 +21,10 @@ else
 
 ## Check Token ##
 if($is_add) {
-	//if(!verifyFormToken('addgame', $tokens)) // verify token
+	//if(!verifyFormToken('addgame')) // verify token
 		//ifTokenBad('Add Game');
 } else {
-	if(!verifyFormToken('gamesettings', $tokens)) // verify token
+	if(!verifyFormToken('gamesettings')) // verify token
 		ifTokenBad('Game Settings Edit');
 }
 

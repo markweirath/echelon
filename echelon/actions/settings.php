@@ -12,7 +12,7 @@ endif;
 
 
 ## Check Token ##
-if(!verifyFormToken('settings', $tokens)) // verify token
+if(!verifyFormToken('settings')) // verify token
 	ifTokenBad('Settings Edit');
 
 ## Get Vars ##

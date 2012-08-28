@@ -14,7 +14,7 @@ $ban_id = $_POST['banid'];
 $type = cleanvar($_POST['type']);
 
 ## check that the sent form token is correct ##
-if(verifyFormToken('unban'.$ban_id, $tokens) == false) // verify token
+if(verifyFormToken('unban'.$ban_id) == false) // verify token
 	ifTokenBad('Unban');
 
 ## Check for empties ##

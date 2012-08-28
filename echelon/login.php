@@ -140,7 +140,7 @@ if($mem->loggedIn()) { ## if logged in users may skip this page
 
 	$page = 'lostpw';
 
-	if(verifyFormTokenLogin('lostpw', $tokens) == false) // verify token
+	if(verifyFormTokenLogin('lostpw') == false) // verify token
 		ifTokenBad('Lost Password'); // if bad log and send error
 	
 	$name = cleanvar($_POST['name']);
@@ -204,7 +204,7 @@ if($mem->loggedIn()) { ## if logged in users may skip this page
 
 	## This section works with the results of the reset password form ##
 	
-	if(verifyFormTokenLogin('resetpw', $tokens) == false) // verify token
+	if(verifyFormTokenLogin('resetpw') == false) // verify token
 		ifTokenBad('Lost Password'); // if bad log and send error
 	
 	// get and clean vars

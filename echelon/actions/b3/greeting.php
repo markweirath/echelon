@@ -6,7 +6,7 @@ require '../../inc.php';
 if($_POST['greeting-sub']) : // if the form is submitted
 
 	## check that the sent form token is corret
-	if(verifyFormToken('greeting', $tokens) == false) // verify token
+	if(verifyFormToken('greeting') == false) // verify token
 		ifTokenBad('Add comment');
 
 	$greeting = cleanvar($_POST['greeting']);
